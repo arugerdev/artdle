@@ -85,7 +85,12 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
   }
 
   const handleMouseMove = e => {
-    if (!isDrawing.current || activeTool === TOOL_BUCKET) return
+    if (
+      !isDrawing.current ||
+      activeTool === TOOL_BUCKET ||
+      !lines[lines.length - 1].points
+    )
+      return
     const stage = e.target.getStage()
     const point = stage.getPointerPosition()
     const lastLine = lines[lines.length - 1]
@@ -212,6 +217,8 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
 
   const getColorOnPos = (canvas, x, y) => {
     const cx = canvas.getContext('2d')
+    x = Math.floor(x)
+    y = Math.floor(y)
     const imageData = cx.getImageData(0, 0, canvas.width, canvas.height)
     const index = (y * canvas.width + x) * 4
 
