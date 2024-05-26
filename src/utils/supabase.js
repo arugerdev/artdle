@@ -24,6 +24,15 @@ export function getDailyWord (day) {
       }
     })
     .catch(err => {
+      console.log(err)
+      if (
+        err
+          .toString()
+          .includes("Cannot read properties of undefined (reading 'word')")
+      ) {
+        toast('No existe palabra de este dia, lo sentimos...')
+        return
+      }
       toast.error('Ha ocurrido un error, intentalo mas tarde: ' + err)
     })
 }
