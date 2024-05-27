@@ -215,7 +215,7 @@ export const DrawList = ({
               <small className='text-medium font-semibold'>
                 La palabra del dia {day} fue:
               </small>
-              <h1 className='flex text-4xl font-sans font-extrabold pt-1 py-12 px-2'>
+              <h1 className='flex text-4xl font-sans font-extrabold py-0 px-2'>
                 {dailyWord}
               </h1>
             </div>
