@@ -414,9 +414,12 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
         <Input
           type='title'
           title='Nombre'
-          variant='underlined'
+          variant='faded'
+          color='primary'
           isClearable={true}
           placeholder='Pon un nombre a tu creacción...'
+          label={<strong>Nombre de tu creacción</strong>}
+          labelPlacement='inside'
           isDisabled={isDrawed}
           value={name}
           onValueChange={setName}
