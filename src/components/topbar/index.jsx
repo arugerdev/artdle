@@ -16,7 +16,12 @@ export const Topbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [location, pushLocation] = useLocation()
 
-  const menuItems = ['Inicio', 'Explorar', 'Sobre nosotros', 'Como jugar']
+  const menuItems = [
+    { label: 'Inicio', path: '/' },
+    { label: 'Explorar dibujos', path: '/explore' },
+    { label: '¿Cómo jugar?', path: '/howtoplay' },
+    { label: 'Sobre nosotros', path: '/about' }
+  ]
 
   return (
     <Navbar
@@ -74,7 +79,7 @@ export const Topbar = () => {
             href=''
             onPress={() => pushLocation('/howtoplay')}
           >
-            ¿Como jugar?
+            ¿Cómo jugar?
           </Link>
         </NavbarItem>
         <NavbarItem isActive={location == '/about'}>
@@ -90,20 +95,15 @@ export const Topbar = () => {
 
       <NavbarMenu>
         {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+          <NavbarMenuItem key={`${item.label}-${index}`}>
             <Link
-              className='w-full'
-              color={
-                index === 2
-                  ? 'warning'
-                  : index === menuItems.length - 1
-                  ? 'danger'
-                  : 'foreground'
-              }
-              href='#'
+              className='w-full cursor-pointer'
+              color={'foreground'}
+              href=''
               size='lg'
+              onPress={() => pushLocation(item.path)}
             >
-              {item}
+              {item.label}
             </Link>
           </NavbarMenuItem>
         ))}
