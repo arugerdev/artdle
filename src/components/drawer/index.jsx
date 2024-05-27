@@ -95,8 +95,6 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
     const point = stage.getPointerPosition()
     const lastLine = lines[lines.length - 1]
     lastLine.points = lastLine.points.concat([point.x, point.y])
-
-    setLines(lines.slice(0, -1).concat(lastLine))
   }
 
   const handleMouseUp = () => {
@@ -187,6 +185,24 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
           handleRedoChanges()
           return
       }
+    }
+
+    switch (e.key) {
+      case 'p':
+      case '1':
+        e.preventDefault()
+        setActiveTool(0)
+        return
+      case 'e':
+      case '2':
+        e.preventDefault()
+        setActiveTool(1)
+        return
+      case 'b':
+      case '3':
+        e.preventDefault()
+        setActiveTool(2)
+        return
     }
   }
 
@@ -370,7 +386,7 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
               value={size}
               startContent={<small>{size.toFixed(0)}px</small>}
               onChange={setSize}
-              className='max-h-[150px] h-[150px]'
+              className='max-h-[140px] h-[150px]'
               isDisabled={isDrawed}
             />
           )}
