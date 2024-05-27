@@ -9,7 +9,8 @@ export const DrawList = ({
   day = new Date().toISOString().split('T')[0],
   subscribe = true,
   orderBy = 'date',
-  showDailyWord = false
+  showDailyWord = false,
+  filterName = ''
 }) => {
   const [draws, setDraws] = useState([])
   const [pageIndex, setPageIndex] = useState(0)
@@ -46,6 +47,56 @@ export const DrawList = ({
         break
     }
 
+    if (day) {
+      searchByDay(orderIndex, orderOptions, added)
+    } else if (filterName) {
+      console.log(filterName)
+      searchByName(orderIndex, orderOptions, added)
+    }
+  }
+
+  const searchByName = (orderIndex, orderOptions, added) => {
+    if (!added) {
+      setLoading(true)
+
+      supabase
+        .from('draws')
+        .select('id', 'COUNT(id)')
+        .ilike('name', `%${filterName.toString()}%`)
+        .then(count => {
+          setDrawsCount(count.data.length)
+        })
+    }
+
+    supabase
+      .from('draws')
+      .select('*')
+      .ilike('name', `%${filterName.toString()}%`)
+      .order(orderIndex, orderOptions)
+      .range(0 + 10 * pageIndex + pageIndex, 10 + 10 * pageIndex + pageIndex)
+      .then(data => {
+        if (added) {
+          setDraws(old => [...old, ...data.data])
+          setLoading(false)
+        } else {
+          setDraws(data.data)
+          if (showDailyWord) {
+            getDailyWord(day).then(word => {
+              setDailyWord(word)
+              setLoading(false)
+            })
+          } else {
+            setLoading(false)
+          }
+        }
+      })
+      .catch(err => {
+        toast.error('Ha ocurrido un error al cargar los dibujos: ' + err)
+        setLoading(false)
+      })
+  }
+
+  const searchByDay = (orderIndex, orderOptions, added) => {
     if (!added) {
       setLoading(true)
 
@@ -64,7 +115,6 @@ export const DrawList = ({
       .order(orderIndex, orderOptions)
       .eq('day', day)
       .range(0 + 10 * pageIndex + pageIndex, 10 + 10 * pageIndex + pageIndex)
-      // .limit(10)
       .then(data => {
         if (added) {
           setDraws(old => [...old, ...data.data])
@@ -150,7 +200,7 @@ export const DrawList = ({
       .subscribe()
 
     return () => taskListener.unsubscribe()
-  }, [day, orderBy])
+  }, [day, orderBy, filterName])
 
   return (
     <section
@@ -158,7 +208,7 @@ export const DrawList = ({
         loading ? 'justify-center' : 'justify-start'
       } flex flex-row flex-wrap bg-slate-100 items-start z-20 gap-2 p-4 w-full h-full mb-8 shadow-lg rounded-xl`}
     >
-      {!loading && (
+      {!loading && draws && (
         <>
           {showDailyWord && (
             <div className='flex flex-col gap-0 justify-start items-center h-full w-full'>
@@ -172,13 +222,13 @@ export const DrawList = ({
           )}
           <section
             ref={containerRef}
-            className='w-full h-full grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-2'
+            className='w-full h-full grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2'
           >
             {draws.map(data => {
               return <DrawCard key={data.id} data={data} />
             })}
           </section>
-          {draws.length == 0 && (
+          {(!draws || draws.length == 0) && (
             <div className='flex flex-col w-full h-full items-center justify-center text-center'>
               <h1 className='font-bold text-xl'>No hay dibujos!</h1>
               <p>😥</p>
@@ -190,6 +240,7 @@ export const DrawList = ({
           </div>
         </>
       )}
+
       {loading && <div className='loader'></div>}
     </section>
   )

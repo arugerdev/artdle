@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react'
 import supabase from '../../utils/supabase'
 import toast from 'react-hot-toast'
 import { abbrNum } from '../../utils/maths'
+import { Tooltip } from '@nextui-org/react'
 export const DrawCard = ({ data }) => {
   const [isLiked, setLiked] = useState()
   const [counter, setCounter] = useState(0)
@@ -86,92 +87,109 @@ export const DrawCard = ({ data }) => {
   }
 
   return (
-    <Link onPress={onOpen} className='w-full h-full cursor-pointer'>
-      <section className='flex flex-col border-r-2 items-center justify-center w-full text-center shadow-lg h-auto rounded-lg text-black bg-white gap-2 p-2'>
-        <img src={data.uridata} width={'250px'} height={'140px'} />
-        <div className='w-full border-1'></div>
-        <div className='flex flex-row w-full items-center justify-center'>
-          <section className='flex flex-col -gap-8 items-start justify-center text-start w-full'>
-            <h1 className='font-extrabold text-pretty'>{data.name}</h1>
-            <small className=''>
-              {new Date(data.created_at).toString().split('GMT')[0]}
-            </small>
-          </section>
-
-          <section className='flex flex-row items-center justify-center'>
-            <Button
-              isIconOnly
-              variant='light'
-              className='flex items-center justify-center text-center p-0'
-              onPress={() => {
-                supabase.auth.getUser().then(async user => {
-                  if (isLiked) removeLike(user)
-                  else if (!isLiked) addLike(user)
-                })
-
-                setLiked(old => !old)
-              }}
-            >
-              {isLiked && (
-                <FilledHeartIcon className='w-full h-full p-2 text-red-600' />
-              )}
-              {!isLiked && (
-                <HeartIcon className='w-full h-full p-2 text-red-600' />
-              )}
-            </Button>
-            {!loading && (
-              <small className='text-md font-bold text-gray-500'>
-                {abbrNum(counter, 2)}
-              </small>
-            )}
-            {loading && <Spinner size='sm' color='danger' />}
-          </section>
+    <Tooltip
+      size='md'
+      content={
+        <div className='flex flex-col items-start justify-center'>
+          <h1 className='font-extrabold max-w-prose text-pretty'>
+            {data.name}
+          </h1>
+          <p className='max-w-prose text-pretty'>
+            {new Date(data.created_at).toString().split('GMT')[0]}
+          </p>
         </div>
+      }
+    >
+      <Link
+        onPress={onOpen}
+        className='w-full max-w-[300px] h-full cursor-pointer'
+      >
+        <section className='flex flex-col border-r-2 items-center justify-center w-full text-center shadow-lg h-auto rounded-lg text-black bg-white gap-2 p-2'>
+          <img src={data.uridata} width={'250px'} height={'140px'} />
+          <div className='w-full border-1'></div>
+          <div className='flex flex-row w-full items-center justify-center'>
+            <section className='flex flex-col -gap-8 items-start justify-center text-start w-full truncate'>
+              <h1 className='font-extrabold'>{data.name}</h1>
+              <small className=''>
+                {new Date(data.created_at).toString().split('GMT')[0]}
+              </small>
+            </section>
 
-        <Modal
-          backdrop='blur'
-          className='flex w-[60%] h-[90%] max-w-full'
-          isOpen={isOpen}
-          onClose={onClose}
-        >
-          <ModalContent>
-            {onClose => (
-              <>
-                <ModalHeader className='flex flex-col gap-1 w-full h-full'>
-                  <h1>{data.name}</h1>
-                </ModalHeader>
-                <ModalBody>
-                  <img
-                    width={'100%'}
-                    height={'100%'}
-                    className='w-full h-full aspect-video'
-                    src={data.uridata}
-                    alt={data.name}
-                  />
-                </ModalBody>
-                <ModalFooter>
-                  <Button
-                    color='success'
-                    variant='ghost'
-                    onPress={() => {
-                      var a = document.createElement('a')
-                      a.href = data.uridata.toString()
-                      a.download = `${data.name}-${data.created_at}-draw.png`
-                      a.click()
-                    }}
-                    startContent={<DownloadIcon />}
-                  >
-                    Download
-                  </Button>
-                  <Button color='danger' variant='light' onPress={onClose}>
-                    Close
-                  </Button>
-                </ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      </section>
-    </Link>
+            <section className='flex flex-row items-center justify-center'>
+              <Button
+                isIconOnly
+                variant='light'
+                className='flex items-center justify-center text-center p-0'
+                onPress={() => {
+                  supabase.auth.getUser().then(async user => {
+                    if (isLiked) removeLike(user)
+                    else if (!isLiked) addLike(user)
+                  })
+
+                  setLiked(old => !old)
+                }}
+              >
+                {isLiked && (
+                  <FilledHeartIcon className='w-full h-full p-2 text-red-600' />
+                )}
+                {!isLiked && (
+                  <HeartIcon className='w-full h-full p-2 text-red-600' />
+                )}
+              </Button>
+              {!loading && (
+                <small className='text-md font-bold text-gray-500'>
+                  {abbrNum(counter, 2)}
+                </small>
+              )}
+              {loading && <Spinner size='sm' color='danger' />}
+            </section>
+          </div>
+
+          <Modal
+            backdrop='blur'
+            className='flex w-[60%] h-[90%] max-w-full'
+            isOpen={isOpen}
+            onClose={onClose}
+          >
+            <ModalContent>
+              {onClose => (
+                <>
+                  <ModalHeader className='flex flex-col gap-1 w-full h-full'>
+                    <h1>{data.name}</h1>
+                  </ModalHeader>
+                  <ModalBody>
+                    <img
+                      width={'100%'}
+                      height={'100%'}
+                      className='w-full h-full aspect-video'
+                      src={data.uridata}
+                      alt={data.name}
+                    />
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button
+                      color='success'
+                      variant='ghost'
+                      onPress={() => {
+                        var a = document.createElement('a')
+                        a.href = data.uridata.toString()
+                        a.download = `${data.name}-${data.created_at}-draw.png`
+                        a.click()
+                      }}
+                      startContent={<DownloadIcon />}
+                    >
+                      Download
+                    </Button>
+                    <Button color='danger' variant='light' onPress={onClose}>
+                      Close
+                    </Button>
+                  </ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+        </section>
+      </Link>
+    </Tooltip>
   )
 }
