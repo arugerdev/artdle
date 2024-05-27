@@ -44,7 +44,7 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
   const [lines, setLines] = useState([])
   const isDrawing = useRef(false)
   const stageRef = useRef()
-  const [redoLines, setRedoLines] = useState([]) // Estado para almacenar las líneas deshechas
+  const [redoLines, setRedoLines] = useState([])
 
   usePreventZoom()
 
@@ -380,9 +380,6 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
           <Stage
             width={960}
             height={540}
-            // onMouseDown={handleMouseDown}
-            // onMouseMove={handleMouseMove}
-            // onMouseUp={handleMouseUp}
             onTouchStart={handleMouseDown}
             onTouchMove={handleMouseMove}
             onTouchEnd={handleMouseUp}
