@@ -1,10 +1,10 @@
 import {
-  Calendar,
   Select,
   SelectItem,
   Accordion,
   AccordionItem,
-  Input
+  Input,
+  DatePicker
 } from '@nextui-org/react'
 import { Topbar } from '../../components/topbar/index'
 import { useEffect, useState } from 'react'
@@ -60,7 +60,10 @@ export default function ExplorePage () {
             aria-label='Por día dibujado'
             title='Por día dibujado'
           >
-            <Calendar
+            <DatePicker
+              className='my-4'
+              label={<strong>Día del dibujo</strong>}
+              labelPlacement='outside'
               minValue={parseDate('2024-05-21')}
               value={date}
               onChange={setDate}
