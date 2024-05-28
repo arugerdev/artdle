@@ -86,8 +86,8 @@ export default function ExplorePage () {
           <SelectItem value={'disdate'}>
             Fecha de creacción (Mas viejos)
           </SelectItem>
-          {/* <SelectItem value={'likes'}>Mejor valoración</SelectItem>
-          <SelectItem value={'dislikes'}>Peor valoración</SelectItem> */}
+          <SelectItem value={'likes'}>Mejor valoración</SelectItem>
+          <SelectItem value={'dislikes'}>Peor valoración</SelectItem>
         </Select>
       </section>
 

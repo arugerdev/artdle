@@ -27,11 +27,13 @@ export const DrawList = ({
     let orderOptions = { ascending: false }
 
     switch (orderBy) {
-      case '$.0' || '$.1':
+      case '$.0':
+      case '$.1':
         orderIndex = 'created_at'
         break
-      case '$.2' || '$.3':
-        orderIndex = 'likes'
+      case '$.2':
+      case '$.3':
+        orderIndex = 'items_count'
         break
     }
 
@@ -42,8 +44,11 @@ export const DrawList = ({
       case '$.1':
         orderOptions = { ascending: true }
         break
-      case '$.2' || '$.3':
+      case '$.2':
         orderOptions = { ascending: false }
+        break
+      case '$.3':
+        orderOptions = { ascending: true }
         break
     }
 
