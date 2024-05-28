@@ -11,7 +11,6 @@ export const ColorBucket = ({
 }) => {
   const handleKeyDown = e => {
     if (e.key === 'b' || e.key === 'B' || e.key === '3') {
-      e.preventDefault()
       setActiveTool(TOOLS.BUCKET)
     }
   }

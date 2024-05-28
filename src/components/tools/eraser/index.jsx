@@ -11,7 +11,6 @@ export const Eraser = ({
 }) => {
   const handleKeyDown = e => {
     if (e.key === 'e' || e.key === 'E' || e.key === '2') {
-      e.preventDefault()
       setActiveTool(TOOLS.ERASER)
     }
   }

@@ -32,7 +32,6 @@ export const EyeDropper = ({
 
   const handleKeyDown = e => {
     if (e.key === 'c' || e.key === 'C' || e.key === '4') {
-      e.preventDefault()
       if (isSupported()) {
         pickColor()
       } else {

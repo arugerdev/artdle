@@ -11,7 +11,6 @@ export const Pencil = ({
 }) => {
   const handleKeyDown = e => {
     if (e.key === 'p' || e.key === 'P' || e.key === '1') {
-      e.preventDefault()
       setActiveTool(TOOLS.PENCIL)
     }
   }
