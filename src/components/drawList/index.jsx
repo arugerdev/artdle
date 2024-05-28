@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from 'react'
-import { DrawCard } from '../draw-card'
+import { DrawCard } from '../drawCard'
 import supabase, { getDailyWord } from '../../utils/supabase'
 import toast from 'react-hot-toast'
 
@@ -50,7 +50,6 @@ export const DrawList = ({
     if (day) {
       searchByDay(orderIndex, orderOptions, added)
     } else if (filterName) {
-      console.log(filterName)
       searchByName(orderIndex, orderOptions, added)
     }
   }

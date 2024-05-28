@@ -4,12 +4,28 @@ import NotFoundPage from './pages/notfoundpage'
 import AboutPage from './pages/about'
 import ExplorePage from './pages/explore'
 import HowToPlayPage from './pages/howtoplay'
+import { isMobile } from './utils/system'
+import { useEffect } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
 
 function App () {
+  useEffect(() => {
+    if (isMobile()) {
+      toast.error(
+        <h1 className='text-sm font-extrabold text-start p-4 border-b-2'>
+          Lo siento pero esta web aun no esta preparada para poder dibujar en
+          dispositivos móviles, si quieres dibujar debe de ser en un ordenador
+          😥
+        </h1>
+      )
+    }
+  }, [])
+
   return (
     <>
+      <Toaster />
       <Switch>
-        <Route path='/' component={MainPage} />
+        {!isMobile() && <Route path='/' component={MainPage} />}
         <Route path='/about' component={AboutPage} />
         <Route path='/explore' component={ExplorePage} />
         <Route path='/howtoplay' component={HowToPlayPage} />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Drawer } from '../../components/drawer/index.jsx'
 import supabase, { getDailyWord } from '../../utils/supabase'
-import { DrawList } from '../../components/draw-list/index'
+import { DrawList } from '../../components/drawList/index'
 import toast, { Toaster } from 'react-hot-toast'
 import { Topbar } from '../../components/topbar/index'
 

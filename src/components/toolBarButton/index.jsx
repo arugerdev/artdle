@@ -18,7 +18,7 @@ export const ToolBarButton = ({
       content={
         <div className='flex flex-col items-start justify-center'>
           <h1 className='font-extrabold max-w-prose text-pretty'>{name}</h1>
-          <p className='max-w-prose text-pretty'>{description}</p>
+          <p className='max-w-[200px] text-pretty'>{description}</p>
         </div>
       }
     >

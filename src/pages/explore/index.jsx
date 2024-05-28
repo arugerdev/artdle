@@ -9,7 +9,7 @@ import {
 import { Topbar } from '../../components/topbar/index'
 import { useEffect, useState } from 'react'
 import { getLocalTimeZone, parseDate, today } from '@internationalized/date'
-import { DrawList } from '../../components/draw-list'
+import { DrawList } from '../../components/drawList'
 import { Toaster } from 'react-hot-toast'
 
 export default function ExplorePage () {
@@ -21,9 +21,6 @@ export default function ExplorePage () {
   useEffect(() => {
     setSelectedKeys(new Set(['1']))
   }, [])
-  useEffect(() => {
-    console.log(selectedKeys)
-  }, [selectedKeys])
 
   return (
     <main className='flex flex-col gap-8 justify-start items-center h-full w-full min-w-screen min-h-screen'>

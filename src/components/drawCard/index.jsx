@@ -55,7 +55,7 @@ export const DrawCard = ({ data }) => {
     return () => {
       abortController.abort()
     }
-  }, [])
+  }, [data])
 
   const removeLike = user => {
     setCounter(old => old - 1)
@@ -64,7 +64,7 @@ export const DrawCard = ({ data }) => {
       .delete()
       .eq('liked_by', user.data.user.id)
       .eq('liked_to', data.id)
-      .then(likes => {
+      .then(() => {
         toast.success('Like quitado')
       })
       .catch(err => {
@@ -78,7 +78,7 @@ export const DrawCard = ({ data }) => {
     supabase
       .from('likes')
       .insert({ liked_by: user.data.user.id, liked_to: data.id })
-      .then(likes => {
+      .then(() => {
         toast.success('Like añadido')
       })
       .catch(err => {

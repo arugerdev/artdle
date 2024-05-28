@@ -24,7 +24,6 @@ export function getDailyWord (day) {
       }
     })
     .catch(err => {
-      console.log(err)
       if (
         err
           .toString()
