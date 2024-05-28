@@ -62,7 +62,7 @@ export default function ExplorePage () {
           >
             <DatePicker
               className='my-4'
-              label={<strong>Día del dibujo</strong>}
+              label={<strong>Día del dibujo (mm / dd / yyyy)</strong>}
               labelPlacement='outside'
               minValue={parseDate('2024-05-21')}
               value={date}
