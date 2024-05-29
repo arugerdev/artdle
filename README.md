@@ -42,17 +42,17 @@ Diviertete!
 ## Roadmap
 - Funcionable en PC [✅]
 - Funcionable en Móviles [⚠]
-    - Drawer admite touch [⚠]    
-    - Botones utilizables en móviles [✅]    
-    - Diseño responsive [❌]    
+    - Drawer admite touch [⚠]
+    - Botones utilizables en móviles [✅]
+    - Diseño responsive [❌]
 - +1.000 palabras preparadas [✅]
 - +3.000 palabras preparadas [✅]
 - +10.000 palabras preparadas [👑]
 - Explorar por nombre de dibujo [✅]
 - Sistema de reportes para dibujos "no family friendly" [✅]
+- Sistema de cuentas para guardar datos entre dispositivos [✅]
 - Sistema de dislikes (POR DECIDIR) [❌]
 - Explorar por palabra del día (POR DECIDIR) [❌]
-- Sistema de cuentas para guardar datos entre dispositivos [❌]
 
 ## Autores
 - [@arugerdev](https://www.github.com/arugerdev) (Creador, Programador)
