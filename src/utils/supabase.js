@@ -37,7 +37,6 @@ export function getDailyWord (day) {
 }
 export function getUserData (id) {
   return supabase.auth.getUser(id).then(data => {
-    console.log(data)
     return data
   })
 }

@@ -29,7 +29,6 @@ export const Topbar = () => {
 
   useEffect(() => {
     getAuthData().then(data => {
-      console.log(data)
       setUserData(data.data.user)
     })
   }, [])
@@ -106,8 +105,7 @@ export const Topbar = () => {
             <Button
               as={Link}
               onPress={() => {
-                signOut().then(data => {
-                  console.log(data)
+                signOut().then(() => {
                   window.location.reload()
                 })
               }}
@@ -142,6 +140,40 @@ export const Topbar = () => {
             <p className='font-bold text-inherit'>Artdle</p>
           </Link>
         </NavbarBrand>
+        <NavbarItem className='sm:hidden pr-3 w-full'>
+          {(!userData || !userData.email) && (
+            <Button
+              as={Link}
+              onPress={() =>
+                loginWithGoogle().then(data => {
+                  console.log(data)
+                })
+              }
+              color='primary'
+              variant='light'
+            >
+              Iniciar Sesión
+            </Button>
+          )}
+          {userData && userData.email && userData.identities.length > 0 && (
+            <Button
+              as={Link}
+              onPress={() => {
+                signOut().then(() => {
+                  window.location.reload()
+                })
+              }}
+              className='flex items-center justify-center bg-transparent rounded-full w-[40px] h-[40px] max-w-[40px] max-h-[40px] min-w-[40px] min-h-[40px]'
+            >
+              <User
+                className='flex items-center justify-center'
+                avatarProps={{
+                  src: userData.identities[0].identity_data.picture
+                }}
+              />
+            </Button>
+          )}
+        </NavbarItem>
       </NavbarContent>
 
       <NavbarMenu>
