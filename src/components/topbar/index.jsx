@@ -102,7 +102,7 @@ export const Topbar = () => {
               Iniciar Sesión
             </Button>
           )}
-          {userData && userData.email && (
+          {userData && userData.email && userData.identities.length > 0 && (
             <Button
               as={Link}
               onPress={() => {
