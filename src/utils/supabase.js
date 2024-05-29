@@ -35,6 +35,36 @@ export function getDailyWord (day) {
       toast.error('Ha ocurrido un error, intentalo mas tarde: ' + err)
     })
 }
+export function getUserData (id) {
+  return supabase.auth.getUser(id).then(data => {
+    console.log(data)
+    return data
+  })
+}
+
+export async function getAuthData () {
+  await supabase.auth.getUser().then(user => {
+    return user
+  })
+}
+
+export async function loginWithGoogle () {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google'
+  })
+
+  if (error) throw error
+
+  return data
+}
+
+export async function signOut () {
+  const { data, error } = await supabase.auth.signOut()
+
+  if (error) throw error
+
+  return data
+}
 
 export function removeLike (user, data, setCounter) {
   setCounter(old => old - 1)

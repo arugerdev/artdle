@@ -7,11 +7,14 @@ import {
   NavbarContent,
   NavbarItem,
   Link,
-  Image
+  Image,
+  Button,
+  User
 } from '@nextui-org/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Logo from '../../assets/img/icon.png'
 import { useLocation } from 'wouter'
+import { getAuthData, loginWithGoogle, signOut } from '../../utils/supabase'
 export const Topbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [location, pushLocation] = useLocation()
@@ -22,6 +25,14 @@ export const Topbar = () => {
     { label: '¿Cómo jugar?', path: '/howtoplay' },
     { label: 'Sobre nosotros', path: '/about' }
   ]
+  const [userData, setUserData] = useState(null)
+
+  useEffect(() => {
+    getAuthData().then(data => {
+      console.log(data)
+      setUserData(data)
+    })
+  }, [])
 
   return (
     <Navbar
@@ -31,24 +42,7 @@ export const Topbar = () => {
       onMenuOpenChange={setIsMenuOpen}
       className='flex flex-row w-full max-w-screen items-center justify-center'
     >
-      <NavbarContent className='flex sm:hidden w-full' justify='center'>
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-        />
-      </NavbarContent>
-
-      <NavbarContent className='sm:hidden pr-3 w-full' justify='center'>
-        <NavbarBrand>
-          <Link
-            className='flex flex-row gap-4 text-black cursor-pointer'
-            onPress={() => pushLocation('/')}
-          >
-            <Image src={Logo} width={'64px'} height={'64px'} />
-            <p className='font-bold text-inherit'>Artdle</p>
-          </Link>
-        </NavbarBrand>
-      </NavbarContent>
-
+      {/* -------------- PC -------------- */}
       <NavbarContent className='hidden sm:flex gap-4 w-full' justify='center'>
         <NavbarBrand>
           <Link
@@ -92,6 +86,63 @@ export const Topbar = () => {
           </Link>
         </NavbarItem>
       </NavbarContent>
+      <NavbarContent justify='end'>
+        <NavbarItem className='hidden sm:flex'>
+          {!userData && (
+            <Button
+              as={Link}
+              onPress={() =>
+                loginWithGoogle().then(data => {
+                  console.log(data)
+                })
+              }
+              color='primary'
+              variant='light'
+            >
+              Iniciar Sesión
+            </Button>
+          )}
+          {userData && (
+            <Button
+              as={Link}
+              onPress={() => {
+                signOut().then(data => {
+                  console.log(data)
+                  window.location.reload()
+                })
+              }}
+              className='flex items-center justify-center bg-transparent rounded-full w-[40px] h-[40px] max-w-[40px] max-h-[40px] min-w-[40px] min-h-[40px]'
+            >
+              <User
+                className='flex items-center justify-center'
+                avatarProps={{
+                  src: userData.identity_data.picture
+                }}
+              />
+            </Button>
+          )}
+        </NavbarItem>
+      </NavbarContent>
+      {/* -------------- END PC -------------- */}
+
+      {/* -------------- MOBILE -------------- */}
+      <NavbarContent className='flex sm:hidden w-full' justify='center'>
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+        />
+      </NavbarContent>
+
+      <NavbarContent className='sm:hidden pr-3 w-full' justify='center'>
+        <NavbarBrand>
+          <Link
+            className='flex flex-row gap-4 text-black cursor-pointer'
+            onPress={() => pushLocation('/')}
+          >
+            <Image src={Logo} width={'64px'} height={'64px'} />
+            <p className='font-bold text-inherit'>Artdle</p>
+          </Link>
+        </NavbarBrand>
+      </NavbarContent>
 
       <NavbarMenu>
         {menuItems.map((item, index) => (
@@ -108,6 +159,7 @@ export const Topbar = () => {
           </NavbarMenuItem>
         ))}
       </NavbarMenu>
+      {/* -------------- END MOBILE -------------- */}
     </Navbar>
   )
 }
