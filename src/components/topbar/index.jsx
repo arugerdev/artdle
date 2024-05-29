@@ -23,7 +23,7 @@ export const Topbar = () => {
     { label: 'Inicio', path: '/' },
     { label: 'Explorar dibujos', path: '/explore' },
     { label: '¿Cómo jugar?', path: '/howtoplay' },
-    { label: 'Sobre nosotros', path: '/about' }
+    { label: 'Sobre Mí', path: '/about' }
   ]
   const [userData, setUserData] = useState(null)
 
@@ -52,38 +52,18 @@ export const Topbar = () => {
             <p className='font-bold text-inherit'>Artdle</p>
           </Link>
         </NavbarBrand>
-        <NavbarItem isActive={location == '/'}>
-          <Link color='foreground' href='' onPress={() => pushLocation('/')}>
-            Inicio
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive={location == '/explore'}>
-          <Link
-            color='foreground'
-            href=''
-            onPress={() => pushLocation('/explore')}
-          >
-            Explorar dibujos
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive={location == '/howtoplay'}>
-          <Link
-            color='foreground'
-            href=''
-            onPress={() => pushLocation('/howtoplay')}
-          >
-            ¿Cómo jugar?
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive={location == '/about'}>
-          <Link
-            color='foreground'
-            href=''
-            onPress={() => pushLocation('/about')}
-          >
-            Sobre nosotros
-          </Link>
-        </NavbarItem>
+
+        {menuItems.map((item, i) => (
+          <NavbarItem key={item.label + i} isActive={location == item.path}>
+            <Link
+              color='foreground'
+              href=''
+              onPress={() => pushLocation(item.path)}
+            >
+              {item.label}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
       <NavbarContent justify='end'>
         <NavbarItem className='hidden sm:flex'>

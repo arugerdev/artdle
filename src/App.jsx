@@ -7,6 +7,8 @@ import HowToPlayPage from './pages/howtoplay'
 import { isMobile } from './utils/system'
 import { useEffect } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
+import PrivacyPage from './pages/privacy'
+import TermsOfServicePage from './pages/termsOfService'
 
 function App () {
   useEffect(() => {
@@ -29,6 +31,8 @@ function App () {
         <Route path='/about' component={AboutPage} />
         <Route path='/explore' component={ExplorePage} />
         <Route path='/howtoplay' component={HowToPlayPage} />
+        <Route path='/privacy' component={PrivacyPage} />
+        <Route path='/conditions' component={TermsOfServicePage} />
         <Route path='' component={NotFoundPage} />
       </Switch>
     </>
