@@ -116,7 +116,7 @@ export const Topbar = () => {
               <User
                 className='flex items-center justify-center'
                 avatarProps={{
-                  src: userData.identity_data.picture
+                  src: userData.identities[0].identity_data.picture
                 }}
               />
             </Button>
