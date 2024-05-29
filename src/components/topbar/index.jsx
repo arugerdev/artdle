@@ -30,7 +30,7 @@ export const Topbar = () => {
   useEffect(() => {
     getAuthData().then(data => {
       console.log(data)
-      setUserData(data)
+      setUserData(data.data.user)
     })
   }, [])
 
@@ -88,7 +88,7 @@ export const Topbar = () => {
       </NavbarContent>
       <NavbarContent justify='end'>
         <NavbarItem className='hidden sm:flex'>
-          {!userData && (
+          {(!userData || !userData.email) && (
             <Button
               as={Link}
               onPress={() =>
@@ -102,7 +102,7 @@ export const Topbar = () => {
               Iniciar Sesión
             </Button>
           )}
-          {userData && (
+          {userData && userData.email && (
             <Button
               as={Link}
               onPress={() => {

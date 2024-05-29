@@ -43,7 +43,7 @@ export function getUserData (id) {
 }
 
 export async function getAuthData () {
-  await supabase.auth.getUser().then(user => {
+  return supabase.auth.getUser().then(user => {
     return user
   })
 }
