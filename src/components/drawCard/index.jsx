@@ -8,83 +8,25 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Spinner
+  Image
 } from '@nextui-org/react'
-import { DownloadIcon, FilledHeartIcon, HeartIcon } from '../../assets/icons'
-import { useEffect, useState } from 'react'
-import supabase from '../../utils/supabase'
-import toast from 'react-hot-toast'
-import { abbrNum } from '../../utils/maths'
+import { DownloadIcon } from '../../assets/icons'
 import { Tooltip } from '@nextui-org/react'
+import { LikeButton } from './../likeButton/index'
+import { getDailyWord } from '../../utils/supabase'
+import { useEffect, useState } from 'react'
+import { OptionsButton } from './../optionsButton/index'
+import { isMobile } from '../../utils/system'
 export const DrawCard = ({ data }) => {
-  const [isLiked, setLiked] = useState()
-  const [counter, setCounter] = useState(0)
-  const [loading, setLoading] = useState(true)
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  const [dailyWord, setDailyWord] = useState('')
+
   useEffect(() => {
-    const abortController = new AbortController()
-
-    setLoading(true)
-    supabase.auth.getUser().then(async user => {
-      supabase
-        .from('likes')
-        .select('*')
-        .eq('liked_by', user.data.user.id)
-        .eq('liked_to', data.id)
-        .then(likes => {
-          setLiked(likes.data.length > 0)
-        })
-        .catch(err => {
-          toast.error('Ha ocurrido un error al encontrar likes: ' + err)
-        })
-
-      supabase
-        .from('likes')
-        .select('*')
-        .eq('liked_to', data.id)
-        .then(likes => {
-          setCounter(likes.data.length)
-          setLoading(false)
-        })
-        .catch(err => {
-          toast.error('Ha ocurrido un error al encontrar likes: ' + err)
-          setLoading(false)
-        })
+    getDailyWord(data.created_at.split('+')[0].split('T')[0]).then(word => {
+      setDailyWord(word)
     })
-    return () => {
-      abortController.abort()
-    }
-  }, [data])
-
-  const removeLike = user => {
-    setCounter(old => old - 1)
-    supabase
-      .from('likes')
-      .delete()
-      .eq('liked_by', user.data.user.id)
-      .eq('liked_to', data.id)
-      .then(() => {
-        toast.success('Like quitado')
-      })
-      .catch(err => {
-        toast.error('Ha ocurrido un error al intentar eliminar el like: ' + err)
-      })
-  }
-
-  const addLike = user => {
-    setCounter(old => old + 1)
-
-    supabase
-      .from('likes')
-      .insert({ liked_by: user.data.user.id, liked_to: data.id })
-      .then(() => {
-        toast.success('Like añadido')
-      })
-      .catch(err => {
-        toast.error('Ha ocurrido un error al intentar añadir el like: ' + err)
-      })
-  }
+  }, [])
 
   return (
     <Tooltip
@@ -105,7 +47,14 @@ export const DrawCard = ({ data }) => {
         className='w-full max-w-[300px] h-full cursor-pointer'
       >
         <section className='flex flex-col border-r-2 items-center justify-center w-full text-center shadow-lg h-auto rounded-lg text-black bg-white gap-2 p-2'>
-          <img src={data.uridata} width={'250px'} height={'140px'} />
+          <Image
+            src={data.uridata}
+            radius='sm'
+            isBlurred={!isMobile()}
+            isZoomed={!isMobile()}
+            width={'250px'}
+            height={'140px'}
+          />
           <div className='w-full border-1'></div>
           <div className='flex flex-row w-full items-center justify-center'>
             <section className='flex flex-col -gap-8 items-start justify-center text-start w-full truncate'>
@@ -115,34 +64,7 @@ export const DrawCard = ({ data }) => {
               </small>
             </section>
 
-            <section className='flex flex-row items-center justify-center'>
-              <Button
-                isIconOnly
-                variant='light'
-                className='flex items-center justify-center text-center p-0'
-                onPress={() => {
-                  supabase.auth.getUser().then(async user => {
-                    if (isLiked) removeLike(user)
-                    else if (!isLiked) addLike(user)
-                  })
-
-                  setLiked(old => !old)
-                }}
-              >
-                {isLiked && (
-                  <FilledHeartIcon className='w-full h-full p-2 text-red-600' />
-                )}
-                {!isLiked && (
-                  <HeartIcon className='w-full h-full p-2 text-red-600' />
-                )}
-              </Button>
-              {!loading && (
-                <small className='text-md font-bold text-gray-500'>
-                  {abbrNum(counter, 2)}
-                </small>
-              )}
-              {loading && <Spinner size='sm' color='danger' />}
-            </section>
+            <LikeButton data={data} />
           </div>
 
           <Modal
@@ -154,35 +76,55 @@ export const DrawCard = ({ data }) => {
             <ModalContent>
               {onClose => (
                 <>
-                  <ModalHeader className='flex flex-col gap-1 w-full h-full'>
-                    <h1>{data.name}</h1>
+                  <ModalHeader className='flex flex-col gap-0 w-full'>
+                    <h1 className='font-extrabold'>{data.name}</h1>
+                    <small className='text-slate-500 font-normal text-sm'>
+                      Dibujado:{' '}
+                      {data.created_at
+                        .split('+')[0]
+                        .split('T')[1]
+                        .split('.')[0] +
+                        ' ' +
+                        data.created_at.split('+')[0].split('T')[0]}
+                    </small>
+                    <small className='text-slate-500 font-normal text-sm'>
+                      Palabra del dia: {dailyWord}
+                    </small>
                   </ModalHeader>
-                  <ModalBody>
-                    <img
-                      width={'100%'}
-                      height={'100%'}
-                      className='w-full h-full aspect-video'
+                  <ModalBody className='overflow-hidden'>
+                    <Image
+                      width={1920}
+                      height={1080}
+                      isBlurred
+                      className='object-fill rounded-sm'
                       src={data.uridata}
                       alt={data.name}
                     />
                   </ModalBody>
                   <ModalFooter>
-                    <Button
-                      color='success'
-                      variant='ghost'
-                      onPress={() => {
-                        var a = document.createElement('a')
-                        a.href = data.uridata.toString()
-                        a.download = `${data.name}-${data.created_at}-draw.png`
-                        a.click()
-                      }}
-                      startContent={<DownloadIcon />}
-                    >
-                      Download
-                    </Button>
-                    <Button color='danger' variant='light' onPress={onClose}>
-                      Close
-                    </Button>
+                    <section className='flex flex-row justify-start w-full'>
+                      <LikeButton data={data} />
+                    </section>
+
+                    <section className='flex flex-row justify-end gap-2 w-full'>
+                      <OptionsButton data={data} />
+                      <Button
+                        color='success'
+                        variant='flat'
+                        onPress={() => {
+                          var a = document.createElement('a')
+                          a.href = data.uridata.toString()
+                          a.download = `${data.name}-${data.created_at}-draw.png`
+                          a.click()
+                        }}
+                        startContent={<DownloadIcon />}
+                      >
+                        Descargar
+                      </Button>
+                      <Button color='danger' variant='light' onPress={onClose}>
+                        Cerrar
+                      </Button>
+                    </section>
                   </ModalFooter>
                 </>
               )}

@@ -49,9 +49,9 @@ Diviertete!
 - +3.000 palabras preparadas [✅]
 - +10.000 palabras preparadas [👑]
 - Explorar por nombre de dibujo [✅]
+- Sistema de reportes para dibujos "no family friendly" [✅]
 - Sistema de dislikes (POR DECIDIR) [❌]
 - Explorar por palabra del día (POR DECIDIR) [❌]
-- Sistema de reportes para dibujos "no family friendly" [❌]
 - Sistema de cuentas para guardar datos entre dispositivos [❌]
 
 ## Autores

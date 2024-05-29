@@ -94,7 +94,7 @@ export default function ExplorePage () {
       <DrawList
         className='max-w-[1560px]'
         day={
-          selectedKeys.currentKey == 2
+          selectedKeys.currentKey == 2 && date
             ? `${date.year}-${date.month}-${date.day}`
             : null
         }

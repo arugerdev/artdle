@@ -35,3 +35,57 @@ export function getDailyWord (day) {
       toast.error('Ha ocurrido un error, intentalo mas tarde: ' + err)
     })
 }
+
+export function removeLike (user, data, setCounter) {
+  setCounter(old => old - 1)
+  supabase
+    .from('likes')
+    .delete()
+    .eq('liked_by', user.data.user.id)
+    .eq('liked_to', data.id)
+    .then(() => {
+      toast.success('Like quitado')
+    })
+    .catch(err => {
+      toast.error('Ha ocurrido un error al intentar eliminar el like: ' + err)
+    })
+}
+
+export function addLike (user, data, setCounter) {
+  setCounter(old => old + 1)
+
+  supabase
+    .from('likes')
+    .insert({ liked_by: user.data.user.id, liked_to: data.id })
+    .then(() => {
+      toast.success('Like añadido')
+    })
+    .catch(err => {
+      toast.error('Ha ocurrido un error al intentar añadir el like: ' + err)
+    })
+}
+export function sendReport (
+  user,
+  data,
+  text,
+  callBack = () => {},
+  loading = () => {}
+) {
+  supabase
+    .from('reports')
+    .insert({
+      report_text: text,
+      draw_id: data.id,
+      created_by: user.data.user.id
+    })
+    .then(() => {
+      toast.success('Reporte enviado! ')
+    })
+    .catch(err => {
+      toast.error('Ha ocurrido un error al enviar el reporte: ' + err)
+    })
+    .finally(() => {
+      callBack()
+      loading(false)
+    })
+}
