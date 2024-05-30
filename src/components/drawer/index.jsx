@@ -15,7 +15,7 @@ import { ToolBarButton } from '../toolBarButton/index'
 import { getColorOnPos } from '../../utils/colors.js'
 import { Stage, Layer, Line } from 'react-konva'
 import { URLImage } from '../URLImage/index.jsx'
-import { isMacOs } from '../../utils/system.js'
+import { isMacOs, isMobile } from '../../utils/system.js'
 import {
   TOOLS,
   fillArea as fill,
@@ -53,7 +53,7 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
 
     switch (activeTool) {
       case TOOLS.BUCKET:
-        fill(canvas, pos.x, pos.y, color)
+        fill(canvas, pos.x, pos.y, color, 1)
         setLines(prevLines => [
           ...prevLines,
           {
@@ -68,22 +68,22 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
 
         break
       case TOOLS.EYEDROPPER:
-        if (activeTool !== TOOLS.EYEDROPPER) return
         setColor(getColorOnPos(canvas, pos.x, pos.y))
         setActiveTool(TOOLS.PENCIL)
         break
+      case TOOLS.PENCIL:
       default:
         setLines(prevLines => [
           ...prevLines,
           {
             tool: activeTool,
-            points: [pos.x, pos.y],
+            points: [pos.x, pos.y, pos.x, pos.y],
             stroke: color,
             strokeWidth: size
           }
         ])
-
         setRedoLines([])
+        break
     }
   }
 
@@ -97,7 +97,11 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
     const stage = e.target.getStage()
     const point = stage.getPointerPosition()
     const lastLine = lines[lines.length - 1]
-    lastLine.points = lastLine.points.concat([point.x, point.y])
+    lastLine.points = lastLine.points.concat([
+      Math.round(point.x),
+      Math.round(point.y)
+    ])
+    setLines(lines => [...lines])
   }
 
   const handleMouseUp = () => {
@@ -190,6 +194,7 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
 
   useEffect(() => {
     const handleMouseMoveGlobal = e => {
+      if (!isMobile) return
       setMousePosition({ x: e.clientX, y: e.clientY + scrollY })
     }
 
@@ -200,14 +205,16 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
       }
     }
 
-    window.addEventListener('mousemove', handleMouseMoveGlobal)
-    window.addEventListener('wheel', handleWheelGlobal, { passive: false })
     window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('wheel', handleWheelGlobal, { passive: false })
+    if (!isMobile) return
+    window.addEventListener('mousemove', handleMouseMoveGlobal)
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMoveGlobal)
       window.removeEventListener('wheel', handleWheelGlobal)
       window.removeEventListener('keydown', handleKeyDown)
+      if (!isMobile) return
+      window.removeEventListener('mousemove', handleMouseMoveGlobal)
     }
   }, [handleKeyDown])
 
@@ -219,22 +226,68 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
     return
   }
 
+  const CANVAS_VIRTUAL_WIDTH = 960
+  const CANVAS_VIRTUAL_HEIGHT = 540
+
+  const [canvasSize, setCanvasSize] = useState({
+    x: clamp(window.innerWidth, CANVAS_VIRTUAL_WIDTH / 3, CANVAS_VIRTUAL_WIDTH),
+    y: clamp(
+      window.innerHeight,
+      CANVAS_VIRTUAL_HEIGHT / 3,
+      CANVAS_VIRTUAL_HEIGHT
+    )
+  })
+
+  useEffect(() => {
+    const handleResize = () => {
+      const ratioW = 1920 / window.innerWidth
+      const ratioH = 1080 / window.innerHeight
+
+      const ratio = Math.min(ratioW, ratioH)
+
+      const newWidth = CANVAS_VIRTUAL_WIDTH / ratio
+      const newHeight = CANVAS_VIRTUAL_HEIGHT / ratio
+
+      setCanvasSize({
+        x: newWidth,
+        y: newHeight
+      })
+      console.log({
+        x: newWidth,
+        y: newHeight
+      })
+      console.log(canvasSize)
+      console.log(ratioW, ratioH)
+      console.log(ratio)
+      console.log(canvasSize.x / canvasSize.y)
+      console.log(
+        canvasSize.x / canvasSize.y == 1.777777777777778 ||
+          canvasSize.x / canvasSize.y == 1.7777777777777777
+      )
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [canvasSize])
+
   return (
     <section
-      className={`${className} flex flex-col bg-slate-100 items-start justify gap-2 p-4 w-full h-full shadow-lg rounded-xl`}
+      className={`${className} flex flex-col bg-slate-100 items-start justify gap-2 p-4 w-full h-full max-w-screen shadow-lg rounded-xl`}
     >
       <section className='flex flex-row gap-2'>
         <section className='flex flex-col border-r-2 items-center justify-start shadow-lg h-auto rounded-lg bg-white gap-2 p-2'>
-          <div
-            className={`fixed left-0 top-0 w-3 h-3 z-10 bg-transparent border-1 border-black rounded-full `}
-            style={{
-              pointerEvents: 'none',
-              left: `${mousePosition.x - size / 2}px`,
-              top: `${mousePosition.y - size / 2 - scrollY}px`,
-              height: `${size}px`,
-              width: `${size}px`
-            }}
-          ></div>
+          {!isMobile() && (
+            <div
+              className={`fixed left-0 top-0 w-3 h-3 z-10 bg-transparent border-1 border-black rounded-full `}
+              style={{
+                pointerEvents: 'none',
+                left: `${mousePosition.x - size / 2}px`,
+                top: `${mousePosition.y - size / 2 - scrollY}px`,
+                height: `${size}px`,
+                width: `${size}px`
+              }}
+            ></div>
+          )}
           <Pencil
             activeTool={activeTool}
             setActiveTool={setActiveTool}
@@ -245,12 +298,13 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
             setActiveTool={setActiveTool}
             isDrawed={isDrawed}
           />
-
-          <ColorBucket
-            activeTool={activeTool}
-            setActiveTool={setActiveTool}
-            isDrawed={isDrawed}
-          />
+          {!isMobile() && (
+            <ColorBucket
+              activeTool={activeTool}
+              setActiveTool={setActiveTool}
+              isDrawed={isDrawed}
+            />
+          )}
 
           <EyeDropper
             activeTool={activeTool}
@@ -320,7 +374,7 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
               minValue={1}
               orientation='vertical'
               aria-label='Size'
-              defaultValue={30}
+              defaultValue={10}
               value={size}
               startContent={<small>{size.toFixed(0)}px</small>}
               onChange={setSize}
@@ -332,8 +386,8 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
 
         {!isDrawed && (
           <Stage
-            width={960}
-            height={540}
+            width={canvasSize.x}
+            height={canvasSize.y}
             onTouchStart={handleMouseDown}
             onTouchMove={handleMouseMove}
             onTouchEnd={handleMouseUp}
@@ -341,6 +395,7 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
             onPointerMove={handleMouseMove}
             onPointerUp={handleMouseUp}
             ref={stageRef}
+            className='touch-none border-2 border-slate-600 rounded-sm p-px w-fit h-fit'
           >
             <Layer>{renderLines()}</Layer>
           </Stage>
