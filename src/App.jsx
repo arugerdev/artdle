@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import PrivacyPage from './pages/privacy'
 import TermsOfServicePage from './pages/termsOfService'
 import TurnPhonePage from './pages/turnphone'
+import DrawPage from './pages/draw'
 
 function App () {
   const [screen, setScreen] = useState({
@@ -32,6 +33,12 @@ function App () {
       <Switch>
         {!(screen.x <= screen.y) && <Route path='/' component={MainPage} />}
         {screen.x <= screen.y && <Route path='/' component={TurnPhonePage} />}
+        <Route
+          path='/draw/:id'
+          component={params => {
+            return <DrawPage id={params.params.id} />
+          }}
+        />
         <Route path='/about' component={AboutPage} />
         <Route path='/explore' component={ExplorePage} />
         <Route path='/howtoplay' component={HowToPlayPage} />

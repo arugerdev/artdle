@@ -61,6 +61,7 @@ export default function MainPage () {
               className='max-w-[1060px]'
               data={myDraw}
               drawed={myDraw.length > 0}
+              dailyWord={dailyWord}
             />
           </div>
 

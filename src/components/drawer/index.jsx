@@ -1,11 +1,17 @@
 /* eslint-disable react/prop-types */
-import { Button, Slider, Input } from '@nextui-org/react'
+import { Button, Slider, Input, Link } from '@nextui-org/react'
 import {
   DownloadIcon,
+  FacebookIcon,
+  LinkedinIcon,
   PaperIcon,
   RedoIcon,
   SendIcon,
-  UndoIcon
+  ShareIcon,
+  TelegramIcon,
+  TwitterIcon,
+  UndoIcon,
+  WhatsappIcon
 } from './../../assets/icons/index'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { clamp } from '../../utils/maths.js'
@@ -26,8 +32,14 @@ import { EyeDropper } from './../tools/eyeDropper/index'
 import { Pencil } from './../tools/pencil/index'
 import { Eraser } from './../tools/eraser/index'
 import { ColorBucket } from './../tools/colorBucket/index'
+import { CopyDetail } from './../copyDetail/index'
 
-export const Drawer = ({ className, drawed = false, data = null }) => {
+export const Drawer = ({
+  className,
+  drawed = false,
+  data = null,
+  dailyWord = ''
+}) => {
   const [activeTool, setActiveTool] = useState(0)
   const [size, setSize] = useState(10)
   const [color, setColor] = useState('#000000')
@@ -44,6 +56,7 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
   const isDrawing = useRef(false)
   const stageRef = useRef()
   const [redoLines, setRedoLines] = useState([])
+  const [drawData, setDrawData] = useState(data)
 
   const handleMouseDown = e => {
     isDrawing.current = true
@@ -174,7 +187,10 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
           uridata: uri,
           creator: user.data.user.id
         })
+        .select()
         .then(result => {
+          data = result.data
+          setDrawData(result.data)
           if (result.status === 201) {
             toast.success(
               'El dibujo se ha subido correctamente, gracias por jugar! Espera hasta mañana para otra palabra diferente!'
@@ -427,6 +443,91 @@ export const Drawer = ({ className, drawed = false, data = null }) => {
         >
           <DownloadIcon className='w-full h-full' />
         </Button>
+        <ToolBarButton
+          icon={<ShareIcon className='w-full h-full' />}
+          onPress={
+            isDrawed
+              ? null
+              : () => {
+                  toast.error('Primero debes de enviar el dibujo! ✏')
+                }
+          }
+          isDisabled={false}
+          modal
+          modalContent={
+            drawData[0] && (
+              <>
+                <CopyDetail
+                  title='Link'
+                  toCopy={`https://artdle.com/draw/${drawData[0].id}`}
+                />
+                <h1 className='w-full text-center font-extrabold pt-4'>
+                  Redes sociales
+                </h1>
+                <section className='flex flex-row items-center justify-center gap-4 p-4'>
+                  <Button
+                    as={Link}
+                    href={`https://twitter.com/intent/post?text=Mira%20lo%20que%20he%20dibujado%20hoy%20en%20Artdle.com!%0ALa%20palabra%20de%20hoy%20es%20${dailyWord}%0A&url=https%3A%2F%2Fartdle.com%2Fdraw%2F${drawData[0].id}`}
+                    className='bg-[#00acee]'
+                    target='_blank'
+                    color='primary'
+                    startContent={
+                      <TwitterIcon className='w-full h-full p-px text-white' />
+                    }
+                  >
+                    Compartir
+                  </Button>
+
+                  <Button
+                    as={Link}
+                    href={`https://www.linkedin.com/shareArticle?mini=true&url=https%3A//artdle.com/draw/${drawData[0].id}`}
+                    className='bg-[#0e76a8]'
+                    target='_blank'
+                    color='primary'
+                    startContent={
+                      <LinkedinIcon className='w-full h-full p-px text-white' />
+                    }
+                  >
+                    Compartir
+                  </Button>
+                  <Button
+                    as={Link}
+                    href={`https://www.facebook.com/sharer/sharer.php?u=https%3A//artdle.com/draw/${drawData[0].id}`}
+                    className='bg-[#3b5998]'
+                    target='_blank'
+                    color='primary'
+                    startContent={
+                      <FacebookIcon className='w-full h-full p-px text-white' />
+                    }
+                  >
+                    Compartir
+                  </Button>
+                  <Button
+                    as={Link}
+                    href={`https://wa.me/?text=Mira%20lo%20que%20he%20dibujado%20hoy%20en%20Artdle.com!%0ALa%20palabra%20de%20hoy%20es%20${dailyWord}%0Ahttps%3A%2F%2Fartdle.com%2Fdraw%2F${drawData[0].id}`}
+                    className='bg-[#25D366]'
+                    target='_blank'
+                    color='primary'
+                    startContent={
+                      <WhatsappIcon className='w-full h-full p-px text-white' />
+                    }
+                  >
+                    Compartir
+                  </Button>
+                </section>
+              </>
+            )
+          }
+          name={
+            isDrawed ? 'Compartir dibujo' : 'Primero debes enviar el dibujo!'
+          }
+          placement='top'
+          description={
+            isDrawed
+              ? 'Puedes copiar el enlace al dibujo o compartirlo por redes sociales como Twitter'
+              : ''
+          }
+        />
         <Button
           className={`bg-success justify-center items-center p-2 shadow-xl`}
           isIconOnly

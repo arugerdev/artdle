@@ -10,14 +10,24 @@ import {
   ModalHeader,
   Image
 } from '@nextui-org/react'
-import { DownloadIcon } from '../../assets/icons'
+import {
+  DownloadIcon,
+  FacebookIcon,
+  LinkedinIcon,
+  ShareIcon,
+  TelegramIcon,
+  TwitterIcon,
+  WhatsappIcon
+} from '../../assets/icons'
 import { Tooltip } from '@nextui-org/react'
 import { LikeButton } from './../likeButton/index'
 import { getDailyWord } from '../../utils/supabase'
 import { useEffect, useState } from 'react'
 import { OptionsButton } from './../optionsButton/index'
 import { isMobile } from '../../utils/system'
-export const DrawCard = ({ data }) => {
+import { ToolBarButton } from '../toolBarButton'
+import { CopyDetail } from '../copyDetail'
+export const DrawCard = ({ data, className = '' }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [dailyWord, setDailyWord] = useState('')
@@ -44,7 +54,7 @@ export const DrawCard = ({ data }) => {
     >
       <Link
         onPress={onOpen}
-        className='w-full max-w-[300px] h-full cursor-pointer'
+        className={` w-full max-w-[300px] h-full cursor-pointer ${className}`}
       >
         <section className='flex flex-col border-r-2 items-center justify-center w-full text-center shadow-lg h-auto rounded-lg text-black bg-white gap-2 p-2'>
           <Image
@@ -52,8 +62,6 @@ export const DrawCard = ({ data }) => {
             radius='sm'
             isBlurred={!isMobile()}
             isZoomed={!isMobile()}
-            width={'250px'}
-            height={'140px'}
           />
           <div className='w-full border-1'></div>
           <div className='flex flex-row w-full items-center justify-center'>
@@ -108,6 +116,80 @@ export const DrawCard = ({ data }) => {
 
                     <section className='flex flex-row justify-end gap-2 w-full'>
                       <OptionsButton data={data} />
+                      <ToolBarButton
+                        icon={<ShareIcon className='w-full h-full' />}
+                        onPress={null}
+                        isDisabled={false}
+                        modal
+                        modalContent={
+                          data && (
+                            <>
+                              <CopyDetail
+                                title='Link'
+                                toCopy={`https://artdle.com/draw/${data.id}`}
+                              />
+                              <h1 className='w-full text-center font-extrabold pt-4'>
+                                Redes sociales
+                              </h1>
+                              <section className='flex flex-row items-center justify-center gap-4 p-4'>
+                                <Button
+                                  as={Link}
+                                  href={`https://twitter.com/intent/post?text=Mira%20lo%20que%20he%20dibujado%20hoy%20en%20Artdle.com!%0ALa%20palabra%20de%20hoy%20es%20${dailyWord}%0A&url=https%3A%2F%2Fartdle.com%2Fdraw%2F${data.id}`}
+                                  className='bg-[#00acee]'
+                                  target='_blank'
+                                  color='primary'
+                                  startContent={
+                                    <TwitterIcon className='w-full h-full p-px text-white' />
+                                  }
+                                >
+                                  Compartir
+                                </Button>
+                                <Button
+                                  as={Link}
+                                  href={`https://www.linkedin.com/shareArticle?mini=true&url=https%3A//artdle.com/draw/${data.id}`}
+                                  className='bg-[#0e76a8]'
+                                  target='_blank'
+                                  color='primary'
+                                  startContent={
+                                    <LinkedinIcon className='w-full h-full p-px text-white' />
+                                  }
+                                >
+                                  Compartir
+                                </Button>
+                                <Button
+                                  as={Link}
+                                  href={`https://www.facebook.com/sharer/sharer.php?u=https%3A//artdle.com/draw/${data.id}`}
+                                  className='bg-[#3b5998]'
+                                  target='_blank'
+                                  color='primary'
+                                  startContent={
+                                    <FacebookIcon className='w-full h-full p-px text-white' />
+                                  }
+                                >
+                                  Compartir
+                                </Button>
+                                <Button
+                                  as={Link}
+                                  href={`https://wa.me/?text=Mira%20lo%20que%20he%20dibujado%20hoy%20en%20Artdle.com!%0ALa%20palabra%20de%20hoy%20es%20${dailyWord}%0Ahttps%3A%2F%2Fartdle.com%2Fdraw%2F${data.id}`}
+                                  className='bg-[#25D366]'
+                                  target='_blank'
+                                  color='primary'
+                                  startContent={
+                                    <WhatsappIcon className='w-full h-full p-px text-white' />
+                                  }
+                                >
+                                  Compartir
+                                </Button>
+                              </section>
+                            </>
+                          )
+                        }
+                        name={'Compartir dibujo'}
+                        placement='top'
+                        description={
+                          'Puedes copiar el enlace al dibujo o compartirlo por redes sociales como Twitter'
+                        }
+                      />
                       <Button
                         color='success'
                         variant='flat'
