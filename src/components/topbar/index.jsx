@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react'
 import Logo from '../../assets/img/icon.png'
 import { useLocation } from 'wouter'
 import { getAuthData, loginWithGoogle, signOut } from '../../utils/supabase'
+import toast from 'react-hot-toast'
 export const Topbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [location, pushLocation] = useLocation()
@@ -102,7 +103,14 @@ export const Topbar = () => {
                   />
                 </DropdownTrigger>
                 <DropdownMenu aria-label='Acciones de cuenta' variant='flat'>
-                  <DropdownItem key='profile' className='h-14 gap-2'>
+                  <DropdownItem
+                    key='profile'
+                    className='h-14 gap-2'
+                    onPress={() => {
+                      navigator.clipboard.writeText(userData.email.toString())
+                      toast.success('Correo copiado correctamente')
+                    }}
+                  >
                     <p className='font-semibold'>Registrado como:</p>
                     <p className='font-semibold text-gray-500'>
                       {userData.email}
