@@ -5,7 +5,6 @@ import {
   PaperIcon,
   RedoIcon,
   SendIcon,
-  ShareIcon,
   UndoIcon
 } from './../../assets/icons/index'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -263,18 +262,6 @@ export const Drawer = ({
         x: newWidth,
         y: newHeight
       })
-      console.log({
-        x: newWidth,
-        y: newHeight
-      })
-      console.log(canvasSize)
-      console.log(ratioW, ratioH)
-      console.log(ratio)
-      console.log(canvasSize.x / canvasSize.y)
-      console.log(
-        canvasSize.x / canvasSize.y == 1.777777777777778 ||
-          canvasSize.x / canvasSize.y == 1.7777777777777777
-      )
     }
 
     window.addEventListener('resize', handleResize)
@@ -438,32 +425,8 @@ export const Drawer = ({
         >
           <DownloadIcon className='w-full h-full' />
         </Button>
-        <ToolBarButton
-          icon={<ShareIcon className='w-full h-full' />}
-          onPress={
-            isDrawed
-              ? null
-              : () => {
-                  toast.error('Primero debes de enviar el dibujo! ✏')
-                }
-          }
-          isDisabled={false}
-          modal
-          modalContent={
-            drawData[0] && (
-              <ShareButton data={drawData[0]} dailyWord={dailyWord} />
-            )
-          }
-          name={
-            isDrawed ? 'Compartir dibujo' : 'Primero debes enviar el dibujo!'
-          }
-          placement='top'
-          description={
-            isDrawed
-              ? 'Puedes copiar el enlace al dibujo o compartirlo por redes sociales como Twitter'
-              : ''
-          }
-        />
+        <ShareButton data={drawData[0]} dailyWord={dailyWord} />
+
         <Button
           className={`bg-success justify-center items-center p-2 shadow-xl`}
           isIconOnly

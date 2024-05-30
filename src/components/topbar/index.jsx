@@ -76,8 +76,8 @@ export const Topbar = () => {
             <Button
               as={Link}
               onPress={() =>
-                loginWithGoogle().then(data => {
-                  console.log(data)
+                loginWithGoogle().then(() => {
+                  toast.success('Sesión iniciada correctamente')
                 })
               }
               color='primary'
@@ -157,8 +157,8 @@ export const Topbar = () => {
             <Button
               as={Link}
               onPress={() =>
-                loginWithGoogle().then(data => {
-                  console.log(data)
+                loginWithGoogle().then(() => {
+                  toast.success('Sesión iniciada correctamente')
                 })
               }
               color='primary'
