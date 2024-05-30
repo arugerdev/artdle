@@ -9,7 +9,11 @@ import {
   Link,
   Image,
   Button,
-  User
+  User,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem
 } from '@nextui-org/react'
 import { useEffect, useState } from 'react'
 import Logo from '../../assets/img/icon.png'
@@ -83,20 +87,43 @@ export const Topbar = () => {
           )}
           {userData && userData.email && userData.identities.length > 0 && (
             <Button
-              as={Link}
-              onPress={() => {
-                signOut().then(() => {
-                  window.location.reload()
-                })
-              }}
+              as={Button}
               className='flex items-center justify-center bg-transparent rounded-full w-[40px] h-[40px] max-w-[40px] max-h-[40px] min-w-[40px] min-h-[40px]'
             >
-              <User
-                className='flex items-center justify-center'
-                avatarProps={{
-                  src: userData.identities[0].identity_data.picture
-                }}
-              />
+              <Dropdown placement='bottom-end'>
+                <DropdownTrigger>
+                  <User
+                    isBordered
+                    as={Button}
+                    className='flex items-center justify-center'
+                    avatarProps={{
+                      src: userData.identities[0].identity_data.picture
+                    }}
+                  />
+                </DropdownTrigger>
+                <DropdownMenu aria-label='Acciones de cuenta' variant='flat'>
+                  <DropdownItem key='profile' className='h-14 gap-2'>
+                    <p className='font-semibold'>Registrado como:</p>
+                    <p className='font-semibold text-gray-500'>
+                      {userData.email}
+                    </p>
+                  </DropdownItem>
+                  <DropdownItem key='signOut'>
+                    <Button
+                      onPress={() => {
+                        signOut().then(() => {
+                          window.location.reload()
+                        })
+                      }}
+                      color='danger'
+                      variant='ghost'
+                      className='font-extrabold'
+                    >
+                      Cerrar sesión
+                    </Button>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </Button>
           )}
         </NavbarItem>
