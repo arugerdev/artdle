@@ -42,9 +42,9 @@ Diviertete!
 ## Roadmap
 - Funcionable en PC [✅]
 - Funcionable en Móviles [⚠]
-    - Drawer admite touch [⚠]
+    - Drawer admite touch [✅]
     - Botones utilizables en móviles [✅]
-    - Diseño responsive [❌]
+    - Diseño responsive [⚠]
 - +1.000 palabras preparadas [✅]
 - +3.000 palabras preparadas [✅]
 - +10.000 palabras preparadas [👑]
