@@ -95,7 +95,7 @@ export const Topbar = () => {
                   <User
                     isBordered
                     as={Button}
-                    className='flex items-center justify-center'
+                    className='flex items-center justify-center gap-0 p-0'
                     avatarProps={{
                       src: userData.identities[0].identity_data.picture
                     }}
@@ -108,19 +108,18 @@ export const Topbar = () => {
                       {userData.email}
                     </p>
                   </DropdownItem>
-                  <DropdownItem key='signOut'>
-                    <Button
-                      onPress={() => {
-                        signOut().then(() => {
-                          window.location.reload()
-                        })
-                      }}
-                      color='danger'
-                      variant='ghost'
-                      className='font-extrabold'
-                    >
-                      Cerrar sesión
-                    </Button>
+                  <DropdownItem
+                    key='signOut'
+                    onPress={() => {
+                      signOut().then(() => {
+                        window.location.reload()
+                      })
+                    }}
+                    color='danger'
+                    variant='ghost'
+                    className='font-extrabold'
+                  >
+                    Cerrar sesión
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
