@@ -5,7 +5,7 @@ export default function AboutPage () {
   return (
     <main className='flex flex-col gap-8 justify-start items-center h-full w-full min-w-screen min-h-screen'>
       <Topbar />
-      <section className='flex flex-col p-4 max-w-prose items-center justify-center gap-2 text-justify'>
+      <section className='flex flex-col p-4 max-w-[80ch] items-center justify-center gap-2 text-justify'>
         <h1 className='text-4xl font-extrabold'>Sobre Mí</h1>
         <p className='text-justify'>
           Soy ArugerDev, un Desarrollador Web y Programador de Videojuegos en

@@ -2,6 +2,7 @@ import { Topbar } from '../../components/topbar/index'
 import img00 from '../../assets/img/how-to-play_00.png'
 import img01 from '../../assets/img/how-to-play_01.png'
 import img02 from '../../assets/img/how-to-play_02.png'
+import { Link as LinkW } from 'wouter'
 import { Image } from '@nextui-org/react'
 export default function HowToPlayPage () {
   return (
@@ -85,6 +86,17 @@ export default function HowToPlayPage () {
           shadow='sm'
           className='p-4 max-w-[900px]'
         />
+
+        <p className='text-jusitfy'>
+          Si necesitas mas información puedes comprobar nuestras{' '}
+          <LinkW href='/privacy' className='text-primary-600'>
+            Políticas de privacidad
+          </LinkW>{' '}
+          o nuestras{' '}
+          <LinkW href='/conditions' className='text-primary-600'>
+            Condiciones de servicio
+          </LinkW>
+        </p>
       </section>
     </main>
   )
