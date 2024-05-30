@@ -1,8 +1,7 @@
-import supabase from '../src/utils/supabase'
+import supabase from '../utils/supabase'
 
 export default async function handler (req, res) {
   const { id } = req.query
-
   const { data, error } = await supabase
     .from('draws')
     .select()
@@ -16,7 +15,7 @@ export default async function handler (req, res) {
   res.setHeader('Content-Type', 'text/html')
   res.send(`
     <!DOCTYPE html>
-    <html lang="es">
+    <html lang="en">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +29,11 @@ export default async function handler (req, res) {
       <title>${data.name}</title>
     </head>
     <body>
-      Loading...
+      <div id="root"></div>
+      <script>
+        window.__INITIAL_DATA__ = ${JSON.stringify(data)};
+      </script>
+      <script type="module" src="/assets/index.js"></script>
     </body>
     </html>
   `)
