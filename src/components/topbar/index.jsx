@@ -115,11 +115,9 @@ export const Topbar = () => {
                         window.location.reload()
                       })
                     }}
-                    className='cursor-pointer'
+                    className='font-extrabold text-danger-500 bg-transparent hover:bg-danger-200 transition-background cursor-pointer'
                   >
-                    <p className='font-extrabold text-danger-500 bg-transparent hover:bg-danger-200 transition-background cursor-pointer'>
-                      Cerrar sesión
-                    </p>
+                    <p>Cerrar sesión</p>
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
