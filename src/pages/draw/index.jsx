@@ -1,15 +1,6 @@
-import {
-  Select,
-  SelectItem,
-  Accordion,
-  AccordionItem,
-  Input,
-  DatePicker
-} from '@nextui-org/react'
+/* eslint-disable react/prop-types */
 import { Topbar } from '../../components/topbar/index'
 import { useEffect, useState } from 'react'
-import { getLocalTimeZone, parseDate, today } from '@internationalized/date'
-import { DrawList } from '../../components/drawList'
 import { Toaster } from 'react-hot-toast'
 import { Helmet } from 'react-helmet'
 import supabase from '../../utils/supabase'
@@ -26,7 +17,6 @@ export default function DrawPage ({ id = 0 }) {
       .select()
       .eq('id', id)
       .then(data => {
-        console.log(data.data[0])
         setData(data.data[0])
         setLoading(false)
       })
