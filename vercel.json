@@ -3,22 +3,6 @@
     {
       "source": "/(.*)",
       "destination": "/"
-    },
-    {
-      "source": "/draw/:id*",
-      "destination": "/api/draw/?id=:id*"
     }
-  ],
-  "redirects": [
-    {
-      "source": "/draw/:id*",
-      "destination": "/api/draw/?id=:id*"
-    }
-  ],
-  "functions": {
-    "api/draw.js": {
-      "memory": 3009,
-      "maxDuration": 30
-    }
-  }
+  ]
 }

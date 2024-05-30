@@ -7,9 +7,7 @@ import { DrawCard } from './../../components/drawCard/index'
 
 export default function DrawPage ({ id = 0 }) {
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState(
-    typeof window !== 'undefined' ? window.__INITIAL_DATA__ : null
-  )
+  const [data, setData] = useState(null)
   useEffect(() => {
     setLoading(true)
     supabase
