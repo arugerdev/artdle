@@ -2,7 +2,7 @@
 import { createClient } from '@supabase/supabase-js'
 import dotenv from 'dotenv'
 
-export default async function handler (request) {
+export default async function handler (req, res) {
   dotenv.config()
 
   const supabase = createClient(
@@ -10,10 +10,10 @@ export default async function handler (request) {
     process.env.VITE_SUPABASE_ANON_KEY
   )
 
-  const drawId = request.query.id
+  const drawId = req.query.id
 
   if (!drawId) {
-    return new Response('Bad Request', { status: 400 })
+    return res.status(404).json({ error: 'Bad request' })
   }
 
   const { data, error } = await supabase
@@ -24,10 +24,8 @@ export default async function handler (request) {
 
   if (error) {
     console.error(error)
-    return new Response('Internal Server Error', { status: 500 })
+    return res.status(500).json({ error: 'Internal server error' })
   }
-
-  console.log(data)
 
   const response = await fetch('https://artdle.com/index.html')
   let html = await response.text()
@@ -42,11 +40,10 @@ export default async function handler (request) {
     .replace(/__META_TW_DESCRIPTION__/g, data.created_at)
     .replace(/__META_TW_IMAGE__/g, data.uridata)
 
-  return new Response(html, {
-    headers: {
-      'Content-Type': 'text/html'
-    }
-  })
+  res.setHeader('Content-Type', 'text/html')
+
+  res.send(html)
+  return res.status(200)
 }
 
 export const config = {
