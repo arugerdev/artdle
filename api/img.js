@@ -29,7 +29,7 @@ export default async function handler (req, res) {
 
   res.setHeader('Content-Type', 'text/html')
 
-  res.send(getImage(data.uridata))
+  res.send(`<img src='${data.uridata}'></img>`)
   return res.status(200)
 }
 
@@ -37,16 +37,4 @@ export const config = {
   edge: {
     includeFiles: './index.html'
   }
-}
-
-function getImage (img) {
-  // Create an empty canvas element
-  canvas = document.createElement('canvas')
-  canvas.width = img.width
-  canvas.height = img.height
-
-  // Copy the image contents to the canvas
-  ctx = canvas.getContext('2d')
-  ctx.drawImage(img, 0, 0)
-  return canvas.toDataURL('image/png')
 }
