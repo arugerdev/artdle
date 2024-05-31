@@ -1,9 +1,12 @@
 import { Image, Link } from '@nextui-org/react'
 import { Topbar } from '../../components/topbar/index'
 import { Link as LinkW } from 'wouter'
+import { DefaultHeaders } from '../../components/defaultHeaders'
+
 export default function AboutPage () {
   return (
     <main className='flex flex-col gap-8 justify-start items-center h-full w-full min-w-screen min-h-screen'>
+      <DefaultHeaders />
       <Topbar />
       <section className='flex flex-col p-4 max-w-[80ch] items-center justify-center gap-2 text-justify'>
         <h1 className='text-4xl font-extrabold'>Sobre Mí</h1>

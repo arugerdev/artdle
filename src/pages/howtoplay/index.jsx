@@ -4,10 +4,12 @@ import img01 from '../../assets/img/how-to-play_01.png'
 import img02 from '../../assets/img/how-to-play_02.png'
 import { Link as LinkW } from 'wouter'
 import { Image } from '@nextui-org/react'
+import { DefaultHeaders } from '../../components/defaultHeaders'
 export default function HowToPlayPage () {
   return (
     <main className='flex flex-col gap-8 justify-start items-center h-full w-full min-w-screen min-h-screen'>
       <Topbar />
+      <DefaultHeaders />
       <section className='flex flex-col p-4 gap-4 w-full justify-center items-center'>
         <h1 className='text-4xl font-extrabold pb-4'>¿Cómo jugar a Artdle?</h1>
         <p className='w-full text-justify max-w-[80ch]'>

@@ -4,6 +4,7 @@ import supabase, { getDailyWord } from '../../utils/supabase'
 import { DrawList } from '../../components/drawList/index'
 import toast, { Toaster } from 'react-hot-toast'
 import { Topbar } from '../../components/topbar/index'
+import { DefaultHeaders } from '../../components/defaultHeaders/index.jsx'
 
 export default function MainPage () {
   const [myDraw, setMyDraw] = useState([])
@@ -47,6 +48,7 @@ export default function MainPage () {
   return (
     <main className='flex flex-col gap-8 justify-start items-center h-full w-full min-w-screen min-h-screen'>
       <Toaster />
+      <DefaultHeaders />
       <Topbar />
       {!loading && (
         <>
