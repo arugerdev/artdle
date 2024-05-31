@@ -1,25 +1,25 @@
-/* eslint-disable no-undef */
-// import { createClient } from '@supabase/supabase-js'
-import { readFileSync } from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
-import dotenv from 'dotenv'
+// /* eslint-disable no-undef */
+// // import { createClient } from '@supabase/supabase-js'
+// import { readFileSync } from 'fs'
+// import path from 'path'
+// import { fileURLToPath } from 'url'
+// import dotenv from 'dotenv'
 
-dotenv.config()
+// dotenv.config()
 
-// const supabaseUrl = process.env.VITE_SUPABASE_URL
-// const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY
-// const supabase = createClient(supabaseUrl, supabaseKey)
+// // const supabaseUrl = process.env.VITE_SUPABASE_URL
+// // const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY
+// // const supabase = createClient(supabaseUrl, supabaseKey)
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+// const __filename = fileURLToPath(import.meta.url)
+// const __dirname = path.dirname(__filename)
 
 export const config = {
   matcher: '/draw/*'
 }
 const middleware = async (req, res) => {
-  const indexPath = path.resolve(__dirname, 'dist', 'index.html')
-  const htmlData = readFileSync(indexPath, 'utf8')
+  //   const indexPath = path.resolve(__dirname, 'dist', 'index.html')
+  //   const htmlData = readFileSync(indexPath, 'utf8')
 
   //   const drawId = req.url.split('/')[1]
 
@@ -69,26 +69,7 @@ const middleware = async (req, res) => {
 
   //   return res.status(200).send(updatedHtml)
 
-  const updatedHtml = htmlData
-    .replace('__META_TITLE__', 'Artdle - Un dibujo al día')
-    .replace(
-      '__META_DESCRIPTION__',
-      '¿Cuál será la palabra de hoy? Entra ahora en Artdle.com, descubrelo y dibuja!'
-    )
-    .replace('__META_OG_TITLE__', 'Artdle - Un dibujo al día')
-    .replace(
-      '__META_OG_DESCRIPTION__',
-      '¿Cuál será la palabra de hoy? Entra ahora en Artdle.com, descubrelo y dibuja!'
-    )
-    .replace('__META_OG_IMAGE__', '/icon.png')
-    .replace('__META_TW_TITLE__', 'Artdle - Un dibujo al día')
-    .replace(
-      '__META_TW_DESCRIPTION__',
-      '¿Cuál será la palabra de hoy? Entra ahora en Artdle.com, descubrelo y dibuja!'
-    )
-    .replace('__META_TW_IMAGE__', '/icon.png')
-
-  return res.status(200).send(updatedHtml)
+  console.log('Middleware working')
 }
 
 export default middleware
