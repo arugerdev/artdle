@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
-import express from 'express'
-import path from 'path'
-import fs from 'fs'
-import { fileURLToPath } from 'url'
+
 import { createClient } from '@supabase/supabase-js'
+import { readFileSync } from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -12,32 +12,30 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL
 const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY
 const supabase = createClient(supabaseUrl, supabaseKey)
 
-const app = express()
-const PORT = process.env.PORT || 3000
-
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-app.use(
-  express.static(path.resolve(__dirname, '..', 'dist'), { maxAge: '30d' })
-)
+export default async function handler (req, res) {
+  const indexPath = path.resolve(__dirname, '..', 'dist', 'index.html')
+  const htmlData = readFileSync(indexPath, 'utf8')
 
-const indexPath = path.resolve(__dirname, '..', 'dist', 'index.html')
+  if (req.method === 'GET') {
+    if (req.url.startsWith('/draw/')) {
+      const drawId = req.url.split('/draw/')[1]
 
-app.get('/draw/*', (req, res) => {
-  fs.readFile(indexPath, 'utf8', (err, htmlData) => {
-    if (err) {
-      console.error('Error during file reading', err)
-      return res.status(404).end()
-    }
-    const drawId = req.params[0]
-    supabase
-      .from('draws')
-      .select('*')
-      .eq('id', drawId)
-      .then(data => {
-        if (!data.data[0]) {
-          htmlData = htmlData
+      try {
+        const { data, error } = await supabase
+          .from('draws')
+          .select('*')
+          .eq('id', drawId)
+
+        if (error) {
+          console.error('Error fetching data from Supabase:', error)
+          return res.status(500).end('Internal Server Error')
+        }
+
+        if (!data || data.length === 0) {
+          const updatedHtml = htmlData
             .replace('__META_TITLE__', 'Artdle - Un dibujo al día')
             .replace(
               '__META_DESCRIPTION__',
@@ -55,33 +53,28 @@ app.get('/draw/*', (req, res) => {
               '¿Cuál será la palabra de hoy? Entra ahora en Artdle.com, descubrelo y dibuja!'
             )
             .replace('__META_TW_IMAGE__', '/icon.png')
-          return res.send(htmlData)
+
+          return res.status(200).send(updatedHtml)
         }
 
-        htmlData = htmlData
-          .replace('__META_TITLE__', data.data[0].name)
-          .replace('__META_DESCRIPTION__', data.data[0].created_at)
-          .replace('__META_OG_TITLE__', data.data[0].name)
-          .replace('__META_OG_DESCRIPTION__', data.data[0].created_at)
-          .replace('__META_OG_IMAGE__', data.data[0].uridata)
-          .replace('__META_TW_TITLE__', data.data[0].name)
-          .replace('__META_TW_DESCRIPTION__', data.data[0].created_at)
-          .replace('__META_TW_IMAGE__', data.data[0].uridata)
-        return res.send(htmlData)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  })
-})
-app.get('*', (req, res) => {
-  fs.readFile(indexPath, 'utf8', (err, htmlData) => {
-    if (err) {
-      console.error('Error during file reading', err)
-      return res.status(404).end()
-    }
-    return res.send(
-      htmlData
+        const draw = data[0]
+        const updatedHtml = htmlData
+          .replace('__META_TITLE__', draw.name)
+          .replace('__META_DESCRIPTION__', draw.created_at)
+          .replace('__META_OG_TITLE__', draw.name)
+          .replace('__META_OG_DESCRIPTION__', draw.created_at)
+          .replace('__META_OG_IMAGE__', draw.uridata)
+          .replace('__META_TW_TITLE__', draw.name)
+          .replace('__META_TW_DESCRIPTION__', draw.created_at)
+          .replace('__META_TW_IMAGE__', draw.uridata)
+
+        return res.status(200).send(updatedHtml)
+      } catch (err) {
+        console.error('Error processing request:', err)
+        return res.status(500).end('Internal Server Error')
+      }
+    } else {
+      const updatedHtml = htmlData
         .replace('__META_TITLE__', 'Artdle - Un dibujo al día')
         .replace(
           '__META_DESCRIPTION__',
@@ -99,13 +92,11 @@ app.get('*', (req, res) => {
           '¿Cuál será la palabra de hoy? Entra ahora en Artdle.com, descubrelo y dibuja!'
         )
         .replace('__META_TW_IMAGE__', '/icon.png')
-    )
-  })
-})
 
-app.listen(PORT, error => {
-  if (error) {
-    return console.log('Error during app startup', error)
+      return res.status(200).send(updatedHtml)
+    }
+  } else {
+    res.setHeader('Allow', ['GET'])
+    res.status(405).end(`Method ${req.method} Not Allowed`)
   }
-  console.log('listening on ' + PORT + '...')
-})
+}
