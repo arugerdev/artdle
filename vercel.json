@@ -3,6 +3,10 @@
     "api/*.js": {
       "memory": 1024,
       "maxDuration": 30
+    },
+    "api/*.jsx": {
+      "memory": 1024,
+      "maxDuration": 30
     }
   },
   "rewrites": [
