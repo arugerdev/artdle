@@ -9,6 +9,8 @@ import PrivacyPage from './pages/privacy'
 import TermsOfServicePage from './pages/termsOfService'
 import TurnPhonePage from './pages/turnphone'
 import DrawPage from './pages/draw'
+import { URLImage } from './components/URLImage'
+import { ImagerDB } from './components/imagerFromDB'
 
 function App () {
   const [screen, setScreen] = useState({
@@ -35,6 +37,7 @@ function App () {
         {screen.x <= screen.y && <Route path='/' component={TurnPhonePage} />}
 
         <Route path='/api/draw*' component={DrawPage} />
+        <Route path='/img/:id' component={ImagerDB} />
         <Route path='/about' component={AboutPage} />
         <Route path='/explore' component={ExplorePage} />
         <Route path='/howtoplay' component={HowToPlayPage} />
