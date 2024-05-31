@@ -53,7 +53,7 @@ export const ToolBarButton = ({
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
-          className='w-full min-w-[40%]'
+          className='w-full min-w-[40%] max-w-screen-md max-h-screen'
           placement='bottom-center'
         >
           <ModalContent>

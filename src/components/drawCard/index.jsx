@@ -45,7 +45,7 @@ export const DrawCard = ({ data, className = '' }) => {
     >
       <Link
         onPress={onOpen}
-        className={` w-full max-w-[300px] h-full cursor-pointer ${className}`}
+        className={` w-full max-w-[500px] h-full cursor-pointer ${className}`}
       >
         <section className='flex flex-col border-r-2 items-center justify-center w-full text-center shadow-lg h-auto rounded-lg text-black bg-white gap-2 p-2'>
           <Image
@@ -75,8 +75,10 @@ export const DrawCard = ({ data, className = '' }) => {
             <ModalContent>
               {onClose => (
                 <>
-                  <ModalHeader className='flex flex-col gap-0 w-full'>
-                    <h1 className='font-extrabold'>{data.name}</h1>
+                  <ModalHeader className='flex flex-col pb-0 pt-2 md:p-4 gap-0 w-full'>
+                    <h1 className='font-extrabold text-sm md:text-md'>
+                      {data.name}
+                    </h1>
                     <small className='text-slate-500 font-normal text-sm'>
                       Dibujado:{' '}
                       {data.created_at
@@ -90,18 +92,16 @@ export const DrawCard = ({ data, className = '' }) => {
                       Palabra del dia: {dailyWord}
                     </small>
                   </ModalHeader>
-                  <ModalBody className='overflow-hidden'>
+                  <ModalBody className='flex flex-col items-center justify-center p-0 w-full h-full overflow-hidden'>
                     <Image
-                      width={1920}
-                      height={1080}
                       isBlurred
-                      className='object-fill rounded-sm'
+                      className='h-full object-scale-down rounded-sm'
                       src={data.uridata}
                       alt={data.name}
                     />
                   </ModalBody>
-                  <ModalFooter>
-                    <section className='flex flex-row justify-start w-full'>
+                  <ModalFooter className='pb-2 pt-0 md:p-4'>
+                    <section className='flex flex-row justify-start w-full '>
                       <LikeButton data={data} />
                     </section>
 

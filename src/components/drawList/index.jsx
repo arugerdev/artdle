@@ -83,7 +83,7 @@ export const DrawList = ({
       .select('*')
       .ilike('name', `%${filterName.toString()}%`)
       .order(orderIndex, orderOptions)
-      .range(0 + 10 * pageIndex + pageIndex, 10 + 10 * pageIndex + pageIndex)
+      .range(0 + 9 * pageIndex + pageIndex, 9 + 9 * pageIndex + pageIndex)
       .then(data => {
         if (added) {
           setDraws(old => [...old, ...data.data])
@@ -124,7 +124,7 @@ export const DrawList = ({
       .select('*')
       .order(orderIndex, orderOptions)
       .eq('day', day)
-      .range(0 + 10 * pageIndex + pageIndex, 10 + 10 * pageIndex + pageIndex)
+      .range(0 + 9 * pageIndex + pageIndex, 9 + 9 * pageIndex + pageIndex)
       .then(data => {
         if (added) {
           setDraws(old => [...old, ...data.data])
