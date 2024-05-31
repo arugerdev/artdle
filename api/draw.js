@@ -20,8 +20,8 @@ export default async function handler (req, res) {
   const htmlData = readFileSync(indexPath, 'utf8')
 
   if (req.method === 'GET') {
-    if (req.url.startsWith('/draw/')) {
-      const drawId = req.url.split('/draw/')[1]
+    if (req.url.startsWith('/api/draw/')) {
+      const drawId = req.url.split('/api/draw/')[1]
 
       try {
         const { data, error } = await supabase
