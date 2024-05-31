@@ -8,13 +8,15 @@ import {
 } from '@nextui-org/react'
 import { Topbar } from '../../components/topbar/index'
 import { useEffect, useState } from 'react'
-import { getLocalTimeZone, parseDate, today } from '@internationalized/date'
+import { parseDate } from '@internationalized/date'
 import { DrawList } from '../../components/drawList'
 import { Toaster } from 'react-hot-toast'
 import { DefaultHeaders } from '../../components/defaultHeaders'
 
 export default function ExplorePage () {
-  const [date, setDate] = useState(today(getLocalTimeZone()))
+  const [date, setDate] = useState(
+    parseDate(new Date().toISOString().split('T')[0])
+  )
   const [orderBy, setOrderBy] = useState(['$.0'])
   const [filterName, setFilterName] = useState('')
   const [selectedKeys, setSelectedKeys] = useState(new Set(['1']))
@@ -69,7 +71,7 @@ export default function ExplorePage () {
               minValue={parseDate('2024-05-21')}
               value={date}
               onChange={setDate}
-              maxValue={today(getLocalTimeZone())}
+              maxValue={parseDate(new Date().toISOString().split('T')[0])}
             />
           </AccordionItem>
         </Accordion>

@@ -81,12 +81,7 @@ export const DrawCard = ({ data, className = '' }) => {
                     </h1>
                     <small className='text-slate-500 font-normal text-sm'>
                       Dibujado:{' '}
-                      {data.created_at
-                        .split('+')[0]
-                        .split('T')[1]
-                        .split('.')[0] +
-                        ' ' +
-                        data.created_at.split('+')[0].split('T')[0]}
+                      {new Date(data.created_at).toString().split('GMT')[0]}
                     </small>
                     <small className='text-slate-500 font-normal text-sm'>
                       Palabra del dia: {dailyWord}

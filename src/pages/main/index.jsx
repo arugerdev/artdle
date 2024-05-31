@@ -71,7 +71,10 @@ export default function MainPage () {
             Otros dibujos
           </h1>
 
-          <DrawList className='max-w-[1560px]' />
+          <DrawList
+            className='max-w-[1560px]'
+            day={new Date().toISOString().split('T')[0]}
+          />
         </>
       )}
       {loading && (
