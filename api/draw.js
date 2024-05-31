@@ -19,8 +19,7 @@ export default async function handler (req, res) {
   const indexPath = path.resolve(__dirname, '..', 'dist', 'index.html')
   const htmlData = readFileSync(indexPath, 'utf8')
 
-  console.log(req.query)
-  const drawId = req.query.split('/')[2]
+  const drawId = req.query.id
 
   try {
     const { data, error } = await supabase
