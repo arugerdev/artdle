@@ -12,24 +12,22 @@
     {
       "source": "/draw/(.*)",
       "destination": "/draw.js"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/draw/([^/]+)",
-      "dest": "/api/draw.js"
     },
     {
-      "src": "/api/draw/(.*)",
-      "dest": "/api/draw.js"
+      "source": "/api/draw/([^/]+)",
+      "destination": "/api/draw.js"
     },
     {
-      "src": "/draw/([^/]+)",
-      "dest": "/api/draw.js"
+      "source": "/api/draw/(.*)",
+      "destination": "/api/draw.js"
     },
     {
-      "src": "/draw/(.*)",
-      "dest": "/api/draw.js"
+      "source": "/draw/([^/]+)",
+      "destination": "/api/draw.js"
+    },
+    {
+      "source": "/draw/(.*)",
+      "destination": "/api/draw.js"
     }
   ]
 }
