@@ -1,10 +1,6 @@
 {
   "functions": {
-    "api/draw.js": {
-      "memory": 1024,
-      "maxDuration": 30
-    },
-    "api/img.jsx": {
+    "api/*.js": {
       "memory": 1024,
       "maxDuration": 30
     }
