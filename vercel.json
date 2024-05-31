@@ -1,6 +1,10 @@
 {
   "functions": {
     "api/*.js": {
+      "memory": 512,
+      "maxDuration": 20
+    },
+    "pages/**/*.jsx": {
       "memory": 1024,
       "maxDuration": 30
     }
