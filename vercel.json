@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "draw.js": {
-      "runtime": "edge"
-    }
-  },
   "rewrites": [
     {
       "source": "/(.*)",

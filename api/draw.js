@@ -49,6 +49,5 @@ export default async function handler (request) {
 export const config = {
   edge: {
     includeFiles: './index.html'
-  },
-  runtime: 'nodejs20.x'
+  }
 }
