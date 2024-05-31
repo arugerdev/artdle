@@ -50,5 +50,5 @@ export const config = {
   edge: {
     includeFiles: './index.html'
   },
-  runtime: 'nodejs12.x'
+  runtime: 'nodejs20.x'
 }
