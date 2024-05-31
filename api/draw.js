@@ -1,12 +1,14 @@
+/* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
-
-// Inicializa el cliente de Supabase
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-)
+import dotenv from 'dotenv'
 
 export default async function handler (request) {
+  dotenv.config()
+
+  const supabase = createClient(
+    process.env.VITE_SUPABASE_URL,
+    process.env.VITE_SUPABASE_ANON_KEY
+  )
   const url = new URL(request.url)
 
   if (!url.pathname.startsWith('/draw/')) {
