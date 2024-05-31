@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync } from 'fs'
 import path from 'path'
@@ -15,7 +14,10 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-export default async function handler (req, res) {
+export const config = {
+  matcher: '/draw/*'
+}
+export default async function middleware (req, res) {
   const indexPath = path.resolve(__dirname, '..', 'dist', 'index.html')
   const htmlData = readFileSync(indexPath, 'utf8')
 
