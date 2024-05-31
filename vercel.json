@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/draw.js": {
+      "runtime": "nodejs12.x"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
@@ -7,6 +12,24 @@
     {
       "source": "/draw/(.*)",
       "destination": "/draw.js"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/draw/([^/]+)",
+      "dest": "/api/draw.js"
+    },
+    {
+      "src": "/api/draw/(.*)",
+      "dest": "/api/draw.js"
+    },
+    {
+      "src": "/draw/([^/]+)",
+      "dest": "/api/draw.js"
+    },
+    {
+      "src": "/draw/(.*)",
+      "dest": "/api/draw.js"
     }
   ]
 }

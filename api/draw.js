@@ -10,8 +10,6 @@ export default async function handler (request) {
     process.env.VITE_SUPABASE_ANON_KEY
   )
 
-  console.log(request.url, process.env.VITE_SUPABASE_URL)
-
   const url = new URL(request.url)
 
   if (!url.pathname.startsWith('/draw/')) {
