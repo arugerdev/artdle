@@ -32,7 +32,7 @@ export default async function handler (req, res) {
 
     const imageBuffer = Buffer.from(base64Data, 'base64')
 
-    res.setHeader('Content-Type', 'image/png')
+    res.setHeader('Content-Type', 'image/jpg')
     res.send(imageBuffer)
     return res.status(200)
   } catch (fetchError) {
