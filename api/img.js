@@ -27,10 +27,17 @@ export default async function handler (req, res) {
     return res.status(500).json({ error: 'Internal server error' })
   }
 
-  res.setHeader('Content-Type', 'text/html')
+  try {
+    const imageResponse = await fetch(data.uridata)
+    const imageBuffer = await imageResponse.buffer()
 
-  res.send(`<img src='${data.uridata}'></img>`)
-  return res.status(200)
+    res.setHeader('Content-Type', 'image/png')
+    res.send(imageBuffer)
+    return res.status(200)
+  } catch (fetchError) {
+    console.error(fetchError)
+    return res.status(500).json({ error: 'Failed to fetch image' })
+  }
 }
 
 export const config = {
