@@ -3,10 +3,6 @@
     {
       "source": "/(.*)",
       "destination": "/"
-    },
-    {
-      "source": "/draw/:id",
-      "destination": "/api/draw?id=:id"
     }
   ]
 }
