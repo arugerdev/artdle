@@ -1,6 +1,6 @@
 {
   "functions": {
-    "draw/[draw].js": {
+    "api/*.js": {
       "memory": 1024,
       "maxDuration": 30
     }
