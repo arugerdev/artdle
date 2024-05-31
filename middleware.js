@@ -18,10 +18,10 @@ export const config = {
   matcher: '/draw/*'
 }
 export default async function middleware (req, res) {
-  const indexPath = path.resolve(__dirname, '..', 'dist', 'index.html')
+  const indexPath = path.resolve(__dirname, 'dist', 'index.html')
   const htmlData = readFileSync(indexPath, 'utf8')
 
-  const drawId = req.url.split('/')[2]
+  const drawId = req.url.split('/')[1]
 
   try {
     const { data, error } = await supabase
