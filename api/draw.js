@@ -19,61 +19,20 @@ export default async function handler (req, res) {
   const indexPath = path.resolve(__dirname, '..', 'dist', 'index.html')
   const htmlData = readFileSync(indexPath, 'utf8')
 
-  if (req.method === 'GET') {
-    if (req.url.startsWith('/api/draw/')) {
-      const drawId = req.url.split('/api/draw/')[1]
+  const { id } = req.query
 
-      try {
-        const { data, error } = await supabase
-          .from('draws')
-          .select('*')
-          .eq('id', drawId)
+  try {
+    const { data, error } = await supabase
+      .from('draws')
+      .select('*')
+      .eq('id', id)
 
-        if (error) {
-          console.error('Error fetching data from Supabase:', error)
-          return res.status(500).end('Internal Server Error')
-        }
+    if (error) {
+      console.error('Error fetching data from Supabase:', error)
+      return res.status(500).end('Internal Server Error')
+    }
 
-        if (!data || data.length === 0) {
-          const updatedHtml = htmlData
-            .replace('__META_TITLE__', 'Artdle - Un dibujo al día')
-            .replace(
-              '__META_DESCRIPTION__',
-              '¿Cuál será la palabra de hoy? Entra ahora en Artdle.com, descubrelo y dibuja!'
-            )
-            .replace('__META_OG_TITLE__', 'Artdle - Un dibujo al día')
-            .replace(
-              '__META_OG_DESCRIPTION__',
-              '¿Cuál será la palabra de hoy? Entra ahora en Artdle.com, descubrelo y dibuja!'
-            )
-            .replace('__META_OG_IMAGE__', '/icon.png')
-            .replace('__META_TW_TITLE__', 'Artdle - Un dibujo al día')
-            .replace(
-              '__META_TW_DESCRIPTION__',
-              '¿Cuál será la palabra de hoy? Entra ahora en Artdle.com, descubrelo y dibuja!'
-            )
-            .replace('__META_TW_IMAGE__', '/icon.png')
-
-          return res.status(200).send(updatedHtml)
-        }
-
-        const draw = data[0]
-        const updatedHtml = htmlData
-          .replace('__META_TITLE__', draw.name)
-          .replace('__META_DESCRIPTION__', draw.created_at)
-          .replace('__META_OG_TITLE__', draw.name)
-          .replace('__META_OG_DESCRIPTION__', draw.created_at)
-          .replace('__META_OG_IMAGE__', draw.uridata)
-          .replace('__META_TW_TITLE__', draw.name)
-          .replace('__META_TW_DESCRIPTION__', draw.created_at)
-          .replace('__META_TW_IMAGE__', draw.uridata)
-
-        return res.status(200).send(updatedHtml)
-      } catch (err) {
-        console.error('Error processing request:', err)
-        return res.status(500).end('Internal Server Error')
-      }
-    } else {
+    if (!data || data.length === 0) {
       const updatedHtml = htmlData
         .replace('__META_TITLE__', 'Artdle - Un dibujo al día')
         .replace(
@@ -95,8 +54,21 @@ export default async function handler (req, res) {
 
       return res.status(200).send(updatedHtml)
     }
-  } else {
-    res.setHeader('Allow', ['GET'])
-    res.status(405).end(`Method ${req.method} Not Allowed`)
+
+    const draw = data[0]
+    const updatedHtml = htmlData
+      .replace('__META_TITLE__', draw.name)
+      .replace('__META_DESCRIPTION__', draw.created_at)
+      .replace('__META_OG_TITLE__', draw.name)
+      .replace('__META_OG_DESCRIPTION__', draw.created_at)
+      .replace('__META_OG_IMAGE__', draw.uridata)
+      .replace('__META_TW_TITLE__', draw.name)
+      .replace('__META_TW_DESCRIPTION__', draw.created_at)
+      .replace('__META_TW_IMAGE__', draw.uridata)
+
+    return res.status(200).send(updatedHtml)
+  } catch (err) {
+    console.error('Error processing request:', err)
+    return res.status(500).end('Internal Server Error')
   }
 }
