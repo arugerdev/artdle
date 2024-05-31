@@ -35,10 +35,10 @@ export default async function handler (req, res) {
     .replace(/__META_DESCRIPTION__/g, data.created_at)
     .replace(/__META_OG_TITLE__/g, data.name)
     .replace(/__META_OG_DESCRIPTION__/g, data.created_at)
-    .replace(/__META_OG_IMAGE__/g, `https://artdle.com/img/${drawId}`)
+    .replace(/__META_OG_IMAGE__/g, `https://artdle.com/api/img?id=${drawId}`)
     .replace(/__META_TW_TITLE__/g, data.name)
     .replace(/__META_TW_DESCRIPTION__/g, data.created_at)
-    .replace(/__META_TW_IMAGE__/g, `https://artdle.com/img/${drawId}`)
+    .replace(/__META_TW_IMAGE__/g, `https://artdle.com/api/img?id=${drawId}`)
 
   res.setHeader('Content-Type', 'text/html')
 
