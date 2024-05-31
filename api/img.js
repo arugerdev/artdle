@@ -28,8 +28,7 @@ export default async function handler (req, res) {
   }
 
   try {
-    const imageResponse = await fetch(data.uridata)
-    const imageBuffer = await imageResponse.buffer()
+    const imageBuffer = Buffer.from(data.uridata, 'base64')
 
     res.setHeader('Content-Type', 'image/png')
     res.send(imageBuffer)
