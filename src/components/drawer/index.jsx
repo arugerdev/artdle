@@ -1,17 +1,11 @@
 /* eslint-disable react/prop-types */
-import { Button, Slider, Input, Link } from '@nextui-org/react'
+import { Button, Slider, Input } from '@nextui-org/react'
 import {
   DownloadIcon,
-  FacebookIcon,
-  LinkedinIcon,
   PaperIcon,
   RedoIcon,
   SendIcon,
-  ShareIcon,
-  TelegramIcon,
-  TwitterIcon,
-  UndoIcon,
-  WhatsappIcon
+  UndoIcon
 } from './../../assets/icons/index'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { clamp } from '../../utils/maths.js'
@@ -32,7 +26,7 @@ import { EyeDropper } from './../tools/eyeDropper/index'
 import { Pencil } from './../tools/pencil/index'
 import { Eraser } from './../tools/eraser/index'
 import { ColorBucket } from './../tools/colorBucket/index'
-import { CopyDetail } from './../copyDetail/index'
+import { ShareButton } from '../shareButton/index.jsx'
 
 export const Drawer = ({
   className,
@@ -61,12 +55,15 @@ export const Drawer = ({
   const handleMouseDown = e => {
     isDrawing.current = true
     const pos = e.target.getStage().getPointerPosition()
+    const stageTransform = e.target.getStage().getAbsoluteTransform().copy()
+    const position = stageTransform.invert().point(pos)
+
     const layer = stageRef.current.children[0]
     const canvas = layer.getCanvas()._canvas
 
     switch (activeTool) {
       case TOOLS.BUCKET:
-        fill(canvas, pos.x, pos.y, color, 1)
+        fill(canvas, position.x, position.y, color)
         setLines(prevLines => [
           ...prevLines,
           {
@@ -81,7 +78,7 @@ export const Drawer = ({
 
         break
       case TOOLS.EYEDROPPER:
-        setColor(getColorOnPos(canvas, pos.x, pos.y))
+        setColor(getColorOnPos(canvas, position.x, position.y))
         setActiveTool(TOOLS.PENCIL)
         break
       case TOOLS.PENCIL:
@@ -90,7 +87,7 @@ export const Drawer = ({
           ...prevLines,
           {
             tool: activeTool,
-            points: [pos.x, pos.y, pos.x, pos.y],
+            points: [position.x, position.y, position.x, position.y],
             stroke: color,
             strokeWidth: size
           }
@@ -109,10 +106,13 @@ export const Drawer = ({
       return
     const stage = e.target.getStage()
     const point = stage.getPointerPosition()
+    const stageTransform = e.target.getStage().getAbsoluteTransform().copy()
+    const position = stageTransform.invert().point(point)
+
     const lastLine = lines[lines.length - 1]
     lastLine.points = lastLine.points.concat([
-      Math.round(point.x),
-      Math.round(point.y)
+      Math.round(position.x),
+      Math.round(position.y)
     ])
     setLines(lines => [...lines])
   }
@@ -246,52 +246,33 @@ export const Drawer = ({
   const CANVAS_VIRTUAL_HEIGHT = 540
 
   const [canvasSize, setCanvasSize] = useState({
-    x: clamp(window.innerWidth, CANVAS_VIRTUAL_WIDTH / 3, CANVAS_VIRTUAL_WIDTH),
-    y: clamp(
-      window.innerHeight,
-      CANVAS_VIRTUAL_HEIGHT / 3,
-      CANVAS_VIRTUAL_HEIGHT
-    )
+    x: clamp(window.innerWidth - 60, 192, CANVAS_VIRTUAL_WIDTH),
+    y:
+      CANVAS_VIRTUAL_HEIGHT *
+      (clamp(window.innerWidth - 60, 108, CANVAS_VIRTUAL_WIDTH) /
+        CANVAS_VIRTUAL_WIDTH)
   })
 
   useEffect(() => {
     const handleResize = () => {
-      const ratioW = 1920 / window.innerWidth
-      const ratioH = 1080 / window.innerHeight
-
-      const ratio = Math.min(ratioW, ratioH)
-
-      const newWidth = CANVAS_VIRTUAL_WIDTH / ratio
-      const newHeight = CANVAS_VIRTUAL_HEIGHT / ratio
-
       setCanvasSize({
-        x: newWidth,
-        y: newHeight
+        x: clamp(window.innerWidth - 60, 192, CANVAS_VIRTUAL_WIDTH),
+        y:
+          CANVAS_VIRTUAL_HEIGHT *
+          (clamp(window.innerWidth - 60, 108, CANVAS_VIRTUAL_WIDTH) /
+            CANVAS_VIRTUAL_WIDTH)
       })
-      console.log({
-        x: newWidth,
-        y: newHeight
-      })
-      console.log(canvasSize)
-      console.log(ratioW, ratioH)
-      console.log(ratio)
-      console.log(canvasSize.x / canvasSize.y)
-      console.log(
-        canvasSize.x / canvasSize.y == 1.777777777777778 ||
-          canvasSize.x / canvasSize.y == 1.7777777777777777
-      )
     }
 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [canvasSize])
-
+  }, [])
   return (
     <section
       className={`${className} flex flex-col bg-slate-100 items-start justify gap-2 p-4 w-full h-full max-w-screen shadow-lg rounded-xl`}
     >
-      <section className='flex flex-row gap-2'>
-        <section className='flex flex-col border-r-2 items-center justify-start shadow-lg h-auto rounded-lg bg-white gap-2 p-2'>
+      <section className='flex flex-col-reverse w-full lg:flex-row gap-2'>
+        <section className='flex flex-row w-full lg:max-w-[64px] h-auto lg:flex-col border-r-2 items-center justify-start shadow-lg rounded-lg bg-white gap-2 p-2'>
           {!isMobile() && (
             <div
               className={`fixed left-0 top-0 w-3 h-3 z-10 bg-transparent border-1 border-black rounded-full `}
@@ -388,13 +369,15 @@ export const Drawer = ({
               step={1}
               maxValue={120}
               minValue={1}
-              orientation='vertical'
+              orientation={
+                window.innerWidth >= 1024 ? 'vertical' : 'horizontal'
+              }
               aria-label='Size'
               defaultValue={10}
               value={size}
               startContent={<small>{size.toFixed(0)}px</small>}
               onChange={setSize}
-              className='max-h-[140px] h-[150px]'
+              className='max-h-[140px] h-auto lg:h-[150px]'
               isDisabled={isDrawed}
             />
           )}
@@ -404,6 +387,14 @@ export const Drawer = ({
           <Stage
             width={canvasSize.x}
             height={canvasSize.y}
+            scaleX={
+              clamp(window.innerWidth - 60, 108, CANVAS_VIRTUAL_WIDTH) /
+              CANVAS_VIRTUAL_WIDTH
+            }
+            scaleY={
+              clamp(window.innerWidth - 60, 108, CANVAS_VIRTUAL_WIDTH) /
+              CANVAS_VIRTUAL_WIDTH
+            }
             onTouchStart={handleMouseDown}
             onTouchMove={handleMouseMove}
             onTouchEnd={handleMouseUp}
@@ -443,91 +434,8 @@ export const Drawer = ({
         >
           <DownloadIcon className='w-full h-full' />
         </Button>
-        <ToolBarButton
-          icon={<ShareIcon className='w-full h-full' />}
-          onPress={
-            isDrawed
-              ? null
-              : () => {
-                  toast.error('Primero debes de enviar el dibujo! ✏')
-                }
-          }
-          isDisabled={false}
-          modal
-          modalContent={
-            drawData[0] && (
-              <>
-                <CopyDetail
-                  title='Link'
-                  toCopy={`https://artdle.com/draw/${drawData[0].id}`}
-                />
-                <h1 className='w-full text-center font-extrabold pt-4'>
-                  Redes sociales
-                </h1>
-                <section className='flex flex-row items-center justify-center gap-4 p-4'>
-                  <Button
-                    as={Link}
-                    href={`https://twitter.com/intent/post?text=Mira%20lo%20que%20he%20dibujado%20hoy%20en%20Artdle.com!%0ALa%20palabra%20de%20hoy%20es%20${dailyWord}%0A&url=https%3A%2F%2Fartdle.com%2Fdraw%2F${drawData[0].id}`}
-                    className='bg-[#00acee]'
-                    target='_blank'
-                    color='primary'
-                    startContent={
-                      <TwitterIcon className='w-full h-full p-px text-white' />
-                    }
-                  >
-                    Compartir
-                  </Button>
+        {isDrawed && <ShareButton data={drawData[0]} dailyWord={dailyWord} />}
 
-                  <Button
-                    as={Link}
-                    href={`https://www.linkedin.com/shareArticle?mini=true&url=https%3A//artdle.com/draw/${drawData[0].id}`}
-                    className='bg-[#0e76a8]'
-                    target='_blank'
-                    color='primary'
-                    startContent={
-                      <LinkedinIcon className='w-full h-full p-px text-white' />
-                    }
-                  >
-                    Compartir
-                  </Button>
-                  <Button
-                    as={Link}
-                    href={`https://www.facebook.com/sharer/sharer.php?u=https%3A//artdle.com/draw/${drawData[0].id}`}
-                    className='bg-[#3b5998]'
-                    target='_blank'
-                    color='primary'
-                    startContent={
-                      <FacebookIcon className='w-full h-full p-px text-white' />
-                    }
-                  >
-                    Compartir
-                  </Button>
-                  <Button
-                    as={Link}
-                    href={`https://wa.me/?text=Mira%20lo%20que%20he%20dibujado%20hoy%20en%20Artdle.com!%0ALa%20palabra%20de%20hoy%20es%20${dailyWord}%0Ahttps%3A%2F%2Fartdle.com%2Fdraw%2F${drawData[0].id}`}
-                    className='bg-[#25D366]'
-                    target='_blank'
-                    color='primary'
-                    startContent={
-                      <WhatsappIcon className='w-full h-full p-px text-white' />
-                    }
-                  >
-                    Compartir
-                  </Button>
-                </section>
-              </>
-            )
-          }
-          name={
-            isDrawed ? 'Compartir dibujo' : 'Primero debes enviar el dibujo!'
-          }
-          placement='top'
-          description={
-            isDrawed
-              ? 'Puedes copiar el enlace al dibujo o compartirlo por redes sociales como Twitter'
-              : ''
-          }
-        />
         <Button
           className={`bg-success justify-center items-center p-2 shadow-xl`}
           isIconOnly

@@ -15,7 +15,7 @@ export default async function handler (req, res) {
   if (!drawId) {
     return res.status(404).json({ error: 'Bad request' })
   }
-
+  // ENVIAR IMAGEN DIRECTAMENTE
   const { data, error } = await supabase
     .from('draws')
     .select('*')
@@ -27,23 +27,18 @@ export default async function handler (req, res) {
     return res.status(500).json({ error: 'Internal server error' })
   }
 
-  const response = await fetch('https://artdle.com/index.html')
-  let html = await response.text()
+  try {
+    const base64Data = data.uridata.replace(/^data:image\/png;base64,/, '')
 
-  html = html
-    .replace(/__META_TITLE__/g, data.name)
-    .replace(/__META_DESCRIPTION__/g, data.created_at)
-    .replace(/__META_OG_TITLE__/g, data.name)
-    .replace(/__META_OG_DESCRIPTION__/g, data.created_at)
-    .replace(/__META_OG_IMAGE__/g, `https://artdle.com/api/img?id=${drawId}`)
-    .replace(/__META_TW_TITLE__/g, data.name)
-    .replace(/__META_TW_DESCRIPTION__/g, data.created_at)
-    .replace(/__META_TW_IMAGE__/g, `https://artdle.com/api/img?id=${drawId}`)
+    const imageBuffer = Buffer.from(base64Data, 'base64')
 
-  res.setHeader('Content-Type', 'text/html')
-
-  res.send(html)
-  return res.status(200)
+    res.setHeader('Content-Type', 'image/jpg')
+    res.send(imageBuffer)
+    return res.status(200)
+  } catch (fetchError) {
+    console.error(fetchError)
+    return res.status(500).json({ error: 'Failed to fetch image' })
+  }
 }
 
 export const config = {
