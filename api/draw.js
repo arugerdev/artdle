@@ -10,7 +10,12 @@ export default async function handler (request) {
     process.env.VITE_SUPABASE_ANON_KEY
   )
 
-  const drawId = request.query.id
+  const url = new URL(request.url)
+  const drawId = url.searchParams.get('id')
+
+  if (!drawId) {
+    return new Response('Bad Request', { status: 400 })
+  }
 
   const { data, error } = await supabase
     .from('draws')
@@ -23,7 +28,9 @@ export default async function handler (request) {
     return new Response('Internal Server Error', { status: 500 })
   }
 
-  const response = await fetch(new URL(request.url))
+  console.log(data)
+
+  const response = await fetch('https://artdle.com/index.html')
   let html = await response.text()
 
   html = html
