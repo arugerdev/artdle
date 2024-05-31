@@ -10,6 +10,7 @@ export default async function handler (request) {
     process.env.VITE_SUPABASE_ANON_KEY
   )
 
+  console.log(request)
   const url = new URL(request.url)
   const drawId = url.searchParams.get('id')
 
