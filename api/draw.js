@@ -19,13 +19,14 @@ export default async function handler (req, res) {
   const indexPath = path.resolve(__dirname, '..', 'dist', 'index.html')
   const htmlData = readFileSync(indexPath, 'utf8')
 
-  const { id } = req.query
+  console.log(req.query)
+  const drawId = req.query.split('/')[2]
 
   try {
     const { data, error } = await supabase
       .from('draws')
       .select('*')
-      .eq('id', id)
+      .eq('id', drawId)
 
     if (error) {
       console.error('Error fetching data from Supabase:', error)

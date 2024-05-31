@@ -39,6 +39,12 @@ function App () {
             return <DrawPage id={params.params.id} />
           }}
         />
+        <Route
+          path='/api/draw/:id'
+          component={params => {
+            return <DrawPage id={params.params.id} />
+          }}
+        />
         <Route path='/about' component={AboutPage} />
         <Route path='/explore' component={ExplorePage} />
         <Route path='/howtoplay' component={HowToPlayPage} />
