@@ -425,7 +425,7 @@ export const Drawer = ({
         >
           <DownloadIcon className='w-full h-full' />
         </Button>
-        <ShareButton data={drawData[0]} dailyWord={dailyWord} />
+        {isDrawed && <ShareButton data={drawData[0]} dailyWord={dailyWord} />}
 
         <Button
           className={`bg-success justify-center items-center p-2 shadow-xl`}
