@@ -28,7 +28,9 @@ export default async function handler (req, res) {
   }
 
   try {
-    const imageBuffer = Buffer.from(data.uridata, 'base64')
+    const base64Data = data.uridata.replace(/^data:image\/png;base64,/, '')
+
+    const imageBuffer = Buffer.from(base64Data, 'base64')
 
     res.setHeader('Content-Type', 'image/png')
     res.send(imageBuffer)
