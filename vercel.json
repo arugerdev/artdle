@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/draw.js": {
+    "draw/[draw].js": {
       "memory": 1024,
       "maxDuration": 30
     }
@@ -9,32 +9,6 @@
     {
       "source": "/(.*)",
       "destination": "/"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/user",
-      "destination": "/api/user"
-    },
-    {
-      "source": "/api/draw/([^/]+)",
-      "destination": "/api/draw.js",
-      "statusCode": 301
-    },
-    {
-      "source": "/api/draw/(.*)",
-      "destination": "/api/draw.js",
-      "statusCode": 301
-    },
-    {
-      "source": "/draw/([^/]+)",
-      "destination": "/api/draw.js",
-      "statusCode": 301
-    },
-    {
-      "source": "/draw/(.*)",
-      "destination": "/api/draw.js",
-      "statusCode": 301
     }
   ]
 }
