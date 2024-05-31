@@ -8,6 +8,10 @@
     {
       "source": "/(.*)",
       "destination": "/"
+    },
+    {
+      "source": "/draw/(.*)",
+      "destination": "/draw.js"
     }
   ]
 }
