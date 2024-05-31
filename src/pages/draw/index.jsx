@@ -4,11 +4,25 @@ import { useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import supabase from '../../utils/supabase'
 import { DrawCard } from './../../components/drawCard/index'
+import { useSearch } from 'wouter'
 
-export default function DrawPage ({ id = 0 }) {
+export default function DrawPage () {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState(null)
+  const searchString = useSearch()
+  const [id, setId] = useState(null)
+
   useEffect(() => {
+    setId(
+      searchString
+        .split('&')
+        .find(e => e.includes('id='))
+        .replace('id=', '')
+    )
+  }, [searchString])
+
+  useEffect(() => {
+    if (!id) return
     setLoading(true)
     supabase
       .from('draws')

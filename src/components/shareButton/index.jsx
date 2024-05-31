@@ -22,7 +22,7 @@ export const ShareButton = ({ data, dailyWord }) => {
           <>
             <CopyDetail
               title='Link'
-              toCopy={`https://artdle.com/draw/${data.id}`}
+              toCopy={`https://artdle.com/api/draw?id=${data.id}`}
             />
             <h1 className='w-full text-center font-extrabold pt-4'>
               Redes sociales
@@ -30,7 +30,7 @@ export const ShareButton = ({ data, dailyWord }) => {
             <section className='w-full h-full grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4 p-4'>
               <Button
                 as={Link}
-                href={`https://twitter.com/intent/post?text=Mira%20lo%20que%20he%20dibujado%20hoy%20en%20Artdle.com!%0ALa%20palabra%20de%20hoy%20es%20${dailyWord}%0A&url=https%3A%2F%2Fartdle.com%2Fdraw%2F${data.id}`}
+                href={`https://twitter.com/intent/post?text=Mira%20lo%20que%20he%20dibujado%20hoy%20en%20Artdle.com!%0ALa%20palabra%20de%20hoy%20es%20${dailyWord}%0A&url=https%3A%2F%2Fartdle.com%2Fapi%2Fdraw%3Fid%3D${data.id}`}
                 className='bg-[#00acee]'
                 target='_blank'
                 color='primary'
@@ -42,7 +42,7 @@ export const ShareButton = ({ data, dailyWord }) => {
               </Button>
               <Button
                 as={Link}
-                href={`https://www.linkedin.com/shareArticle?mini=true&url=https%3A//artdle.com/draw/${data.id}`}
+                href={`https://www.linkedin.com/shareArticle?mini=true&url=https%3A//artdle.com/api/draw?id=${data.id}`}
                 className='bg-[#0e76a8]'
                 target='_blank'
                 color='primary'
@@ -54,7 +54,7 @@ export const ShareButton = ({ data, dailyWord }) => {
               </Button>
               <Button
                 as={Link}
-                href={`https://www.facebook.com/sharer/sharer.php?u=https%3A//artdle.com/draw/${data.id}`}
+                href={`https://www.facebook.com/sharer/sharer.php?u=https%3A//artdle.com/api/draw?id=${data.id}`}
                 className='bg-[#3b5998]'
                 target='_blank'
                 color='primary'
@@ -66,7 +66,7 @@ export const ShareButton = ({ data, dailyWord }) => {
               </Button>
               <Button
                 as={Link}
-                href={`https://wa.me/?text=Mira%20lo%20que%20he%20dibujado%20hoy%20en%20Artdle.com!%0ALa%20palabra%20de%20hoy%20es%20${dailyWord}%0Ahttps%3A%2F%2Fartdle.com%2Fdraw%2F${data.id}`}
+                href={`https://wa.me/?text=Mira%20lo%20que%20he%20dibujado%20hoy%20en%20Artdle.com!%0ALa%20palabra%20de%20hoy%20es%20${dailyWord}%0Ahttps%3A%2F%2Fartdle.com%2Fapi%2Fdraw%3Fid%3D${data.id}`}
                 className='bg-[#25D366]'
                 target='_blank'
                 color='primary'

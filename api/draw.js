@@ -10,9 +10,7 @@ export default async function handler (request) {
     process.env.VITE_SUPABASE_ANON_KEY
   )
 
-  const url = new URL(request.url)
-  const path = url.pathname
-  const drawId = path.split('/')[1]
+  const drawId = request.query.id
 
   const { data, error } = await supabase
     .from('draws')

@@ -33,18 +33,8 @@ function App () {
       <Switch>
         {!(screen.x <= screen.y) && <Route path='/' component={MainPage} />}
         {screen.x <= screen.y && <Route path='/' component={TurnPhonePage} />}
-        <Route
-          path='/draw/:id'
-          component={params => {
-            return <DrawPage id={params.params.id} />
-          }}
-        />
-        <Route
-          path='/api/draw/:id'
-          component={params => {
-            return <DrawPage id={params.params.id} />
-          }}
-        />
+
+        <Route path='/api/draw*' component={DrawPage} />
         <Route path='/about' component={AboutPage} />
         <Route path='/explore' component={ExplorePage} />
         <Route path='/howtoplay' component={HowToPlayPage} />
