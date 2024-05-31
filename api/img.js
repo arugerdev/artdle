@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import { createClient } from '@supabase/supabase-js'
 import dotenv from 'dotenv'
+import { ImageResponse } from '@vercel/og'
 
 export default async function handler (req, res) {
   dotenv.config()
