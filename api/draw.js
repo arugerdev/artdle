@@ -33,14 +33,14 @@ export default async function handler (request) {
   let html = await response.text()
 
   html = html
-    .replace(/__META_TITLE__/g, data.data[0].name)
-    .replace(/__META_DESCRIPTION__/g, data.data[0].created_at)
-    .replace(/__META_OG_TITLE__/g, data.data[0].name)
-    .replace(/__META_OG_DESCRIPTION__/g, data.data[0].created_at)
-    .replace(/__META_OG_IMAGE__/g, data.data[0].uridata)
-    .replace(/__META_TW_TITLE__/g, data.data[0].name)
-    .replace(/__META_TW_DESCRIPTION__/g, data.data[0].created_at)
-    .replace(/__META_TW_IMAGE__/g, data.data[0].uridata)
+    .replace(/__META_TITLE__/g, data.name)
+    .replace(/__META_DESCRIPTION__/g, data.created_at)
+    .replace(/__META_OG_TITLE__/g, data.name)
+    .replace(/__META_OG_DESCRIPTION__/g, data.created_at)
+    .replace(/__META_OG_IMAGE__/g, data.uridata)
+    .replace(/__META_TW_TITLE__/g, data.name)
+    .replace(/__META_TW_DESCRIPTION__/g, data.created_at)
+    .replace(/__META_TW_IMAGE__/g, data.uridata)
 
   return new Response(html, {
     headers: {
