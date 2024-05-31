@@ -1,28 +1,40 @@
 {
+  "functions": {
+    "api/draw.js": {
+      "memory": 3009,
+      "maxDuration": 30
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/"
-    },
+    }
+  ],
+  "redirects": [
     {
-      "source": "/draw/(.*)",
-      "destination": "/draw.js"
+      "source": "/user",
+      "destination": "/api/user"
     },
     {
       "source": "/api/draw/([^/]+)",
-      "destination": "/api/draw.js"
+      "destination": "/api/draw.js",
+      "statusCode": 301
     },
     {
       "source": "/api/draw/(.*)",
-      "destination": "/api/draw.js"
+      "destination": "/api/draw.js",
+      "statusCode": 301
     },
     {
       "source": "/draw/([^/]+)",
-      "destination": "/api/draw.js"
+      "destination": "/api/draw.js",
+      "statusCode": 301
     },
     {
       "source": "/draw/(.*)",
-      "destination": "/api/draw.js"
+      "destination": "/api/draw.js",
+      "statusCode": 301
     }
   ]
 }

@@ -11,12 +11,8 @@ export default async function handler (request) {
   )
 
   const url = new URL(request.url)
-
-  if (!url.pathname.startsWith('/draw/')) {
-    return fetch(request)
-  }
-
-  const drawId = url.pathname.replace('/draw/', '')
+  const path = url.pathname
+  const drawId = path.split('/')[1]
 
   const { data, error } = await supabase
     .from('draws')
