@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename)
 export const config = {
   matcher: '/draw/*'
 }
-export default async function middleware (req, res) {
+const middleware = async (req, res) => {
   const indexPath = path.resolve(__dirname, 'dist', 'index.html')
   const htmlData = readFileSync(indexPath, 'utf8')
 
@@ -69,3 +69,5 @@ export default async function middleware (req, res) {
 
   return res.status(200).send(updatedHtml)
 }
+
+export default middleware
