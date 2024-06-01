@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react'
 import { parseDate } from '@internationalized/date'
 import { DrawList } from '../../components/drawList'
 import { Toaster } from 'react-hot-toast'
-import { DefaultHeaders } from '../../components/defaultHeaders'
 
 export default function ExplorePage () {
   const [date, setDate] = useState(
@@ -28,7 +27,6 @@ export default function ExplorePage () {
   return (
     <main className='flex flex-col gap-8 justify-start items-center h-full w-full min-w-screen min-h-screen'>
       <Toaster />
-      <DefaultHeaders />
       <Topbar />
       <section className='flex flex-col p-4 gap-4 w-full max-w-[1560px]'>
         <h1 className='text-4xl font-extrabold'>Explorar dibujos</h1>

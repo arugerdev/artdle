@@ -1,11 +1,9 @@
-import { DefaultHeaders } from '../../components/defaultHeaders'
 import { Topbar } from '../../components/topbar/index'
 
 export default function TermsOfServicePage () {
   return (
     <main className='flex flex-col gap-8 justify-start items-center h-full w-full min-w-screen min-h-screen'>
       <Topbar />
-      <DefaultHeaders />
       <section className='flex flex-col p-4 max-w-prose items-center justify-center gap-2 text-justify'>
         <div className='p-6 bg-white shadow-md rounded-md'>
           <h1 className='text-2xl font-bold mb-4'>Condiciones de Servicio</h1>
