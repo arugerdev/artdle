@@ -131,11 +131,11 @@ export const DrawList = ({
           setLoading(false)
         } else {
           setDraws(data.data)
+        }
           getDailyWord(day).then(word => {
             setDailyWord(word)
             setLoading(false)
           })
-        }
       })
       .catch(err => {
         toast.error('Ha ocurrido un error al cargar los dibujos: ' + err)
@@ -186,8 +186,8 @@ export const DrawList = ({
 
   useEffect(() => {
     if (shouldFetch) {
-      setShouldFetch(false)
       getData()
+      setShouldFetch(false)
     }
   }, [shouldFetch])
 
