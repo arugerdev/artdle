@@ -14,7 +14,7 @@ supabase.auth.getSession().then(data => {
 export default supabase
 
 export function getDailyWord (day) {
-  console.log(day)
+  supabase.from('daily_word').select('*').then((data) => {console.log(data)})
   return supabase
     .from('daily_word')
     .select('*')
