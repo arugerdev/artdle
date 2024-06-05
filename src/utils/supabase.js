@@ -14,13 +14,14 @@ supabase.auth.getSession().then(data => {
 export default supabase
 
 export function getDailyWord (day) {
-  supabase.from('daily_word').select('*').then((data) => {console.log(data)})
   return supabase
     .from('daily_word')
     .select('*')
     .eq('day', day)
-    .then(async data => {
-      if (data.data && data.data.length > 0) {
+    .then(data => {
+      console.log (data.data)
+      if (data.data.length > 0) {
+      console.log (data.data)
         return data.data[0].word
       }
       else 
