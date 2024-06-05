@@ -133,6 +133,7 @@ export const DrawList = ({
           setDraws(data.data)
         }
           getDailyWord(day).then(word => {
+            console.log(word)
             setDailyWord(word)
             setLoading(false)
           })
