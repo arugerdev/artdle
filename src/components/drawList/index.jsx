@@ -55,9 +55,14 @@ export const DrawList = ({
     if (day) {
       const todayDate = new Date().toISOString().split('T')[0]
 
-      if (day.split('-')[0] < 2024 || day.split('-')[0] > todayDate.year) return
-      if ((day.split('-')[1] < 5 && day.split('-')[0] < 2024) || day.split('-')[1] > todayDate.month + 1) return
-      if ((day.split('-')[2] < 21 && day.split('-')[1] < 5 && day.split('-')[0] < 2024)) || day.split('-')[2] > todayDate.day) return
+      if (day.split('-')[0] > todayDate.year) return
+      if (day.split('-')[1] > todayDate.month) return
+      if (day.split('-')[2] > todayDate.day) return
+  
+      if (day.split('-')[0] < 2024) return
+      if (day.split('-')[1] < 5 && day.split('-')[0] <= 2024) return
+      if (day.split('-')[2] < 21 && day.split('-')[1] <= 5 && day.split('-')[0] <= 2024) return
+  
       
       searchByDay(orderIndex, orderOptions, added)
     } else if (filterName) {
