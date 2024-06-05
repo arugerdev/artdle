@@ -19,7 +19,7 @@ export function getDailyWord (day) {
     .select('*')
     .eq('day', day)
     .then(async data => {
-      if (data.data) {
+      if (data.data & data.data.length > 0) {
         return data.data[0].word
       }
     })
