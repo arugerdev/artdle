@@ -9,7 +9,6 @@ export function fillArea (canvas, x, y, fillColor) {
   const cx = canvas.getContext('2d')
   const imageData = cx.getImageData(0, 0, canvas.width, canvas.height)
   const sample = { x, y }
-  const isPainted = new Array(canvas.width * canvas.height)
   const toPaint = [sample]
 
   const forEachNeighbor = (point, fn) => {
@@ -34,15 +33,9 @@ export function fillArea (canvas, x, y, fillColor) {
   cx.fillStyle = fillColor
   while (toPaint.length) {
     const current = toPaint.pop()
-    const id = current.x + current.y * imageData.width
-
-    if (isPainted[id]) {
-      continue
-    } else {
-      cx.fillRect(current.x - 0.5, current.y - 0.5, 2, 2)
-      isPainted[id] = true
-    }
-
+    
+    cx.fillRect(current.x - 0.5, current.y - 0.5, 2, 2)
+    
     forEachNeighbor(current, function (neighbor) {
       if (
         neighbor.x >= 0 &&
