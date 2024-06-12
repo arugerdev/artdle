@@ -18,20 +18,14 @@ export function getDailyWord (day) {
     .from('daily_word')
     .select('*')
     .eq('day', day)
-    .then(async data => {
-      if (data.data) {
+    .then(data => {
+      if (data.data.length > 0) {
         return data.data[0].word
       }
+      else 
+        toast('No existe palabra de este dia, lo sentimos...')
     })
     .catch(err => {
-      if (
-        err
-          .toString()
-          .includes("Cannot read properties of undefined (reading 'word')")
-      ) {
-        toast('No existe palabra de este dia, lo sentimos...')
-        return
-      }
       toast.error('Ha ocurrido un error, intentalo mas tarde: ' + err)
     })
 }

@@ -55,10 +55,15 @@ export const DrawList = ({
     if (day) {
       const todayDate = new Date().toISOString().split('T')[0]
 
-      if (day.split('-')[0] < 2024 || day.split('-')[0] > todayDate.year) return
-      if (day.split('-')[1] < 5 || day.split('-')[1] > todayDate.month) return
-      if (day.split('-')[2] < 21 || day.split('-')[2] > todayDate.day) return
-
+      if (day.split('-')[0] > todayDate.year) return
+      if (day.split('-')[1] > todayDate.month) return
+      if (day.split('-')[2] > todayDate.day) return
+  
+      if (day.split('-')[0] < 2024) return
+      if (day.split('-')[1] < 5 && day.split('-')[0] <= 2024) return
+      if (day.split('-')[2] < 21 && day.split('-')[1] <= 5 && day.split('-')[0] <= 2024) return
+  
+      
       searchByDay(orderIndex, orderOptions, added)
     } else if (filterName) {
       searchByName(orderIndex, orderOptions, added)
@@ -131,11 +136,12 @@ export const DrawList = ({
           setLoading(false)
         } else {
           setDraws(data.data)
+        }
           getDailyWord(day).then(word => {
+            console.log(word)
             setDailyWord(word)
             setLoading(false)
           })
-        }
       })
       .catch(err => {
         toast.error('Ha ocurrido un error al cargar los dibujos: ' + err)
@@ -186,8 +192,8 @@ export const DrawList = ({
 
   useEffect(() => {
     if (shouldFetch) {
-      setShouldFetch(false)
       getData()
+      setShouldFetch(false)
     }
   }, [shouldFetch])
 

@@ -31,14 +31,12 @@ export default async function handler (req, res) {
   let html = await response.text()
 
   html = html
-    .replace(/__META_TITLE__/g, data.name)
-    .replace(/__META_DESCRIPTION__/g, data.created_at)
-    .replace(/__META_OG_TITLE__/g, data.name)
-    .replace(/__META_OG_DESCRIPTION__/g, data.created_at)
-    .replace(/__META_OG_IMAGE__/g, `https://artdle.com/api/img?id=${drawId}`)
-    .replace(/__META_TW_TITLE__/g, data.name)
-    .replace(/__META_TW_DESCRIPTION__/g, data.created_at)
-    .replace(/__META_TW_IMAGE__/g, `https://artdle.com/api/img?id=${drawId}`)
+    .replaceAll('Artdle - Un dibujo al día', data.name)
+    .replaceAll(
+      '¿Cuál será la palabra de hoy? Entra ahora en Artdle.com, descubrelo y dibuja!',
+      data.created_at
+    )
+    .replaceAll('/icon.png', `https://artdle.com/api/img?id=${drawId}`)
 
   res.setHeader('Content-Type', 'text/html')
 

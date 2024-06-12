@@ -10,9 +10,9 @@ En artdle deberas dibujar algo relacionado con la palabra aleatoria que cambiarÃ
 Â¡Que gane el mejor!
 
 ## Demo
-Puedes probar el Juego [aqui](https://artdle.vercel.app/), proto tendremos un dominio propio...
+Puedes probar el Juego [aqui](https://artdle.com/). Este es el dominio oficial!
 
-[artdle.vercel.app](https://artdle.vercel.app/)
+[artdle.com](https://artdle.com/)
 
 ## Ejemplo Local
 AVISO: Este proyecto es de codigo abierto, pero por temas de privacidad y seguridad, no puedo compartir el archivo .env con las claves y url a la base de datos, este proyecto funciona con Supabase
