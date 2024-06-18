@@ -10,7 +10,10 @@ export const DrawList = ({
   subscribe = true,
   orderBy = 'date',
   showDailyWord = false,
-  filterName = ''
+  showDrawsCount = true,
+  filterName = '',
+  maxItems = 10,
+  positions = false
 }) => {
   const [draws, setDraws] = useState([])
   const [pageIndex, setPageIndex] = useState(0)
@@ -58,12 +61,16 @@ export const DrawList = ({
       if (day.split('-')[0] > todayDate.year) return
       if (day.split('-')[1] > todayDate.month) return
       if (day.split('-')[2] > todayDate.day) return
-  
+
       if (day.split('-')[0] < 2024) return
       if (day.split('-')[1] < 5 && day.split('-')[0] <= 2024) return
-      if (day.split('-')[2] < 21 && day.split('-')[1] <= 5 && day.split('-')[0] <= 2024) return
-  
-      
+      if (
+        day.split('-')[2] < 21 &&
+        day.split('-')[1] <= 5 &&
+        day.split('-')[0] <= 2024
+      )
+        return
+
       searchByDay(orderIndex, orderOptions, added)
     } else if (filterName) {
       searchByName(orderIndex, orderOptions, added)
@@ -89,6 +96,7 @@ export const DrawList = ({
       .ilike('name', `%${filterName.toString()}%`)
       .order(orderIndex, orderOptions)
       .range(0 + 9 * pageIndex + pageIndex, 9 + 9 * pageIndex + pageIndex)
+      .limit(maxItems)
       .then(data => {
         if (added) {
           setDraws(old => [...old, ...data.data])
@@ -130,6 +138,7 @@ export const DrawList = ({
       .order(orderIndex, orderOptions)
       .eq('day', day)
       .range(0 + 9 * pageIndex + pageIndex, 9 + 9 * pageIndex + pageIndex)
+      .limit(maxItems)
       .then(data => {
         if (added) {
           setDraws(old => [...old, ...data.data])
@@ -137,11 +146,10 @@ export const DrawList = ({
         } else {
           setDraws(data.data)
         }
-          getDailyWord(day).then(word => {
-            console.log(word)
-            setDailyWord(word)
-            setLoading(false)
-          })
+        getDailyWord(day).then(word => {
+          setDailyWord(word)
+          setLoading(false)
+        })
       })
       .catch(err => {
         toast.error('Ha ocurrido un error al cargar los dibujos: ' + err)
@@ -240,8 +248,14 @@ export const DrawList = ({
             ref={containerRef}
             className='w-full h-full grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2'
           >
-            {draws.map(data => {
-              return <DrawCard key={data.id} data={data} />
+            {draws.map((data, ind) => {
+              return (
+                <DrawCard
+                  key={data.id}
+                  position={positions ? ind + 1 : null}
+                  data={data}
+                />
+              )
             })}
           </section>
           {(!draws || draws.length == 0) && (
@@ -250,10 +264,12 @@ export const DrawList = ({
               <p>😥</p>
             </div>
           )}
-          <div className='flex flex-col w-full h-full items-center justify-center text-center'>
-            {drawsCount > draws.length && <div className='loader'></div>}
-            <p>Hay {drawsCount} dibujos</p>
-          </div>
+          {showDrawsCount && (
+            <div className='flex flex-col w-full h-full items-center justify-center text-center'>
+              {drawsCount > draws.length && <div className='loader'></div>}
+              <p>Hay {drawsCount} dibujos</p>
+            </div>
+          )}
         </>
       )}
 

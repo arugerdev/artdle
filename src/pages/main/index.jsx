@@ -66,12 +66,27 @@ export default function MainPage () {
           </div>
 
           <h1 className='flex text-4xl font-sans font-extrabold py-8 pb-2 px-2'>
+            Mejores dibujos
+          </h1>
+
+          <DrawList
+            className='max-w-[860px]'
+            day={new Date().toISOString().split('T')[0]}
+            orderBy='$.2'
+            maxItems={3}
+            showDailyWord={false}
+            showDrawsCount={false}
+            subscribe={true}
+            positions
+          />
+          <h1 className='flex text-4xl font-sans font-extrabold py-8 pb-2 px-2'>
             Otros dibujos
           </h1>
 
           <DrawList
             className='max-w-[1560px]'
             day={new Date().toISOString().split('T')[0]}
+            subscribe={true}
           />
         </>
       )}

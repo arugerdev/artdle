@@ -23,7 +23,7 @@ const TYPE = {
   REPORT: 1
 }
 
-export const OptionsButton = ({ data = {} }) => {
+export const OptionsButton = ({ data = {}, userData = null }) => {
   const [loading, setLoading] = useState(false)
   const [reportText, setReportText] = useState('')
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -97,6 +97,12 @@ export const OptionsButton = ({ data = {} }) => {
                       toCopy={data.created_at}
                     />
                     <CopyDetail title='Imagen en URI:' toCopy={data.uridata} />
+                    {userData && (
+                      <CopyDetail
+                        title='Hecho por:'
+                        toCopy={userData.username}
+                      />
+                    )}
                   </ModalBody>
                   <ModalFooter>
                     <Button color='danger' variant='light' onPress={onClose}>

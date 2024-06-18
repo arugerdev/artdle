@@ -8,24 +8,30 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Image
+  Image,
+  Avatar
 } from '@nextui-org/react'
 import { DownloadIcon } from '../../assets/icons'
 import { Tooltip } from '@nextui-org/react'
 import { LikeButton } from './../likeButton/index'
-import { getDailyWord } from '../../utils/supabase'
+import { getDailyWord, getUserData } from '../../utils/supabase'
 import { useEffect, useState } from 'react'
 import { OptionsButton } from './../optionsButton/index'
 import { isMobile } from '../../utils/system'
 import { ShareButton } from './../shareButton/index'
-export const DrawCard = ({ data, className = '' }) => {
+export const DrawCard = ({ data, className = '', position = null }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [dailyWord, setDailyWord] = useState('')
+  const [userData, setUserData] = useState(null)
 
   useEffect(() => {
     getDailyWord(data.created_at.split('+')[0].split('T')[0]).then(word => {
       setDailyWord(word)
+    })
+
+    getUserData(data.creator).then(data => {
+      setUserData(data)
     })
   }, [])
 
@@ -48,6 +54,17 @@ export const DrawCard = ({ data, className = '' }) => {
         className={` w-full max-w-[500px] h-full cursor-pointer ${className}`}
       >
         <section className='flex flex-col border-r-2 items-center justify-center w-full text-center shadow-lg h-auto rounded-lg text-black bg-white gap-2 p-2'>
+          {position && (
+            <p>
+              {position === 1
+                ? '👑'
+                : position === 2
+                ? '🥈'
+                : position === 3
+                ? '🥉'
+                : `#${position}`}
+            </p>
+          )}
           <Image
             src={data.uridata}
             radius='sm'
@@ -65,7 +82,6 @@ export const DrawCard = ({ data, className = '' }) => {
 
             <LikeButton data={data} />
           </div>
-
           <Modal
             backdrop='blur'
             className='flex w-[100%] md:w-[60%] h-[90%] max-w-full'
@@ -86,6 +102,16 @@ export const DrawCard = ({ data, className = '' }) => {
                     <small className='text-slate-500 font-normal text-sm'>
                       Palabra del dia: {dailyWord}
                     </small>
+                    {userData && (
+                      <div className='flex flex-row items-center justify-start gap-2'>
+                        <Avatar size='sm' src={userData.avatar_url} />
+                        <small className='text-slate-500 font-normal text-sm'>
+                          <strong>{userData.username}</strong>
+                          <br />
+                          {userData.email}
+                        </small>
+                      </div>
+                    )}
                   </ModalHeader>
                   <ModalBody className='flex flex-col items-center justify-center p-0 w-full h-full overflow-hidden'>
                     <Image
@@ -102,7 +128,7 @@ export const DrawCard = ({ data, className = '' }) => {
 
                     <section className='flex flex-row justify-end gap-2 w-full'>
                       <section className='flex flex-row justify-end'>
-                        <OptionsButton data={data} />
+                        <OptionsButton data={data} userData={userData} />
                         <ShareButton data={data} dailyWord={dailyWord} />
                       </section>
                       <Button
