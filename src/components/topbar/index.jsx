@@ -8,18 +8,14 @@ import {
   NavbarItem,
   Link,
   Image,
-  Button,
-  User,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem
+  Button
 } from '@nextui-org/react'
 import { useEffect, useState } from 'react'
 import Logo from '../../assets/img/icon.png'
 import { useLocation } from 'wouter'
 import { getAuthData, loginWithGoogle, signOut } from '../../utils/supabase'
 import toast from 'react-hot-toast'
+import { UserButton } from '../userButton'
 export const Topbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [location, pushLocation] = useLocation()
@@ -87,49 +83,7 @@ export const Topbar = () => {
             </Button>
           )}
           {userData && userData.email && userData.identities.length > 0 && (
-            <Button
-              as={Button}
-              className='flex items-center justify-center bg-transparent rounded-full w-[40px] h-[40px] max-w-[40px] max-h-[40px] min-w-[40px] min-h-[40px]'
-            >
-              <Dropdown placement='bottom-end'>
-                <DropdownTrigger>
-                  <User
-                    isBordered
-                    as={Button}
-                    className='flex items-center justify-center gap-0 p-0'
-                    avatarProps={{
-                      src: userData.identities[0].identity_data.picture
-                    }}
-                  />
-                </DropdownTrigger>
-                <DropdownMenu aria-label='Acciones de cuenta' variant='flat'>
-                  <DropdownItem
-                    key='profile'
-                    className='h-14 gap-2'
-                    onPress={() => {
-                      navigator.clipboard.writeText(userData.email.toString())
-                      toast.success('Correo copiado correctamente')
-                    }}
-                  >
-                    <p className='font-semibold'>Registrado como:</p>
-                    <p className='font-semibold text-gray-500'>
-                      {userData.email}
-                    </p>
-                  </DropdownItem>
-                  <DropdownItem
-                    key='signOut'
-                    onPress={() => {
-                      signOut().then(() => {
-                        window.location.reload()
-                      })
-                    }}
-                    className='font-extrabold text-danger-500 bg-transparent hover:bg-danger-200 transition-background cursor-pointer'
-                  >
-                    <p>Cerrar sesión</p>
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </Button>
+            <UserButton userData={userData} signOut={signOut} />
           )}
         </NavbarItem>
       </NavbarContent>
@@ -168,22 +122,7 @@ export const Topbar = () => {
             </Button>
           )}
           {userData && userData.email && userData.identities.length > 0 && (
-            <Button
-              as={Link}
-              onPress={() => {
-                signOut().then(() => {
-                  window.location.reload()
-                })
-              }}
-              className='flex items-center justify-center bg-transparent rounded-full w-[40px] h-[40px] max-w-[40px] max-h-[40px] min-w-[40px] min-h-[40px]'
-            >
-              <User
-                className='flex items-center justify-center'
-                avatarProps={{
-                  src: userData.identities[0].identity_data.picture
-                }}
-              />
-            </Button>
+            <UserButton userData={userData} signOut={signOut} />
           )}
         </NavbarItem>
       </NavbarContent>
