@@ -21,18 +21,20 @@ export function getDailyWord (day) {
     .then(data => {
       if (data.data.length > 0) {
         return data.data[0].word
-      }
-      else 
-        toast('No existe palabra de este dia, lo sentimos...')
+      } else toast('No existe palabra de este dia, lo sentimos...')
     })
     .catch(err => {
       toast.error('Ha ocurrido un error, intentalo mas tarde: ' + err)
     })
 }
 export function getUserData (id) {
-  return supabase.auth.getUser(id).then(data => {
-    return data
-  })
+  return supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', id)
+    .then(data => {
+      return data.data[0]
+    })
 }
 
 export async function getAuthData () {
