@@ -97,12 +97,11 @@ export const OptionsButton = ({ data = {}, userData = null }) => {
                       toCopy={data.created_at}
                     />
                     <CopyDetail title='Imagen en URI:' toCopy={data.uridata} />
-                    {userData && (
-                      <CopyDetail
-                        title='Hecho por:'
-                        toCopy={userData.username}
-                      />
-                    )}
+                    <CopyDetail
+                      title='Hecho por:'
+                      toCopy={userData?.username ?? 'Autor Desconocido'}
+                      hide={!userData?.username}
+                    />
                   </ModalBody>
                   <ModalFooter>
                     <Button color='danger' variant='light' onPress={onClose}>

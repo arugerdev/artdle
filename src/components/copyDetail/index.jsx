@@ -5,7 +5,8 @@ export const CopyDetail = ({
   props,
   className = '',
   title = 'Titulo del copyDetail',
-  toCopy = 'Copia esto'
+  toCopy = 'Copia esto',
+  hide = false
 }) => {
   return (
     <section
@@ -15,6 +16,7 @@ export const CopyDetail = ({
       <Snippet
         {...props}
         hideSymbol
+        hideCopyButton={hide}
         codeString={toCopy.toString()}
         className='w-full truncate items-center justify-end flex-row-reverse'
       >
