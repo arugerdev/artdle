@@ -246,20 +246,20 @@ export const Drawer = ({
   const CANVAS_VIRTUAL_HEIGHT = 540
 
   const [canvasSize, setCanvasSize] = useState({
-    x: clamp(window.innerWidth - 60, 192, CANVAS_VIRTUAL_WIDTH),
+    x: clamp(window.innerWidth - 200, 192, CANVAS_VIRTUAL_WIDTH),
     y:
       CANVAS_VIRTUAL_HEIGHT *
-      (clamp(window.innerWidth - 60, 108, CANVAS_VIRTUAL_WIDTH) /
+      (clamp(window.innerWidth - 200, 108, CANVAS_VIRTUAL_WIDTH) /
         CANVAS_VIRTUAL_WIDTH)
   })
 
   useEffect(() => {
     const handleResize = () => {
       setCanvasSize({
-        x: clamp(window.innerWidth - 60, 192, CANVAS_VIRTUAL_WIDTH),
+        x: clamp(window.innerWidth - 200, 192, CANVAS_VIRTUAL_WIDTH),
         y:
           CANVAS_VIRTUAL_HEIGHT *
-          (clamp(window.innerWidth - 60, 108, CANVAS_VIRTUAL_WIDTH) /
+          (clamp(window.innerWidth - 200, 108, CANVAS_VIRTUAL_WIDTH) /
             CANVAS_VIRTUAL_WIDTH)
       })
     }
@@ -271,7 +271,7 @@ export const Drawer = ({
     <section
       className={`${className} flex flex-col bg-slate-100 items-start justify gap-2 p-4 w-full h-full max-w-screen shadow-lg rounded-xl`}
     >
-      <section className='flex flex-col-reverse w-full lg:flex-row gap-2'>
+      <section className='flex flex-col-reverse items-center lg:items-start justify-center w-full lg:flex-row gap-2'>
         <section className='flex flex-row w-full lg:max-w-[64px] h-auto lg:flex-col border-r-2 items-center justify-start shadow-lg rounded-lg bg-white gap-2 p-2'>
           {!isMobile() && (
             <div
@@ -388,14 +388,13 @@ export const Drawer = ({
             width={canvasSize.x}
             height={canvasSize.y}
             scaleX={
-              clamp(window.innerWidth - 60, 108, CANVAS_VIRTUAL_WIDTH) /
+              clamp(window.innerWidth - 200, 108, CANVAS_VIRTUAL_WIDTH) /
               CANVAS_VIRTUAL_WIDTH
             }
             scaleY={
-              clamp(window.innerWidth - 60, 108, CANVAS_VIRTUAL_WIDTH) /
+              clamp(window.innerWidth - 200, 108, CANVAS_VIRTUAL_WIDTH) /
               CANVAS_VIRTUAL_WIDTH
             }
-            onTouchStart={handleMouseDown}
             onTouchMove={handleMouseMove}
             onTouchEnd={handleMouseUp}
             onPointerDown={handleMouseDown}

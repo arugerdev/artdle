@@ -16,6 +16,7 @@ import { useLocation } from 'wouter'
 import { getAuthData, loginWithGoogle, signOut } from '../../utils/supabase'
 import toast from 'react-hot-toast'
 import { UserButton } from '../userButton'
+import { isMobile } from '../../utils/system'
 export const Topbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [location, pushLocation] = useLocation()
@@ -37,9 +38,10 @@ export const Topbar = () => {
   return (
     <Navbar
       isBordered
-      shouldHideOnScroll
+      shouldHideOnScroll={!isMobile()}
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
+      position='static'
       className='flex flex-row w-full max-w-screen items-center justify-center'
     >
       {/* -------------- PC -------------- */}
