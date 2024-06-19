@@ -82,6 +82,12 @@ export const DrawCard = ({ data, className = '', position = null }) => {
 
             <LikeButton data={data} />
           </div>
+          <div className='flex flex-row w-full items-center justify-start p-0 m-0 gap-2'>
+            <Avatar size='sm' src={userData?.avatar_url} />
+            <small className='text-slate-500 font-normal text-sm'>
+              <strong>{userData?.username ?? 'Autor desconocido'}</strong>
+            </small>
+          </div>
           <Modal
             backdrop='blur'
             className='flex w-[100%] md:w-[60%] h-[90%] max-w-full'
@@ -107,8 +113,6 @@ export const DrawCard = ({ data, className = '', position = null }) => {
                         <Avatar size='sm' src={userData.avatar_url} />
                         <small className='text-slate-500 font-normal text-sm'>
                           <strong>{userData.username}</strong>
-                          <br />
-                          {userData.email}
                         </small>
                       </div>
                     )}

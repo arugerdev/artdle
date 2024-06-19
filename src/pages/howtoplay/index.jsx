@@ -3,7 +3,9 @@ import img00 from '../../assets/img/how-to-play_00.png'
 import img01 from '../../assets/img/how-to-play_01.png'
 import img02 from '../../assets/img/how-to-play_02.png'
 import { Link as LinkW } from 'wouter'
-import { Image } from '@nextui-org/react'
+import { Button, Image, Link } from '@nextui-org/react'
+import { loginWithGoogle } from '../../utils/supabase'
+import toast from 'react-hot-toast'
 export default function HowToPlayPage () {
   return (
     <main className='flex flex-col gap-8 justify-start items-center h-full w-full min-w-screen min-h-screen'>
@@ -86,7 +88,53 @@ export default function HowToPlayPage () {
           shadow='sm'
           className='p-4 max-w-[900px]'
         />
+        <p className='w-full text-center max-w-[80ch] font-bold'>
+          ¿Puedo guardar mis likes entre dispositivos?
+        </p>
+        <p className='w-full text-justify max-w-[80ch]'>
+          Actualmente la unica manera de sincronizar tus datos entre
+          dispositivos es gracias a Google, si tienes una cuenta de Google y te
+          gustaría tener todos tus likes y dibujos sincronizados entre varios de
+          tus dispositivos puedes iniciar sesión con Google.
+          <br />
+          <br />
+          Tranquilo! Esto es totalmente seguro y solo guardamos datos necesarios
+          como emails, nombres de usuario y fotos de perfil.
+        </p>
+        <Button
+          as={Link}
+          onPress={() =>
+            loginWithGoogle().then(() => {
+              toast.success('Sesión iniciada correctamente')
+            })
+          }
+          color='primary'
+          variant='flat'
+          className='mb-12'
+        >
+          Iniciar Sesión Aquí
+        </Button>
 
+        <p className='w-full text-center max-w-[80ch] font-bold'>
+          ¿De quien es ese dibujo?
+        </p>
+        <p className='w-full text-justify max-w-[80ch]'>
+          Los dibujos no guardan información de los dueños aparte de su
+          identificador, en el caso de los usuarios que estan conectados con
+          Google, en cada dibujo se muestra el nombre de usuario y la foto del
+          dueño, esto para identificar los dibujos mas facilmente y saber que
+          autores tienen mejor cualidades que otros.
+        </p>
+
+        <Button
+          as={LinkW}
+          color='success'
+          variant='shadow'
+          className='font-bold text-md my-6'
+          href='/'
+        >
+          Empieza a jugar ya!
+        </Button>
         <p className='text-jusitfy'>
           Si necesitas mas información puedes comprobar nuestras{' '}
           <LinkW href='/privacy' className='text-primary-600'>
