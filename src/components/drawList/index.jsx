@@ -12,7 +12,7 @@ export const DrawList = ({
   showDailyWord = false,
   showDrawsCount = true,
   filterName = '',
-  maxItems = 10,
+  maxItems = 8,
   positions = false
 }) => {
   const [draws, setDraws] = useState([])
@@ -95,7 +95,7 @@ export const DrawList = ({
       .select('*')
       .ilike('name', `%${filterName.toString()}%`)
       .order(orderIndex, orderOptions)
-      .range(0 + 9 * pageIndex + pageIndex, 9 + 9 * pageIndex + pageIndex)
+      .range(0 + 7 * pageIndex + pageIndex, 7 + 7 * pageIndex + pageIndex)
       .limit(maxItems)
       .then(data => {
         if (added) {
@@ -137,7 +137,7 @@ export const DrawList = ({
       .select('*')
       .order(orderIndex, orderOptions)
       .eq('day', day)
-      .range(0 + 9 * pageIndex + pageIndex, 9 + 9 * pageIndex + pageIndex)
+      .range(0 + 7 * pageIndex + pageIndex, 7 + 7 * pageIndex + pageIndex)
       .limit(maxItems)
       .then(data => {
         if (added) {
@@ -246,7 +246,7 @@ export const DrawList = ({
           )}
           <section
             ref={containerRef}
-            className='w-full h-full grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-2'
+            className='w-full h-full grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-2'
           >
             {draws.map((data, ind) => {
               return (
