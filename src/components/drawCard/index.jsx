@@ -108,14 +108,14 @@ export const DrawCard = ({ data, className = '', position = null }) => {
                     <small className='text-slate-500 font-normal text-sm'>
                       Palabra del dia: {dailyWord}
                     </small>
-                    {userData && (
-                      <div className='flex flex-row items-center justify-start gap-2'>
-                        <Avatar size='sm' src={userData.avatar_url} />
-                        <small className='text-slate-500 font-normal text-sm'>
-                          <strong>{userData.username}</strong>
-                        </small>
-                      </div>
-                    )}
+                    <div className='flex flex-row items-center justify-start gap-2'>
+                      <Avatar size='sm' src={userData?.avatar_url} />
+                      <small className='text-slate-500 font-normal text-sm'>
+                        <strong>
+                          {userData?.username ?? 'Autor desconocido'}
+                        </strong>
+                      </small>
+                    </div>
                   </ModalHeader>
                   <ModalBody className='flex flex-col items-center justify-center p-0 w-full h-full overflow-hidden'>
                     <Image

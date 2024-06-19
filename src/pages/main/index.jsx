@@ -70,7 +70,7 @@ export default function MainPage () {
           </h1>
 
           <DrawList
-            className='max-w-[860px]'
+            className='max-w-[1200px]'
             day={new Date().toISOString().split('T')[0]}
             orderBy='$.2'
             maxItems={3}
