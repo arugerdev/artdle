@@ -81,7 +81,7 @@ export const ShareButton = ({ data, dailyWord }) => {
         )
       }
       name={'Compartir dibujo'}
-      placement='top'
+      placement='center'
       description={
         'Puedes copiar el enlace al dibujo o compartirlo por redes sociales como Twitter'
       }
