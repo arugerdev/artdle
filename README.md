@@ -53,8 +53,6 @@ Diviertete!
 - Sistema de cuentas para guardar datos entre dispositivos [✅]
 - Mostrar autores verificados con cuenta de Google en cada dibujo [✅]
 - Ranking de mejores dibujos diarios [✅]
-- Sistema de dislikes (POR DECIDIR) [❌]
-- Explorar por palabra del día (POR DECIDIR) [❌]
 
 ## Autores
 - [@arugerdev](https://www.github.com/arugerdev) (Creador, Programador)
