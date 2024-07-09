@@ -8,7 +8,8 @@ import {
   NavbarItem,
   Link,
   Image,
-  Button
+  Button,
+  Skeleton
 } from '@nextui-org/react'
 import { useEffect, useState } from 'react'
 import Logo from '../../assets/img/icon.png'
@@ -28,11 +29,16 @@ export const Topbar = () => {
     { label: 'Sobre Mí', path: '/about' }
   ]
   const [userData, setUserData] = useState(null)
+  const [loadingUserData, setLoadingUserData] = useState(true)
 
   useEffect(() => {
-    getAuthData().then(data => {
-      setUserData(data.data.user)
-    })
+    getAuthData()
+      .then(data => {
+        setUserData(data.data.user)
+      })
+      .finally(() => {
+        setLoadingUserData(false)
+      })
   }, [])
 
   return (
@@ -70,23 +76,25 @@ export const Topbar = () => {
       </NavbarContent>
       <NavbarContent justify='end'>
         <NavbarItem className='hidden sm:flex'>
-          {(!userData || !userData.email) && (
-            <Button
-              as={Link}
-              onPress={() =>
-                loginWithGoogle().then(() => {
-                  toast.success('Sesión iniciada correctamente')
-                })
-              }
-              color='primary'
-              variant='light'
-            >
-              Iniciar Sesión
-            </Button>
-          )}
-          {userData && userData.email && userData.identities.length > 0 && (
-            <UserButton userData={userData} signOut={signOut} />
-          )}
+          <Skeleton isLoaded={!loadingUserData} className='rounded-xl'>
+            {(!userData || !userData.email) && (
+              <Button
+                as={Link}
+                onPress={() =>
+                  loginWithGoogle().then(() => {
+                    toast.success('Sesión iniciada correctamente')
+                  })
+                }
+                color='primary'
+                variant='light'
+              >
+                Iniciar Sesión
+              </Button>
+            )}
+            {userData && userData.email && userData.identities.length > 0 && (
+              <UserButton userData={userData} signOut={signOut} />
+            )}
+          </Skeleton>
         </NavbarItem>
       </NavbarContent>
       {/* -------------- END PC -------------- */}
