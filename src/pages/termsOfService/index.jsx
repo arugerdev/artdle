@@ -101,8 +101,10 @@ export default function TermsOfServicePage () {
             <h2 className='text-xl font-semibold'>6. Contacto</h2>
             <p className='text-gray-700 mt-2'>
               Para cualquier pregunta o preocupación sobre estas Condiciones de
-              Servicio, puedes contactarnos a través de [correo
-              electrónico/contacto].
+              Servicio, puedes contactarnos a través de{' '}
+              <a className='text-blue-600' href='mailto:aruger.dev@gmail.com'>
+                aruger.dev@gmail.com
+              </a>
             </p>
           </section>
         </div>

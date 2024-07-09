@@ -108,7 +108,10 @@ export default function PrivacyPage () {
             <h2 className='text-xl font-semibold'>7. Contacto</h2>
             <p className='text-gray-700 mt-2'>
               Si tienes alguna pregunta sobre esta Política de Privacidad,
-              puedes contactarnos a través de [correo electrónico/contacto].
+              puedes contactarnos a través de{' '}
+              <a className='text-blue-600' href='mailto:aruger.dev@gmail.com'>
+                aruger.dev@gmail.com
+              </a>
             </p>
           </section>
         </div>
