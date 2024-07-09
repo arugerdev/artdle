@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import supabase from '../../utils/supabase'
 import { DrawCard } from './../../components/drawCard/index'
-import { useSearch } from 'wouter'
+import { useLocation, useSearch } from 'wouter'
 
 export default function DrawPage () {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState(null)
   const searchString = useSearch()
   const [id, setId] = useState(null)
+  const [, pushLocation] = useLocation()
 
   useEffect(() => {
     setId(
@@ -33,6 +34,12 @@ export default function DrawPage () {
         setLoading(false)
       })
   }, [id])
+
+  useEffect(() => {
+    if (!loading && !data) {
+      pushLocation('/404')
+    }
+  }, [data, loading, pushLocation])
 
   return (
     <main className='flex flex-col gap-8 justify-start items-center h-full w-full min-w-screen min-h-screen'>
