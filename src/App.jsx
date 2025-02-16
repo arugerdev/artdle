@@ -34,7 +34,7 @@ function App () {
         {!(screen.x <= screen.y) && <Route path='/' component={MainPage} />}
         {screen.x <= screen.y && <Route path='/' component={TurnPhonePage} />}
 
-        <Route path='/api/draw*' component={DrawPage} />
+        <Route path='/api/draw' component={DrawPage} />
         <Route path='/about' component={AboutPage} />
         <Route path='/explore' component={ExplorePage} />
         <Route path='/howtoplay' component={HowToPlayPage} />
