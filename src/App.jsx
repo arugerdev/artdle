@@ -34,8 +34,13 @@ function App () {
         {!(screen.x <= screen.y) && <Route path='/' component={MainPage} />}
         {screen.x <= screen.y && <Route path='/' component={TurnPhonePage} />}
 
+        {/* ❌ QUITAR ESTAS RUTAS
         <Route path='/api/draw' component={DrawPage} />
         <Route path='/api/img' component={DrawPage} />
+        */}
+
+        <Route path='/draw' component={DrawPage} /> 
+        
         <Route path='/about' component={AboutPage} />
         <Route path='/explore' component={ExplorePage} />
         <Route path='/howtoplay' component={HowToPlayPage} />
