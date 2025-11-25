@@ -36,10 +36,13 @@ export default function DrawPage () {
   }, [id])
 
   useEffect(() => {
-    if (!loading && !data) {
+    if (!id) return
+    if (loading) return
+    if (!data) {
       pushLocation('/404')
     }
-  }, [data, loading, pushLocation])
+  }, [id, data, loading, pushLocation])
+
 
   return (
     <main className='flex flex-col gap-8 justify-start items-center h-full w-full min-w-screen min-h-screen'>
