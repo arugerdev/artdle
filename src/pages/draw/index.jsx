@@ -7,7 +7,7 @@ import { DrawCard } from './../../components/drawCard/index'
 import { useLocation, useSearch } from 'wouter'
 
 export default function DrawPage () {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [data, setData] = useState(null)
   const searchString = useSearch()
   const [id, setId] = useState(null)
