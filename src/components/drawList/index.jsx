@@ -12,6 +12,7 @@ export const DrawList = ({
   showDailyWord = false,
   showDrawsCount = true,
   filterName = '',
+  filterCategory = null,
   maxItems = 8,
   positions = false
 }) => {
@@ -42,13 +43,15 @@ export const DrawList = ({
   }
 
   const applyFilter = query => {
-    if (day) return query.eq('day', day)
-    if (filterName) return query.ilike('name', `%${filterName.toString()}%`)
-    return query
+    let q = query
+    if (day) q = q.eq('day', day)
+    else if (filterName) q = q.ilike('name', `%${filterName.toString()}%`)
+    if (filterCategory) q = q.eq('daily_category', filterCategory)
+    return q
   }
 
   const getData = async (added = false) => {
-    if (!day && !filterName) return
+    if (!day && !filterName && !filterCategory) return
 
     const { index: orderIndex, options: orderOptions } = resolveOrder()
 
@@ -146,7 +149,7 @@ export const DrawList = ({
       .subscribe()
 
     return () => taskListener.unsubscribe()
-  }, [day, orderBy, filterName])
+  }, [day, orderBy, filterName, filterCategory])
 
   return (
     <section
