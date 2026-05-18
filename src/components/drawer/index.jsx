@@ -30,6 +30,7 @@ import { Line as LineTool } from './../tools/line/index'
 import { Rect as RectTool } from './../tools/rect/index'
 import { ShareButton } from '../shareButton/index.jsx'
 import { stageToCompressedDataURL, dataURLToBlob, resolveDrawImage } from '../../utils/image.js'
+import { loadDraft, saveDraft, clearDraft } from '../../utils/offlineDraft.js'
 import { PaletteSwatches } from '../paletteSwatches/index.jsx'
 import { downloadSVG } from '../../utils/svg.js'
 import { SvgExportIcon } from '../../assets/icons'
@@ -54,7 +55,14 @@ export const Drawer = ({
       : null
   )
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [lines, setLines] = useState([])
+  // Restore an offline draft if the user was mid-drawing and got disconnected
+  // or refreshed. Scoped to today so yesterday's WIP doesn't leak in.
+  const TODAY = new Date().toISOString().split('T')[0]
+  const [lines, setLines] = useState(() => {
+    if (drawed) return []
+    const draft = loadDraft(TODAY)
+    return draft?.lines ?? []
+  })
   const isDrawing = useRef(false)
   const stageRef = useRef()
   const [redoLines, setRedoLines] = useState([])
@@ -150,6 +158,7 @@ export const Drawer = ({
 
   const handleMouseUp = () => {
     isDrawing.current = false
+    if (!isDrawed) saveDraft(TODAY, lines, name)
   }
 
   const handleKeyDown = useCallback(
@@ -289,6 +298,7 @@ export const Drawer = ({
       }
 
       setDrawData(inserted)
+      clearDraft()
       toast.success(
         'El dibujo se ha subido correctamente, gracias por jugar! Espera hasta mañana para otra palabra diferente!'
       )
