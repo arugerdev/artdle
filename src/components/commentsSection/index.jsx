@@ -84,22 +84,31 @@ export const CommentsSection = ({ drawId }) => {
         <div className='flex flex-col gap-2'>
           <Textarea
             size='sm'
+            variant='bordered'
             value={text}
             onValueChange={setText}
             placeholder='Escribe un comentario...'
             maxLength={MAX_LEN + 50}
-            classNames={{ input: 'min-h-[60px]' }}
+            classNames={{
+              inputWrapper: 'bg-white/60 dark:bg-zinc-900/40 border-slate-200 dark:border-zinc-700 data-[hover=true]:border-slate-300 dark:data-[hover=true]:border-zinc-600',
+              input: 'min-h-[60px] text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500'
+            }}
           />
           <div className='flex flex-row items-center justify-end gap-2'>
-            <small className={text.length > MAX_LEN ? 'text-red-500' : 'text-gray-500'}>
+            <small className={
+              text.length > MAX_LEN
+                ? 'text-red-500 font-mono'
+                : 'text-slate-500 dark:text-zinc-400 font-mono'
+            }>
               {text.length}/{MAX_LEN}
             </small>
             <Button
               size='sm'
-              color='primary'
+              radius='full'
               isLoading={posting}
               isDisabled={text.trim().length < 1 || text.length > MAX_LEN}
               onPress={send}
+              className='bg-slate-900 text-white dark:bg-zinc-50 dark:text-slate-900 font-semibold disabled:opacity-40'
             >
               Publicar
             </Button>
