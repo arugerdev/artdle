@@ -2,6 +2,25 @@
 import { createClient } from '@supabase/supabase-js'
 import dotenv from 'dotenv'
 
+const MIME_BY_PREFIX = {
+  'data:image/png;base64,': 'image/png',
+  'data:image/webp;base64,': 'image/webp',
+  'data:image/jpeg;base64,': 'image/jpeg',
+  'data:image/gif;base64,': 'image/gif'
+}
+
+function extractImage (uridata = '') {
+  for (const [prefix, mime] of Object.entries(MIME_BY_PREFIX)) {
+    if (uridata.startsWith(prefix)) {
+      return { mime, base64: uridata.slice(prefix.length) }
+    }
+  }
+  // Unknown prefix — strip anything that looks like a data URL header and
+  // assume PNG (current legacy behaviour).
+  const stripped = uridata.replace(/^data:[^;]+;base64,/, '')
+  return { mime: 'image/png', base64: stripped }
+}
+
 export default async function handler (req, res) {
   dotenv.config()
 
@@ -13,31 +32,32 @@ export default async function handler (req, res) {
   const drawId = req.query.id
 
   if (!drawId) {
-    return res.status(404).json({ error: 'Bad request' })
+    return res.status(400).json({ error: 'Bad request: missing id' })
   }
-  // ENVIAR IMAGEN DIRECTAMENTE
+
   const { data, error } = await supabase
     .from('draws')
-    .select('*')
+    .select('uridata')
     .eq('id', drawId)
     .single()
 
   if (error) {
     console.error(error)
-    return res.status(500).json({ error: 'Internal server error' })
+    return res.status(error.code === 'PGRST116' ? 404 : 500).json({
+      error: error.code === 'PGRST116' ? 'Not found' : 'Internal server error'
+    })
   }
 
   try {
-    const base64Data = data.uridata.replace(/^data:image\/png;base64,/, '')
-
-    const imageBuffer = Buffer.from(base64Data, 'base64')
-
-    res.setHeader('Content-Type', 'image/jpg')
-    res.send(imageBuffer)
-    return res.status(200)
-  } catch (fetchError) {
-    console.error(fetchError)
-    return res.status(500).json({ error: 'Failed to fetch image' })
+    const { mime, base64 } = extractImage(data.uridata)
+    const buffer = Buffer.from(base64, 'base64')
+    res.setHeader('Content-Type', mime)
+    res.setHeader('Cache-Control', 'public, max-age=86400, immutable')
+    res.status(200).send(buffer)
+    return
+  } catch (e) {
+    console.error(e)
+    return res.status(500).json({ error: 'Failed to decode image' })
   }
 }
 

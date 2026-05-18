@@ -27,6 +27,7 @@ import { Pencil } from './../tools/pencil/index'
 import { Eraser } from './../tools/eraser/index'
 import { ColorBucket } from './../tools/colorBucket/index'
 import { ShareButton } from '../shareButton/index.jsx'
+import { stageToCompressedDataURL } from '../../utils/image.js'
 
 export const Drawer = ({
   className,
@@ -178,7 +179,7 @@ export const Drawer = ({
 
   const sendDraw = () => {
     setLoading(true)
-    const uri = stageRef.current.toDataURL()
+    const uri = stageToCompressedDataURL(stageRef.current)
     supabase.auth.getUser().then(user => {
       supabase
         .from('draws')
