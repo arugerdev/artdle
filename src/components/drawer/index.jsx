@@ -235,9 +235,10 @@ export const Drawer = ({
   }
 
   useEffect(() => {
+    // The custom brush-size cursor lives in position: fixed coordinates,
+    // so we want viewport-relative client{X,Y} — no scrollY math needed.
     const handleMouseMoveGlobal = e => {
-      if (!isMobile) return
-      setMousePosition({ x: e.clientX, y: e.clientY + scrollY })
+      setMousePosition({ x: e.clientX, y: e.clientY })
     }
 
     const handleWheelGlobal = e => {
@@ -249,14 +250,18 @@ export const Drawer = ({
 
     window.addEventListener('keydown', handleKeyDown)
     window.addEventListener('wheel', handleWheelGlobal, { passive: false })
-    if (!isMobile) return
-    window.addEventListener('mousemove', handleMouseMoveGlobal)
+
+    const mobile = isMobile()
+    if (!mobile) {
+      window.addEventListener('mousemove', handleMouseMoveGlobal)
+    }
 
     return () => {
       window.removeEventListener('wheel', handleWheelGlobal)
       window.removeEventListener('keydown', handleKeyDown)
-      if (!isMobile) return
-      window.removeEventListener('mousemove', handleMouseMoveGlobal)
+      if (!mobile) {
+        window.removeEventListener('mousemove', handleMouseMoveGlobal)
+      }
     }
   }, [handleKeyDown])
 
@@ -301,11 +306,12 @@ export const Drawer = ({
         <section className='flex flex-row w-full lg:max-w-[64px] h-auto lg:flex-col border-r-2 items-center justify-start shadow-lg rounded-lg bg-white gap-2 p-2'>
           {!isMobile() && (
             <div
+              aria-hidden='true'
               className={`fixed left-0 top-0 w-3 h-3 z-10 bg-transparent border-1 border-black rounded-full `}
               style={{
                 pointerEvents: 'none',
                 left: `${mousePosition.x - size / 2}px`,
-                top: `${mousePosition.y - size / 2 - scrollY}px`,
+                top: `${mousePosition.y - size / 2}px`,
                 height: `${size}px`,
                 width: `${size}px`
               }}
