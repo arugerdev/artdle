@@ -9,6 +9,7 @@ import PrivacyPage from './pages/privacy'
 import TermsOfServicePage from './pages/termsOfService'
 import TurnPhonePage from './pages/turnphone'
 import DrawPage from './pages/draw'
+import ProfilePage from './pages/profile'
 import { ErrorBoundary } from './components/errorBoundary'
 
 function App () {
@@ -43,6 +44,7 @@ function App () {
         <Route path='/api/draw' component={DrawPage} />
         <Route path='/draw' component={DrawPage} />
 
+        <Route path='/u/:username' component={ProfilePage} />
         <Route path='/about' component={AboutPage} />
         <Route path='/explore' component={ExplorePage} />
         <Route path='/howtoplay' component={HowToPlayPage} />

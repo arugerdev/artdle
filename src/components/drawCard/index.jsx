@@ -21,6 +21,8 @@ import { isMobile } from '../../utils/system'
 import { ShareButton } from './../shareButton/index'
 import { resolveDrawImage } from '../../utils/image'
 import { ReplayModal } from '../replayModal'
+import { CommentsSection } from '../commentsSection'
+import { Link as WouterLink } from 'wouter'
 export const DrawCard = ({ data, className = '', position = null }) => {
   const imageSrc = resolveDrawImage(data, { supabaseUrl: import.meta.env.VITE_SUPABASE_URL })
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -133,19 +135,27 @@ export const DrawCard = ({ data, className = '', position = null }) => {
                     <div className='flex flex-row items-center justify-start gap-2'>
                       <Avatar size='sm' src={userData?.avatar_url} />
                       <small className='text-slate-500 font-normal text-sm'>
-                        <strong>
-                          {userData?.username ?? 'Autor desconocido'}
-                        </strong>
+                        {userData?.username
+                          ? (
+                            <WouterLink
+                              href={`/u/${encodeURIComponent(userData.username)}`}
+                              className='hover:underline'
+                            >
+                              <strong>{userData.username}</strong>
+                            </WouterLink>
+                          )
+                          : <strong>Autor desconocido</strong>}
                       </small>
                     </div>
                   </ModalHeader>
-                  <ModalBody className='flex flex-col items-center justify-center p-0 w-full h-full overflow-hidden'>
+                  <ModalBody className='flex flex-col items-start justify-start gap-3 p-3 w-full h-full overflow-auto'>
                     <Image
                       isBlurred
                       className='h-full object-scale-down rounded-sm'
                       src={imageSrc}
                       alt={data.name}
                     />
+                    <CommentsSection drawId={data.id} />
                   </ModalBody>
                   <ModalFooter className='pb-2 pt-0 md:p-4'>
                     <section className='flex flex-row justify-start w-full '>
