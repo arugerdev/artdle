@@ -20,10 +20,12 @@ export const DrawList = ({
   const [loading, setLoading] = useState(false)
   const [dailyWord, setDailyWord] = useState('')
   const [drawsCount, setDrawsCount] = useState(0)
-  const [isInView, setIsInView] = useState(false)
   const [shouldFetch, setShouldFetch] = useState(false)
 
   const containerRef = useRef(null)
+  const sentinelRef = useRef(null)
+  const stateRef = useRef({ loading: false, drawsCount: 0, drawsLen: 0 })
+  stateRef.current = { loading, drawsCount, drawsLen: draws.length }
 
   const resolveOrder = () => {
     switch (orderBy) {
@@ -96,26 +98,20 @@ export const DrawList = ({
     }
   }, [pageIndex])
 
-  const handleScroll = () => {
-    if (containerRef.current && typeof window !== 'undefined') {
-      const container = containerRef.current
-      const { bottom } = container.getBoundingClientRect()
-      const { innerHeight } = window
-      setIsInView(bottom <= innerHeight)
-    }
-  }
-
   useEffect(() => {
-    if (loading) return
-    if (isInView && drawsCount > draws.length) {
-      setPageIndex(old => old + 1)
-    }
-  }, [isInView])
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    const node = sentinelRef.current
+    if (!node || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return
+        const { loading: l, drawsCount: c, drawsLen: n } = stateRef.current
+        if (!l && c > n) setPageIndex(old => old + 1)
+      },
+      { rootMargin: '200px' }
+    )
+    io.observe(node)
+    return () => io.disconnect()
+  }, [draws.length === 0])
 
   const resetData = () => {
     setDailyWord('')
@@ -191,7 +187,10 @@ export const DrawList = ({
             </div>
           )}
           {showDrawsCount && (
-            <div className='flex flex-col w-full h-full items-center justify-center text-center'>
+            <div
+              ref={sentinelRef}
+              className='flex flex-col w-full h-full items-center justify-center text-center'
+            >
               {drawsCount > draws.length && <div className='loader'></div>}
               <p>Hay {drawsCount} dibujos</p>
             </div>
