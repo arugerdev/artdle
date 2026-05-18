@@ -19,6 +19,7 @@ import toast from 'react-hot-toast'
 import { UserButton } from '../userButton'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../i18n'
+import { ThemeToggle } from '../themeToggle'
 export const Topbar = () => {
   const { t } = useTranslation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -57,12 +58,16 @@ export const Topbar = () => {
       position='sticky'
       maxWidth='full'
       classNames={{
-        base: 'bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800 shadow-none',
+        base: 'ios-card border-b backdrop-saturate-150',
         wrapper: 'max-w-screen-2xl px-4 sm:px-6',
-        item: ['data-[active=true]:font-semibold', 'data-[active=true]:text-zinc-50'],
-        menu: 'bg-zinc-950 border-l border-zinc-800',
-        menuItem: 'text-zinc-300',
-        toggleIcon: 'text-zinc-300'
+        item: [
+          'data-[active=true]:font-semibold',
+          'data-[active=true]:text-slate-900',
+          'dark:data-[active=true]:text-zinc-50'
+        ],
+        menu: 'ios-card border-l border-slate-200 dark:border-zinc-800 mt-0',
+        menuItem: 'text-slate-700 dark:text-zinc-300',
+        toggleIcon: 'text-slate-700 dark:text-zinc-200'
       }}
     >
       {/* -------------- PC -------------- */}
@@ -94,19 +99,22 @@ export const Topbar = () => {
       </NavbarContent>
       <NavbarContent justify='end'>
         <NavbarItem className='hidden sm:flex'>
+          <ThemeToggle />
+        </NavbarItem>
+        <NavbarItem className='hidden sm:flex'>
           <button
             type='button'
             onClick={toggleLang}
             aria-label={`Idioma actual: ${lang.toUpperCase()}. Cambiar a ${lang === 'es' ? 'inglés' : 'español'}`}
-            className='group relative inline-flex h-7 w-14 items-center rounded-full border border-zinc-800 bg-zinc-900 px-1 text-[10px] font-mono uppercase tracking-wider transition-colors hover:border-zinc-700'
+            className='group relative inline-flex h-8 w-14 items-center rounded-full ios-chip px-1 text-[10px] font-mono uppercase tracking-wider'
           >
             <span
-              className={`absolute top-0.5 h-5 w-6 rounded-full bg-zinc-50 shadow-sm transition-all duration-300 ${
+              className={`absolute top-0.5 h-7 w-6 rounded-full bg-white/90 dark:bg-zinc-50/95 shadow-sm transition-all duration-300 ${
                 lang === 'es' ? 'left-0.5' : 'left-[1.65rem]'
               }`}
             />
-            <span className={`relative z-10 flex-1 text-center ${lang === 'es' ? 'text-zinc-950' : 'text-zinc-500'}`}>ES</span>
-            <span className={`relative z-10 flex-1 text-center ${lang === 'en' ? 'text-zinc-950' : 'text-zinc-500'}`}>EN</span>
+            <span className={`relative z-10 flex-1 text-center ${lang === 'es' ? 'text-slate-900' : 'text-slate-500 dark:text-zinc-500'}`}>ES</span>
+            <span className={`relative z-10 flex-1 text-center ${lang === 'en' ? 'text-slate-900' : 'text-slate-500 dark:text-zinc-500'}`}>EN</span>
           </button>
         </NavbarItem>
         <NavbarItem className='hidden sm:flex'>
@@ -121,7 +129,7 @@ export const Topbar = () => {
                     toast.success('Sesión iniciada correctamente')
                   })
                 }
-                className='bg-zinc-50 text-zinc-950 font-semibold hover:bg-zinc-200 transition-colors cursor-pointer'
+                className='bg-slate-900 text-white dark:bg-zinc-50 dark:text-slate-900 font-semibold hover:bg-slate-700 dark:hover:bg-zinc-200 transition-colors cursor-pointer'
               >
                 {t('nav.signIn')}
               </Button>
@@ -144,10 +152,10 @@ export const Topbar = () => {
       <NavbarContent className='sm:hidden pr-3 w-full' justify='center'>
         <NavbarBrand>
           <Link
-            className='flex flex-row gap-2 items-center cursor-pointer text-zinc-50'
+            className='flex flex-row gap-2 items-center cursor-pointer text-slate-900 dark:text-zinc-50'
             onPress={() => pushLocation('/')}
           >
-            <Image src={Logo} width={32} height={32} radius='full' className='ring-1 ring-zinc-700' />
+            <Image src={Logo} width={32} height={32} radius='full' className='ring-1 ring-slate-200 dark:ring-zinc-700' />
             <p className='font-semibold text-base text-inherit'>Artdle</p>
           </Link>
         </NavbarBrand>

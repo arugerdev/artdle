@@ -79,7 +79,7 @@ export const LikeButton = ({ data = {} }) => {
         </Button>
       </Tooltip>
       {!loading && (
-        <small className='text-xs font-mono font-medium text-zinc-400'>
+        <small className='text-xs font-mono font-medium text-slate-500 dark:text-zinc-400'>
           {abbrNum(counter, 2)}
         </small>
       )}

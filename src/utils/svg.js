@@ -1,52 +1,53 @@
-// SVG export — build a vector representation of the strokes so the
-// artwork can be downloaded losslessly. Bucket fills (raster dataURLs)
-// are skipped, same as the timelapse replay.
+// SVG export.
+//
+// The old version walked the path list and emitted <path>/<rect>/<line>
+// elements per stroke, then skipped bucket fills entirely — meaning the
+// downloaded SVG never matched what was on screen. Now we just embed the
+// finished canvas (which already has all bucket fills baked in) as a
+// base64 PNG inside an <image> element. The result is a valid SVG that
+// renders exactly what the user sees, scales cleanly in any viewer, and
+// stays one file.
 
-import { TOOLS } from './tools'
+const WIDTH = 960
+const HEIGHT = 540
 
-function pointsToPath (points) {
-  if (!points || points.length < 2) return ''
-  const out = [`M ${points[0]} ${points[1]}`]
-  for (let i = 2; i < points.length; i += 2) {
-    out.push(`L ${points[i]} ${points[i + 1]}`)
-  }
-  return out.join(' ')
-}
-
-export function linesToSVG (lines, { width = 960, height = 540 } = {}) {
-  const body = lines
-    .filter(l => l.tool !== TOOLS.BUCKET && l.points)
-    .map(l => {
-      const isEraser = l.tool === TOOLS.ERASER
-      const stroke = isEraser ? '#ffffff' : l.stroke
-      const width = l.strokeWidth
-      if (l.tool === TOOLS.RECT && l.points.length >= 4) {
-        const [x1, y1, x2, y2] = l.points
-        const x = Math.min(x1, x2)
-        const y = Math.min(y1, y2)
-        const w = Math.abs(x2 - x1)
-        const h = Math.abs(y2 - y1)
-        return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="${stroke}" stroke-width="${width}" />`
-      }
-      if (l.tool === TOOLS.LINE && l.points.length >= 4) {
-        const [x1, y1, x2, y2] = l.points
-        return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${width}" stroke-linecap="round" />`
-      }
-      // PENCIL or ERASER freehand
-      const d = pointsToPath(l.points)
-      return `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" />`
-    })
-    .join('\n  ')
-
+export function canvasToSVG (canvas, { width = WIDTH, height = HEIGHT } = {}) {
+  const dataUrl = canvas.toDataURL('image/png')
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
-  <rect width="${width}" height="${height}" fill="white" />
-  ${body}
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+  <image href="${dataUrl}" width="${width}" height="${height}" />
 </svg>`
 }
 
-export function downloadSVG (lines, filename = 'drawing.svg') {
-  const svg = linesToSVG(lines)
+export function downloadSVG (canvasOrLines, filename = 'drawing.svg', opts) {
+  // Back-compat: callers used to pass `lines`. Detect a canvas element
+  // and fall back to a minimal embed-of-blank-canvas otherwise.
+  let svg
+  if (canvasOrLines && typeof canvasOrLines === 'object' && 'toDataURL' in canvasOrLines) {
+    svg = canvasToSVG(canvasOrLines, opts)
+  } else {
+    // Lines-array input — render to an offscreen canvas first.
+    const c = document.createElement('canvas')
+    c.width = WIDTH
+    c.height = HEIGHT
+    const ctx = c.getContext('2d')
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, WIDTH, HEIGHT)
+    // Lazy import to avoid a cycle (canvasRender imports from this if extended).
+    import('./canvasRender.js').then(({ paintScene }) => {
+      paintScene(ctx, canvasOrLines ?? [])
+      svg = canvasToSVG(c, opts)
+      const blob = new Blob([svg], { type: 'image/svg+xml' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      a.click()
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
+    })
+    return
+  }
   const blob = new Blob([svg], { type: 'image/svg+xml' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')

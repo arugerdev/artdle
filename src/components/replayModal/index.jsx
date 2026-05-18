@@ -139,13 +139,19 @@ export const ReplayModal = ({ isOpen, onClose, drawId, drawName }) => {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} backdrop='blur' className='w-full max-w-4xl'>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      backdrop='blur'
+      className='w-full max-w-4xl'
+      classNames={{ base: 'ios-card text-slate-900 dark:text-zinc-100' }}
+    >
       <ModalContent>
         {close => (
           <>
             <ModalHeader className='flex flex-col gap-0 pb-2'>
               <h1 className='font-extrabold text-md'>Timelapse · {drawName}</h1>
-              <small className='text-slate-500 font-normal text-sm'>
+              <small className='text-slate-500 dark:text-zinc-400 font-normal text-sm'>
                 Mira cómo se dibujó paso a paso
               </small>
             </ModalHeader>
@@ -166,7 +172,7 @@ export const ReplayModal = ({ isOpen, onClose, drawId, drawName }) => {
                     ref={canvasRef}
                     width={VW}
                     height={VH}
-                    className='block rounded-2xl border border-slate-200/70 shadow-inner bg-white max-w-full h-auto'
+                    className='paper block rounded-2xl max-w-full h-auto'
                     style={{ width: `min(${VW}px, 100%)`, aspectRatio: `${VW}/${VH}` }}
                     role='img'
                     aria-label={`Timelapse de ${drawName}`}
@@ -189,10 +195,10 @@ export const ReplayModal = ({ isOpen, onClose, drawId, drawName }) => {
                       isIconOnly
                       radius='full'
                       aria-label={playing ? 'Pausar' : 'Reproducir'}
-                      className='bg-slate-900 text-white'
+                      className='bg-slate-900 text-white dark:bg-zinc-50 dark:text-slate-900'
                       onPress={onPlayPause}
                     >
-                      <PlayIcon className='w-4 h-4' />
+                      <PlayIcon size={16} />
                     </Button>
                     <Button size='sm' variant='light' onPress={onRestart}>
                       Reiniciar
@@ -203,7 +209,7 @@ export const ReplayModal = ({ isOpen, onClose, drawId, drawName }) => {
                           key={opt.label}
                           size='sm'
                           variant={i === speedIdx ? 'solid' : 'light'}
-                          className={i === speedIdx ? 'bg-slate-900 text-white' : ''}
+                          className={i === speedIdx ? 'bg-slate-900 text-white dark:bg-zinc-50 dark:text-slate-900' : ''}
                           onPress={() => setSpeedIdx(i)}
                         >
                           {opt.label}

@@ -76,7 +76,7 @@ export const DrawCard = ({ data, className = '', position = null }) => {
         onPress={onOpen}
         className={`w-full max-w-[500px] h-full cursor-pointer group ${className}`}
       >
-        <section className='flex flex-col items-center justify-start w-full text-center h-auto rounded-2xl text-zinc-100 gap-2 p-2 bg-zinc-900 border border-zinc-800 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-zinc-700 group-hover:shadow-[0_18px_40px_rgb(0,0,0,0.5)]'>
+        <section className='ios-card flex flex-col items-center justify-start w-full text-center h-auto rounded-2xl gap-2 p-2 text-slate-900 dark:text-zinc-100 transition-all duration-300 group-hover:-translate-y-1'>
           {position && (
             <p className='text-2xl leading-none' aria-label={`Posición ${position}`}>
               {position === 1
@@ -85,7 +85,7 @@ export const DrawCard = ({ data, className = '', position = null }) => {
                 ? '🥈'
                 : position === 3
                 ? '🥉'
-                : <span className='font-mono text-sm text-zinc-500'>#{position}</span>}
+                : <span className='font-mono text-sm text-slate-500 dark:text-zinc-500'>#{position}</span>}
             </p>
           )}
           <div className='w-full rounded-xl overflow-hidden bg-white'>
@@ -99,16 +99,16 @@ export const DrawCard = ({ data, className = '', position = null }) => {
           </div>
           <div className='flex flex-row w-full items-center justify-center gap-2 px-2'>
             <section className='flex flex-col items-start justify-center text-start w-full truncate gap-0'>
-              <h1 className='font-semibold truncate w-full text-zinc-100 text-sm'>{data.name}</h1>
-              <small className='text-zinc-500 text-[10px] font-mono'>
+              <h1 className='font-semibold truncate w-full text-slate-900 dark:text-zinc-100 text-sm'>{data.name}</h1>
+              <small className='text-slate-500 dark:text-zinc-500 text-[10px] font-mono'>
                 {new Date(data.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
               </small>
             </section>
             <LikeButton data={data} />
           </div>
-          <div className='flex flex-row w-full items-center justify-start gap-2 pt-2 px-2 pb-1 border-t border-zinc-800'>
-            <Avatar size='sm' src={userData?.avatar_url} className='border border-zinc-700 w-6 h-6' />
-            <small className='text-zinc-400 font-normal text-xs truncate'>
+          <div className='flex flex-row w-full items-center justify-start gap-2 pt-2 px-2 pb-1 border-t border-slate-200/60 dark:border-zinc-800/60'>
+            <Avatar size='sm' src={userData?.avatar_url} className='border border-slate-200 dark:border-zinc-700 w-6 h-6' />
+            <small className='text-slate-600 dark:text-zinc-400 font-normal text-xs truncate'>
               {userData?.username ?? 'Autor desconocido'}
             </small>
           </div>

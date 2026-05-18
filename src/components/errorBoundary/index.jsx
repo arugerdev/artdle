@@ -33,29 +33,29 @@ export class ErrorBoundary extends Component {
     const t = (k) => i18n.t(k)
     return (
       <main className='flex flex-col gap-8 justify-center items-center h-full w-full min-w-screen min-h-screen p-6'>
-        <section className='flex flex-col items-center justify-center text-center'>
-          <h1 className='font-extrabold text-2xl'>{t('errorBoundary.title')}</h1>
-          <h2 className='font-semibold text-gray-600 mt-2'>{t('errorBoundary.subtitle')}</h2>
-          <p className='font-mono text-xs text-gray-400 mt-4 max-w-prose break-words'>
+        <section className='ios-card flex flex-col items-center justify-center text-center max-w-md rounded-3xl p-8'>
+          <h1 className='font-extrabold text-2xl text-slate-900 dark:text-zinc-100'>{t('errorBoundary.title')}</h1>
+          <h2 className='font-semibold text-slate-500 dark:text-zinc-400 mt-2'>{t('errorBoundary.subtitle')}</h2>
+          <p className='font-mono text-xs text-slate-400 dark:text-zinc-500 mt-4 max-w-prose break-words'>
             {String(this.state.error?.message ?? this.state.error ?? 'Error desconocido')}
           </p>
-        </section>
-        <section className='flex flex-row items-center justify-center gap-2'>
-          <Button
-            variant='flat'
-            color='primary'
-            className='font-bold text-md'
-            onPress={this.handleReload}
-          >
-            {t('errorBoundary.reload')}
-          </Button>
-          <Button
-            variant='light'
-            className='font-bold text-md'
-            onPress={this.handleHome}
-          >
-            {t('errorBoundary.home')}
-          </Button>
+          <section className='flex flex-row items-center justify-center gap-2 mt-6'>
+            <Button
+              radius='full'
+              className='bg-slate-900 text-white dark:bg-zinc-50 dark:text-slate-900 font-semibold'
+              onPress={this.handleReload}
+            >
+              {t('errorBoundary.reload')}
+            </Button>
+            <Button
+              radius='full'
+              variant='light'
+              className='font-semibold text-slate-700 dark:text-zinc-300'
+              onPress={this.handleHome}
+            >
+              {t('errorBoundary.home')}
+            </Button>
+          </section>
         </section>
       </main>
     )
