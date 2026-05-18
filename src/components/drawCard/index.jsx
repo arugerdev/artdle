@@ -76,7 +76,7 @@ export const DrawCard = ({ data, className = '', position = null }) => {
         onPress={onOpen}
         className={`w-full max-w-[500px] h-full cursor-pointer group ${className}`}
       >
-        <section className='glass flex flex-col items-center justify-start w-full text-center h-auto rounded-2xl text-slate-900 gap-2 p-3 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_18px_40px_rgb(15,23,42,0.10)]'>
+        <section className='flex flex-col items-center justify-start w-full text-center h-auto rounded-2xl text-zinc-100 gap-2 p-2 bg-zinc-900 border border-zinc-800 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-zinc-700 group-hover:shadow-[0_18px_40px_rgb(0,0,0,0.5)]'>
           {position && (
             <p className='text-2xl leading-none' aria-label={`Posición ${position}`}>
               {position === 1
@@ -85,30 +85,30 @@ export const DrawCard = ({ data, className = '', position = null }) => {
                 ? '🥈'
                 : position === 3
                 ? '🥉'
-                : `#${position}`}
+                : <span className='font-mono text-sm text-zinc-500'>#{position}</span>}
             </p>
           )}
-          <Image
-            src={imageSrc}
-            radius='lg'
-            alt={`Dibujo "${data.name}" — palabra del día: ${data.daily_word ?? dailyWord ?? '?'}`}
-            isBlurred={!isMobile()}
-            isZoomed={!isMobile()}
-            classNames={{ wrapper: 'w-full' }}
-          />
-          <div className='w-full h-px bg-slate-200/60'></div>
-          <div className='flex flex-row w-full items-center justify-center gap-2'>
+          <div className='w-full rounded-xl overflow-hidden bg-white'>
+            <Image
+              src={imageSrc}
+              radius='none'
+              alt={`Dibujo "${data.name}" — palabra del día: ${data.daily_word ?? dailyWord ?? '?'}`}
+              isZoomed={!isMobile()}
+              classNames={{ wrapper: 'w-full !max-w-none' }}
+            />
+          </div>
+          <div className='flex flex-row w-full items-center justify-center gap-2 px-2'>
             <section className='flex flex-col items-start justify-center text-start w-full truncate gap-0'>
-              <h1 className='font-semibold truncate w-full text-slate-900'>{data.name}</h1>
-              <small className='text-slate-400 text-xs'>
-                {new Date(data.created_at).toString().split('GMT')[0]}
+              <h1 className='font-semibold truncate w-full text-zinc-100 text-sm'>{data.name}</h1>
+              <small className='text-zinc-500 text-[10px] font-mono'>
+                {new Date(data.created_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
               </small>
             </section>
             <LikeButton data={data} />
           </div>
-          <div className='flex flex-row w-full items-center justify-start gap-2 pt-1 border-t border-slate-100/80'>
-            <Avatar size='sm' src={userData?.avatar_url} className='border border-slate-200/60' />
-            <small className='text-slate-500 font-normal text-sm truncate'>
+          <div className='flex flex-row w-full items-center justify-start gap-2 pt-2 px-2 pb-1 border-t border-zinc-800'>
+            <Avatar size='sm' src={userData?.avatar_url} className='border border-zinc-700 w-6 h-6' />
+            <small className='text-zinc-400 font-normal text-xs truncate'>
               {userData?.username ?? 'Autor desconocido'}
             </small>
           </div>

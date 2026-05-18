@@ -32,7 +32,7 @@ export const ColorPickerPopover = ({ color, setColor, isDisabled = false }) => {
       onOpenChange={setOpen}
       backdrop='transparent'
       classNames={{
-        content: 'p-0 border border-slate-200/70 bg-white/80 backdrop-blur-xl shadow-xl'
+        content: 'p-0 border border-zinc-800 bg-zinc-900 shadow-2xl'
       }}
     >
       <PopoverTrigger>
@@ -41,7 +41,7 @@ export const ColorPickerPopover = ({ color, setColor, isDisabled = false }) => {
           disabled={isDisabled}
           aria-label={`Abrir selector de color · ${color.toUpperCase()}`}
           title={`Color · ${color.toUpperCase()}`}
-          className='w-9 h-9 rounded-full border-2 border-white shadow-inner ring-1 ring-slate-300 hover:ring-slate-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed'
+          className='w-9 h-9 rounded-full border-2 border-zinc-700 shadow-inner ring-1 ring-zinc-950 hover:ring-zinc-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed'
           style={{ background: color }}
         />
       </PopoverTrigger>
@@ -61,17 +61,18 @@ export const ColorPickerPopover = ({ color, setColor, isDisabled = false }) => {
             onValueChange={commit}
             startContent={
               <span
-                className='w-5 h-5 rounded-md border border-slate-200'
+                className='w-5 h-5 rounded-md border border-zinc-700'
                 style={{ background: /^#[0-9a-fA-F]{6}$/.test(hex) ? hex : color }}
               />
             }
             classNames={{
-              input: 'font-mono text-sm uppercase',
-              inputWrapper: 'min-h-[2rem] h-8'
+              label: 'text-zinc-400 text-xs',
+              input: 'font-mono text-sm uppercase text-zinc-100',
+              inputWrapper: 'min-h-[2rem] h-8 bg-zinc-800/50 border-zinc-700 data-[hover=true]:border-zinc-600 group-data-[focus=true]:border-zinc-400'
             }}
           />
           <div>
-            <p className='text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1'>
+            <p className='text-[10px] font-semibold uppercase tracking-widest text-zinc-500 mb-1'>
               Accesibles
             </p>
             <div className='grid grid-cols-8 gap-1'>
@@ -83,8 +84,8 @@ export const ColorPickerPopover = ({ color, setColor, isDisabled = false }) => {
                   onClick={() => { setHex(c); setColor(c) }}
                   className={`w-5 h-5 rounded-md border transition-transform hover:scale-110 ${
                     color.toLowerCase() === c.toLowerCase()
-                      ? 'border-2 border-slate-900 scale-110'
-                      : 'border-slate-200'
+                      ? 'border-2 border-zinc-50 scale-110'
+                      : 'border-zinc-700'
                   }`}
                   style={{ background: c }}
                 />

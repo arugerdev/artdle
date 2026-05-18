@@ -31,8 +31,8 @@ export const LayerPanel = ({ layers, activeLayer, setLayers, setActiveLayer }) =
               onClick={() => toggle(layer.id)}
               className={`text-xs w-6 h-6 flex items-center justify-center rounded-md border transition-colors ${
                 layer.visible
-                  ? 'border-slate-300 text-slate-700 hover:bg-slate-100'
-                  : 'border-slate-200 text-slate-400 hover:bg-slate-50'
+                  ? 'border-zinc-700 text-zinc-300 hover:bg-zinc-800'
+                  : 'border-zinc-800 text-zinc-600 hover:bg-zinc-900'
               }`}
             >
               {layer.visible ? '👁' : '◌'}
@@ -52,8 +52,8 @@ export const LayerPanel = ({ layers, activeLayer, setLayers, setActiveLayer }) =
               onClick={() => setActiveLayer(layer.id)}
               className={`text-xs w-6 h-6 flex items-center justify-center rounded-md font-semibold transition-colors ${
                 activeLayer === layer.id
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'bg-slate-100/70 text-slate-600 hover:bg-slate-200/70'
+                  ? 'bg-zinc-50 text-zinc-950 shadow-sm'
+                  : 'bg-zinc-800/70 text-zinc-400 hover:bg-zinc-700/70'
               }`}
             >
               {layer.id + 1}

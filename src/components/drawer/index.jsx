@@ -19,7 +19,6 @@ import { canvasToCompressedDataURL, dataURLToBlob, resolveDrawImage } from '../.
 import { loadDraft, saveDraft, clearDraft } from '../../utils/offlineDraft.js'
 import { LayerPanel } from '../layerPanel/index.jsx'
 import { ColorPickerPopover } from '../colorPickerPopover/index.jsx'
-import { PaletteSwatches } from '../paletteSwatches/index.jsx'
 import { downloadSVG } from '../../utils/svg.js'
 import { paintScene, strokePath, applyBucket, sampleColor } from '../../utils/canvasRender.js'
 
@@ -396,17 +395,17 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
     <div
       role='separator'
       aria-hidden='true'
-      className='bg-slate-200/70 self-stretch h-px w-full lg:h-px lg:w-full lg:my-0.5'
+      className='bg-zinc-800 self-stretch h-px w-full lg:h-px lg:w-full lg:my-1'
     />
   )
 
   return (
     <section
-      className={`${className} glass flex flex-col items-start gap-3 p-3 sm:p-4 w-full h-full max-w-screen rounded-3xl`}
+      className={`${className} surface flex flex-col items-start gap-3 p-3 sm:p-4 w-full h-full max-w-screen rounded-3xl`}
     >
       <section className='flex flex-col-reverse items-center lg:items-start justify-center w-full lg:flex-row gap-3'>
         {/* TOOLBAR */}
-        <section className='glass-strong flex flex-row flex-wrap w-full lg:max-w-[68px] h-auto lg:flex-col items-center justify-start rounded-2xl gap-1.5 p-2'>
+        <section className='surface-3 flex flex-row flex-wrap w-full lg:max-w-[60px] h-auto lg:flex-col items-center justify-start rounded-2xl gap-1 p-1.5'>
           <Pencil activeTool={activeTool} setActiveTool={setActiveTool} isDrawed={isDrawed} />
           <Eraser activeTool={activeTool} setActiveTool={setActiveTool} isDrawed={isDrawed} />
           <ColorBucket activeTool={activeTool} setActiveTool={setActiveTool} isDrawed={isDrawed} />
@@ -417,7 +416,6 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
           <Divider />
 
           <ColorPickerPopover color={color} setColor={setColor} isDisabled={isDrawed} />
-          <PaletteSwatches color={color} setColor={setColor} isDisabled={isDrawed} />
 
           <Divider />
 
@@ -463,6 +461,7 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
                 placement='right'
                 delay={400}
                 closeDelay={0}
+                classNames={{ content: 'bg-zinc-900 border border-zinc-800 text-zinc-100' }}
               >
                 <Slider
                   size='sm'
@@ -474,13 +473,18 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
                   defaultValue={10}
                   value={size}
                   startContent={
-                    <small className='text-xs font-mono text-slate-500 w-7 text-right'>
+                    <small className='text-[10px] font-mono text-zinc-400 w-6 text-right'>
                       {size.toFixed(0)}
                     </small>
                   }
                   onChange={setSize}
                   className='max-h-[140px] h-auto lg:h-[150px]'
                   isDisabled={isDrawed}
+                  classNames={{
+                    track: 'bg-zinc-800',
+                    filler: 'bg-zinc-300',
+                    thumb: 'bg-zinc-50 border-2 border-zinc-300'
+                  }}
                 />
               </Tooltip>
             </>
@@ -492,7 +496,7 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
           {!isMobile() && cursorPos.visible && !isDrawed && (
             <div
               aria-hidden='true'
-              className='fixed pointer-events-none z-10 rounded-full border border-slate-700 bg-slate-700/10 mix-blend-multiply'
+              className='fixed pointer-events-none z-10 rounded-full border border-zinc-900/70 bg-zinc-900/10'
               style={{
                 left: `${cursorPos.x - size / 2}px`,
                 top: `${cursorPos.y - size / 2}px`,
@@ -508,7 +512,7 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
                 ref={committedCanvasRef}
                 width={VW}
                 height={VH}
-                className='block rounded-2xl bg-white shadow-inner border border-slate-200/70 max-w-full h-auto'
+                className='paper block rounded-2xl max-w-full h-auto'
                 style={{ width: `min(${VW}px, 100%)`, aspectRatio: `${VW}/${VH}` }}
                 role='img'
                 aria-label={`Lienzo de dibujo, palabra del día: ${dailyWord}`}
@@ -531,27 +535,27 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
             <img
               src={uriData}
               alt={name}
-              className='w-[960px] max-w-full h-auto rounded-2xl border border-slate-200/70 shadow-inner'
+              className='paper w-[960px] max-w-full h-auto rounded-2xl'
             />
           )}
         </div>
       </section>
 
       {/* ACTION BAR */}
-      <section className='glass-strong flex flex-row flex-wrap items-center justify-end w-full h-auto rounded-2xl gap-2 p-2.5'>
+      <section className='surface-3 flex flex-row flex-wrap items-center justify-end w-full h-auto rounded-2xl gap-2 p-2'>
         <Input
           type='title'
           variant='bordered'
           isClearable
           placeholder='Pon un nombre a tu creación...'
-          label={<span className='text-xs font-medium uppercase tracking-wider text-slate-500'>Nombre</span>}
+          label={<span className='text-[10px] font-medium uppercase tracking-widest text-zinc-500'>Nombre</span>}
           labelPlacement='outside'
           isDisabled={isDrawed}
           value={name}
           onValueChange={setName}
           classNames={{
-            inputWrapper: 'min-h-[2.5rem] bg-white/50 backdrop-blur-md border-slate-200/70 data-[hover=true]:border-slate-300 group-data-[focus=true]:border-slate-400 group-data-[focus=true]:bg-white/70',
-            input: 'text-sm'
+            inputWrapper: 'min-h-[2.5rem] bg-zinc-900/60 border-zinc-700 data-[hover=true]:border-zinc-600 group-data-[focus=true]:border-zinc-400',
+            input: 'text-sm text-zinc-100 placeholder:text-zinc-500'
           }}
         />
 
@@ -562,9 +566,9 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
             isIconOnly
             aria-label='Descargar PNG'
             onPress={handleSave}
-            className='bg-white/60 backdrop-blur-md border border-slate-200/60'
+            className='bg-zinc-800/60 border border-zinc-700 text-zinc-200 hover:bg-zinc-700'
           >
-            <DownloadIcon className='w-5 h-5 text-slate-700' />
+            <DownloadIcon className='w-5 h-5' />
           </Button>
         </Tooltip>
 
@@ -576,9 +580,9 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
             aria-label='Descargar SVG'
             isDisabled={paths.length === 0}
             onPress={() => downloadSVG(paths, `${name}-${Date.now()}.svg`)}
-            className='bg-white/60 backdrop-blur-md border border-slate-200/60'
+            className='bg-zinc-800/60 border border-zinc-700 text-zinc-200 hover:bg-zinc-700'
           >
-            <SvgExportIcon className='w-5 h-5 text-slate-700' />
+            <SvgExportIcon className='w-5 h-5' />
           </Button>
         </Tooltip>
 
@@ -603,7 +607,7 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
             isLoading={loading}
             onPress={sendDraw}
             isDisabled={isDrawed || name.length < 2}
-            className='bg-slate-900 text-white hover:bg-slate-700 transition-colors'
+            className='bg-zinc-50 text-zinc-950 hover:bg-zinc-200 disabled:bg-zinc-800 disabled:text-zinc-600 transition-colors'
           >
             <SendIcon className='w-5 h-5' />
           </Button>

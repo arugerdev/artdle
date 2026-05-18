@@ -3,13 +3,17 @@
 @tailwind utilities;
 
 /* ----------------------------------------------------------------------
- * Page surface — neutral slate base with two extremely faint radial
- * tints that give backdrop-blur something to soften. No screaming
- * gradients on visible content; this lives behind glass panels only.
+ * Dark editorial palette — zinc-based neutrals, warm undertone.
+ * The canvas itself stays white so drawing feels like real paper; the
+ * chrome around it is dark so the work-in-progress draws the eye.
  * --------------------------------------------------------------------*/
 html, body {
   min-height: 100%;
-  background-color: #f8fafc; /* slate-50 */
+  background-color: #0a0a0b; /* near-black neutral, warmer than slate-950 */
+  color: #fafafa;
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body::before {
@@ -18,53 +22,59 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  /* Single very faint warm tint, no rainbow. Sits behind everything. */
   background-image:
-    radial-gradient(40rem 40rem at 12% 8%, rgba(99, 102, 241, 0.06), transparent 60%),
-    radial-gradient(36rem 36rem at 92% 88%, rgba(244, 114, 182, 0.05), transparent 60%);
+    radial-gradient(60rem 60rem at 80% -10%, rgba(245, 158, 11, 0.04), transparent 70%),
+    radial-gradient(50rem 50rem at -10% 110%, rgba(99, 102, 241, 0.04), transparent 70%);
 }
 
 /* ----------------------------------------------------------------------
- * Glass surface utility — apply with `.glass` on any container.
- * Tuned so it works whether the surface is on slate-50 or on top of
- * a card grid.
+ * Surface utilities — opaque dark cards with hairline borders. No
+ * glass/blur on dark backgrounds because it just looks muddy.
  * --------------------------------------------------------------------*/
 @layer components {
-  .glass {
-    @apply bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgb(15,23,42,0.06)];
+  .surface {
+    @apply bg-zinc-900 border border-zinc-800 shadow-[0_1px_0_0_rgb(255,255,255,0.04)_inset,0_30px_60px_-20px_rgb(0,0,0,0.6)];
   }
-  .glass-strong {
-    @apply bg-white/85 backdrop-blur-xl border border-white/70 shadow-[0_10px_40px_rgb(15,23,42,0.08)];
+  .surface-2 {
+    @apply bg-zinc-900/70 border border-zinc-800 backdrop-blur-md;
   }
-  .glass-subtle {
-    @apply bg-white/40 backdrop-blur-md border border-white/50;
+  .surface-3 {
+    @apply bg-zinc-800/60 border border-zinc-700/60;
   }
+  /* legacy aliases used in a couple of places — point to the dark surface */
+  .glass { @apply surface; }
+  .glass-strong { @apply surface; }
+  .glass-subtle { @apply surface-2; }
+
+  .hairline { @apply border-b border-zinc-800; }
 }
 
 /* ----------------------------------------------------------------------
- * Loader — same animation as before, slimmer for the new look.
+ * Loader — bright on dark.
  * --------------------------------------------------------------------*/
 .loader {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 80px;
+  height: 80px;
 }
 .loader::before,
 .loader::after {
   content: '';
   position: absolute;
-  width: 24px;
-  height: 24px;
-  border-radius: 8px;
-  background-color: rgb(71, 85, 105); /* slate-600 */
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  background-color: rgb(244, 244, 245); /* zinc-100 */
   left: 50%;
   top: 50%;
   animation: rotate 1s ease-in infinite;
 }
 .loader::after {
-  width: 14px;
-  height: 14px;
-  border-radius: 6px;
-  background-color: rgb(148, 163, 184); /* slate-400 */
+  width: 10px;
+  height: 10px;
+  border-radius: 4px;
+  background-color: rgb(161, 161, 170); /* zinc-400 */
   animation: rotate 1s ease-in infinite, moveY 1s ease-in infinite;
 }
 
@@ -80,4 +90,14 @@ body::before {
   60% { transform: translate(-50%, 100%) rotate(180deg) scale(1, 1); }
   75% { transform: translate(-50%, 0%) rotate(270deg) scale(1, 1); }
   100% { transform: translate(-50%, -100%) rotate(360deg) scale(1, 1); }
+}
+
+/* ----------------------------------------------------------------------
+ * The canvas itself: paper-like, brightest element on screen.
+ * --------------------------------------------------------------------*/
+.paper {
+  background-color: #ffffff;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 30px 80px -20px rgba(0,0,0,0.7);
 }
