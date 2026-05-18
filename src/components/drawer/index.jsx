@@ -221,6 +221,31 @@ export const Drawer = ({
 
       if (insertError) throw insertError
 
+      // Best-effort timelapse upload — failing here should NOT roll back
+      // the draw. Bucket strokes are skipped: their payload includes the
+      // whole canvas dataURL, which doesn't fit our 500 KB JSON budget.
+      const drawId = inserted?.[0]?.id
+      if (drawId) {
+        const strokesForReplay = lines
+          .filter(l => l.tool !== TOOLS.BUCKET && l.points)
+          .map(l => ({
+            tool: l.tool,
+            points: l.points,
+            stroke: l.stroke,
+            strokeWidth: l.strokeWidth
+          }))
+        if (strokesForReplay.length > 0) {
+          supabase
+            .from('draw_strokes')
+            .insert({ draw_id: drawId, strokes: strokesForReplay })
+            .then(({ error: strokesError }) => {
+              if (strokesError) {
+                console.warn('[Drawer] Failed to save timelapse:', strokesError.message)
+              }
+            })
+        }
+      }
+
       setDrawData(inserted)
       toast.success(
         'El dibujo se ha subido correctamente, gracias por jugar! Espera hasta mañana para otra palabra diferente!'

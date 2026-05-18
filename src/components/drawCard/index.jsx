@@ -11,7 +11,7 @@ import {
   Image,
   Avatar
 } from '@nextui-org/react'
-import { DownloadIcon } from '../../assets/icons'
+import { DownloadIcon, PlayIcon } from '../../assets/icons'
 import { Tooltip } from '@nextui-org/react'
 import { LikeButton } from './../likeButton/index'
 import { getDailyWord, getUserData } from '../../utils/supabase'
@@ -20,9 +20,15 @@ import { OptionsButton } from './../optionsButton/index'
 import { isMobile } from '../../utils/system'
 import { ShareButton } from './../shareButton/index'
 import { resolveDrawImage } from '../../utils/image'
+import { ReplayModal } from '../replayModal'
 export const DrawCard = ({ data, className = '', position = null }) => {
   const imageSrc = resolveDrawImage(data, { supabaseUrl: import.meta.env.VITE_SUPABASE_URL })
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: replayOpen,
+    onOpen: openReplay,
+    onClose: closeReplay
+  } = useDisclosure()
 
   // Prefer joined-view fields when present; fall back to lazy fetches
   // so the card still works if invoked with a plain `draws` row.
@@ -152,6 +158,16 @@ export const DrawCard = ({ data, className = '', position = null }) => {
                         <ShareButton data={data} dailyWord={dailyWord} />
                       </section>
                       <Button
+                        color='secondary'
+                        variant='flat'
+                        onPress={openReplay}
+                        startContent={<PlayIcon />}
+                        isIconOnly={window.innerWidth <= 1000}
+                        aria-label='Ver timelapse'
+                      >
+                        {window.innerWidth <= 1000 ? '' : 'Timelapse'}
+                      </Button>
+                      <Button
                         color='success'
                         variant='flat'
                         onPress={() => {
@@ -179,6 +195,12 @@ export const DrawCard = ({ data, className = '', position = null }) => {
               )}
             </ModalContent>
           </Modal>
+          <ReplayModal
+            isOpen={replayOpen}
+            onClose={closeReplay}
+            drawId={data.id}
+            drawName={data.name}
+          />
         </section>
       </Link>
     </Tooltip>
