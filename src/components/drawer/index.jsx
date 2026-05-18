@@ -31,6 +31,8 @@ import { Rect as RectTool } from './../tools/rect/index'
 import { ShareButton } from '../shareButton/index.jsx'
 import { stageToCompressedDataURL, dataURLToBlob, resolveDrawImage } from '../../utils/image.js'
 import { loadDraft, saveDraft, clearDraft } from '../../utils/offlineDraft.js'
+import { LayerPanel } from '../layerPanel/index.jsx'
+import { Tooltip } from '@nextui-org/react'
 import { PaletteSwatches } from '../paletteSwatches/index.jsx'
 import { downloadSVG } from '../../utils/svg.js'
 import { SvgExportIcon } from '../../assets/icons'
@@ -392,16 +394,26 @@ export const Drawer = ({
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+  // Visual separator between tool groups in the toolbar. Horizontal on
+  // mobile, vertical on desktop because the toolbar pivots orientation.
+  const Divider = () => (
+    <div
+      role='separator'
+      aria-hidden='true'
+      className='bg-slate-200 self-stretch h-px w-full lg:h-px lg:w-full lg:my-0.5'
+    />
+  )
+
   return (
     <section
-      className={`${className} flex flex-col bg-slate-100 items-start justify gap-2 p-4 w-full h-full max-w-screen shadow-lg rounded-xl`}
+      className={`${className} flex flex-col bg-slate-50 items-start gap-3 p-3 sm:p-4 w-full h-full max-w-screen shadow-lg rounded-2xl border border-slate-200`}
     >
-      <section className='flex flex-col-reverse items-center lg:items-start justify-center w-full lg:flex-row gap-2'>
-        <section className='flex flex-row w-full lg:max-w-[64px] h-auto lg:flex-col border-r-2 items-center justify-start shadow-lg rounded-lg bg-white gap-2 p-2'>
+      <section className='flex flex-col-reverse items-center lg:items-start justify-center w-full lg:flex-row gap-3'>
+        <section className='flex flex-row flex-wrap w-full lg:max-w-[72px] h-auto lg:flex-col items-center justify-start shadow-md rounded-xl bg-white gap-1.5 p-2 border border-slate-200'>
           {!isMobile() && (
             <div
               aria-hidden='true'
-              className={`fixed left-0 top-0 w-3 h-3 z-10 bg-transparent border-1 border-black rounded-full `}
+              className='fixed left-0 top-0 w-3 h-3 z-10 bg-transparent border border-black rounded-full'
               style={{
                 pointerEvents: 'none',
                 left: `${mousePosition.x - size / 2}px`,
@@ -411,6 +423,8 @@ export const Drawer = ({
               }}
             ></div>
           )}
+
+          {/* Drawing tools */}
           <Pencil
             activeTool={activeTool}
             setActiveTool={setActiveTool}
@@ -438,7 +452,6 @@ export const Drawer = ({
             setActiveTool={setActiveTool}
             isDrawed={isDrawed}
           />
-
           <EyeDropper
             activeTool={activeTool}
             setActiveTool={setActiveTool}
@@ -446,109 +459,103 @@ export const Drawer = ({
             isDrawed={isDrawed}
           />
 
-          <input
-            type='color'
-            value={color}
-            onChange={e => setColor(e.target.value)}
-            className='bg-transparent rounded-full justify-center p-1 w-[40px] h-[40px] cursor-pointer'
-            disabled={isDrawed}
-            aria-label='Selector de color'
-          ></input>
+          <Divider />
+
+          {/* Colour controls */}
+          <Tooltip
+            content={
+              <div className='flex flex-col gap-0'>
+                <span className='font-semibold text-xs'>Selector de color</span>
+                <span className='text-[10px] text-gray-500 font-mono'>{color.toUpperCase()}</span>
+              </div>
+            }
+            placement='right'
+            delay={200}
+            closeDelay={0}
+          >
+            <input
+              type='color'
+              value={color}
+              onChange={e => setColor(e.target.value)}
+              className='bg-transparent rounded-full justify-center p-1 w-9 h-9 cursor-pointer border border-slate-200 hover:border-slate-400 transition-colors'
+              disabled={isDrawed}
+              aria-label='Selector de color'
+            />
+          </Tooltip>
           <PaletteSwatches color={color} setColor={setColor} isDisabled={isDrawed} />
 
+          <Divider />
+
+          {/* History / cleanup */}
           <ToolBarButton
             icon={<UndoIcon className='w-full h-full' />}
             onPress={() =>
-              handleUndoChanges(
-                lines,
-                setLines,
-                redoLines,
-                setRedoLines,
-                isDrawed
-              )
+              handleUndoChanges(lines, setLines, redoLines, setRedoLines, isDrawed)
             }
-            isDisabled={isDrawed}
-            name='Undo / Deshacer ( CTRL + Z )'
-            description={
-              'Se utiliza para deshacer o borrar el último paso o acción realizado/a.'
-            }
+            isDisabled={isDrawed || lines.length === 0}
+            name='Deshacer ( Ctrl + Z )'
+            description='Deshace el último trazo o acción.'
           />
           <ToolBarButton
             icon={<RedoIcon className='w-full h-full' />}
             onPress={() =>
-              handleRedoChanges(
-                lines,
-                setLines,
-                redoLines,
-                setRedoLines,
-                isDrawed
-              )
+              handleRedoChanges(lines, setLines, redoLines, setRedoLines, isDrawed)
             }
-            isDisabled={isDrawed}
-            name='Redo / Rehacer ( CTRL + Y )'
-            description={
-              'Se utiliza para rehacer o volver al último paso o acción realizado/a.'
-            }
+            isDisabled={isDrawed || redoLines.length === 0}
+            name='Rehacer ( Ctrl + Y )'
+            description='Rehace el último trazo deshecho.'
           />
-
           <ToolBarButton
             icon={<PaperIcon className='w-full h-full' />}
             onPress={() => setLines([])}
-            isDisabled={isDrawed}
-            name='Clear / Limpiar'
-            description={
-              'Se utiliza para borrar todo el lienzo CUIDADO CON ESTO, BORRARÁ TODO EL DIBUJO, se utiliza cuando quieres empezar desde el comienzo a dibujar.'
-            }
+            isDisabled={isDrawed || lines.length === 0}
+            name='Limpiar lienzo'
+            description='⚠ Borra todo el lienzo. Úsalo si quieres empezar de cero.'
           />
 
           {!isDrawed && (
-            <div
-              className='flex flex-row lg:flex-col gap-1 border border-slate-200 rounded-md p-1 mt-0 lg:mt-1'
-              aria-label='Capas'
-            >
-              {layers.map(layer => (
-                <div key={layer.id} className='flex flex-row items-center gap-1'>
-                  <button
-                    type='button'
-                    aria-label={`${layer.visible ? 'Ocultar' : 'Mostrar'} ${layer.name}`}
-                    onClick={() =>
-                      setLayers(prev => prev.map(l => l.id === layer.id ? { ...l, visible: !l.visible } : l))
-                    }
-                    className='text-xs w-5 h-5 flex items-center justify-center'
-                  >
-                    {layer.visible ? '👁' : '◌'}
-                  </button>
-                  <button
-                    type='button'
-                    aria-pressed={activeLayer === layer.id}
-                    aria-label={`Capa activa: ${layer.name}`}
-                    onClick={() => setActiveLayer(layer.id)}
-                    className={`text-xs px-1 rounded ${activeLayer === layer.id ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-700'}`}
-                  >
-                    {layer.id + 1}
-                  </button>
-                </div>
-              ))}
-            </div>
+            <>
+              <Divider />
+              <LayerPanel
+                layers={layers}
+                activeLayer={activeLayer}
+                setLayers={setLayers}
+                setActiveLayer={setActiveLayer}
+              />
+            </>
           )}
 
           {(activeTool === TOOLS.PENCIL || activeTool === TOOLS.ERASER) && (
-            <Slider
-              size='sm'
-              step={1}
-              maxValue={120}
-              minValue={1}
-              orientation={
-                window.innerWidth >= 1024 ? 'vertical' : 'horizontal'
-              }
-              aria-label='Size'
-              defaultValue={10}
-              value={size}
-              startContent={<small>{size.toFixed(0)}px</small>}
-              onChange={setSize}
-              className='max-h-[140px] h-auto lg:h-[150px]'
-              isDisabled={isDrawed}
-            />
+            <>
+              <Divider />
+              <Tooltip
+                content={`Tamaño del pincel: ${size.toFixed(0)} px`}
+                placement='right'
+                delay={400}
+                closeDelay={0}
+              >
+                <Slider
+                  size='sm'
+                  step={1}
+                  maxValue={120}
+                  minValue={1}
+                  orientation={
+                    window.innerWidth >= 1024 ? 'vertical' : 'horizontal'
+                  }
+                  aria-label='Tamaño del pincel'
+                  defaultValue={10}
+                  value={size}
+                  startContent={
+                    <small className='text-xs font-mono text-slate-500 w-7 text-right'>
+                      {size.toFixed(0)}
+                    </small>
+                  }
+                  onChange={setSize}
+                  className='max-h-[140px] h-auto lg:h-[150px]'
+                  isDisabled={isDrawed}
+                />
+              </Tooltip>
+            </>
           )}
         </section>
 
@@ -570,59 +577,111 @@ export const Drawer = ({
             onPointerMove={handleMouseMove}
             onPointerUp={handleMouseUp}
             ref={stageRef}
-            className='touch-none border-2 border-slate-600 rounded-sm p-px w-fit h-fit'
+            className='touch-none border border-slate-300 shadow-inner rounded-lg bg-white p-px w-fit h-fit'
           >
             <Layer>{renderLines()}</Layer>
           </Stage>
         )}
-        {isDrawed && <img src={uriData} className='w-[960px] h-[540px]' />}
+        {isDrawed && (
+          <img
+            src={uriData}
+            alt={name}
+            className='w-[960px] max-w-full h-auto rounded-lg border border-slate-300 shadow-inner'
+          />
+        )}
       </section>
 
-      <section className='flex flex-row border-r-2 items-center justify-end shadow-lg w-full h-auto rounded-lg bg-white gap-2 p-2'>
+      <section className='flex flex-row flex-wrap items-center justify-end shadow-md w-full h-auto rounded-xl bg-white gap-2 p-2.5 border border-slate-200'>
         <Input
           type='title'
-          title='Nombre'
           variant='faded'
           color='primary'
-          isClearable={true}
-          placeholder='Pon un nombre a tu creacción...'
-          label={<strong>Nombre de tu creacción</strong>}
+          isClearable
+          placeholder='Pon un nombre a tu creación...'
+          label={<strong>Nombre de tu creación</strong>}
           labelPlacement='inside'
           isDisabled={isDrawed}
           value={name}
           onValueChange={setName}
-        ></Input>
+          classNames={{
+            inputWrapper: 'min-h-[3rem]'
+          }}
+        />
 
-        <Button
-          className={`${
-            activeTool === 3 ? 'border-2 border-blue-500 bg-slate-300' : ''
-          } bg-transparent justify-center p-2`}
-          isIconOnly
-          aria-label='Descargar PNG'
-          onPress={() => handleSave(uriData !== null)}
+        <Tooltip
+          content={
+            <div className='flex flex-col'>
+              <span className='font-semibold text-xs'>Descargar PNG</span>
+              <span className='text-[10px] text-gray-500'>Imagen rasterizada</span>
+            </div>
+          }
+          placement='top'
+          delay={200}
+          closeDelay={0}
         >
-          <DownloadIcon className='w-full h-full' />
-        </Button>
-        <Button
-          className='bg-transparent justify-center p-2'
-          isIconOnly
-          aria-label='Descargar SVG'
-          isDisabled={lines.length === 0}
-          onPress={() => downloadSVG(lines, `${name}-${Date.now()}.svg`)}
+          <Button
+            variant='flat'
+            isIconOnly
+            aria-label='Descargar PNG'
+            onPress={() => handleSave(uriData !== null)}
+          >
+            <DownloadIcon className='w-full h-full p-2' />
+          </Button>
+        </Tooltip>
+
+        <Tooltip
+          content={
+            <div className='flex flex-col'>
+              <span className='font-semibold text-xs'>Descargar SVG</span>
+              <span className='text-[10px] text-gray-500'>Vectorial · sin pérdida</span>
+            </div>
+          }
+          placement='top'
+          delay={200}
+          closeDelay={0}
         >
-          <SvgExportIcon className='w-full h-full' />
-        </Button>
+          <Button
+            variant='flat'
+            isIconOnly
+            aria-label='Descargar SVG'
+            isDisabled={lines.length === 0}
+            onPress={() => downloadSVG(lines, `${name}-${Date.now()}.svg`)}
+          >
+            <SvgExportIcon className='w-full h-full p-2' />
+          </Button>
+        </Tooltip>
+
         {isDrawed && <ShareButton data={drawData[0]} dailyWord={dailyWord} />}
 
-        <Button
-          className={`bg-success justify-center items-center p-2 shadow-xl`}
-          isIconOnly
-          isLoading={loading}
-          onPress={sendDraw}
-          isDisabled={isDrawed || name.length < 2}
+        <Tooltip
+          content={
+            <div className='flex flex-col'>
+              <span className='font-semibold text-xs'>
+                {isDrawed ? 'Dibujo enviado' : 'Enviar dibujo'}
+              </span>
+              <span className='text-[10px] text-gray-500'>
+                {name.length < 2 ? 'Pon un nombre primero' : 'Subir y publicar'}
+              </span>
+            </div>
+          }
+          placement='top'
+          delay={200}
+          closeDelay={0}
+          isDisabled={isDrawed}
         >
-          <SendIcon className='w-full h-full text-white' />
-        </Button>
+          <Button
+            color='success'
+            variant='shadow'
+            isIconOnly
+            aria-label='Enviar dibujo'
+            isLoading={loading}
+            onPress={sendDraw}
+            isDisabled={isDrawed || name.length < 2}
+            className='shadow-success/30'
+          >
+            <SendIcon className='w-full h-full p-2 text-white' />
+          </Button>
+        </Tooltip>
       </section>
     </section>
   )

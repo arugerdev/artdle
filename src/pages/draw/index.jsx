@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { Topbar } from '../../components/topbar/index'
 import { useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'

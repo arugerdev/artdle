@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react'
+import { Tooltip } from '@nextui-org/react'
 import { COLORBLIND_PALETTE } from '../../utils/tools'
 
 const STORAGE_KEY = 'artdle.palette'
@@ -35,17 +36,18 @@ export const PaletteSwatches = ({ color, setColor, isDisabled }) => {
         aria-label='Paleta accesible'
       >
         {COLORBLIND_PALETTE.map(c => (
-          <button
-            key={c}
-            type='button'
-            role='option'
-            aria-selected={color.toLowerCase() === c.toLowerCase()}
-            aria-label={`Color ${c}`}
-            disabled={isDisabled}
-            onClick={() => setColor(c)}
-            className={`w-5 h-5 rounded-full border ${color.toLowerCase() === c.toLowerCase() ? 'border-2 border-blue-500' : 'border-slate-300'}`}
-            style={{ background: c }}
-          />
+          <Tooltip key={c} content={c.toUpperCase()} delay={300} closeDelay={0} placement='right' size='sm'>
+            <button
+              type='button'
+              role='option'
+              aria-selected={color.toLowerCase() === c.toLowerCase()}
+              aria-label={`Color ${c}`}
+              disabled={isDisabled}
+              onClick={() => setColor(c)}
+              className={`w-5 h-5 rounded-full border transition-transform hover:scale-110 active:scale-95 ${color.toLowerCase() === c.toLowerCase() ? 'border-2 border-blue-500 ring-2 ring-blue-200' : 'border-slate-300'}`}
+              style={{ background: c }}
+            />
+          </Tooltip>
         ))}
       </div>
       {custom.length > 0 && (
@@ -55,30 +57,42 @@ export const PaletteSwatches = ({ color, setColor, isDisabled }) => {
           aria-label='Paleta personalizada'
         >
           {custom.map(c => (
-            <button
-              key={c}
-              type='button'
-              role='option'
-              aria-selected={color.toLowerCase() === c.toLowerCase()}
-              aria-label={`Color personalizado ${c}`}
-              disabled={isDisabled}
-              onClick={() => setColor(c)}
-              className={`w-5 h-5 rounded-sm border ${color.toLowerCase() === c.toLowerCase() ? 'border-2 border-blue-500' : 'border-slate-300'}`}
-              style={{ background: c }}
-            />
+            <Tooltip key={c} content={`Color personalizado · ${c.toUpperCase()}`} delay={300} closeDelay={0} placement='right' size='sm'>
+              <button
+                type='button'
+                role='option'
+                aria-selected={color.toLowerCase() === c.toLowerCase()}
+                aria-label={`Color personalizado ${c}`}
+                disabled={isDisabled}
+                onClick={() => setColor(c)}
+                className={`w-5 h-5 rounded-sm border transition-transform hover:scale-110 active:scale-95 ${color.toLowerCase() === c.toLowerCase() ? 'border-2 border-blue-500 ring-2 ring-blue-200' : 'border-slate-300'}`}
+                style={{ background: c }}
+              />
+            </Tooltip>
           ))}
         </div>
       )}
-      <button
-        type='button'
-        disabled={isDisabled}
-        onClick={saveCurrent}
-        aria-label='Guardar color actual en paleta'
-        title='Guardar color actual'
-        className='w-5 h-5 rounded-sm border border-dashed border-slate-400 text-slate-500 text-xs leading-[1.1rem] hover:bg-slate-100 disabled:opacity-50'
+      <Tooltip
+        content={
+          <div className='flex flex-col gap-0'>
+            <span className='font-semibold text-xs'>Guardar color</span>
+            <span className='text-[10px] text-gray-500'>Añade el color actual a tu paleta</span>
+          </div>
+        }
+        delay={200}
+        closeDelay={0}
+        placement='right'
       >
-        ＋
-      </button>
+        <button
+          type='button'
+          disabled={isDisabled}
+          onClick={saveCurrent}
+          aria-label='Guardar color actual en paleta'
+          className='w-5 h-5 rounded-sm border border-dashed border-slate-400 text-slate-500 text-xs leading-[1.1rem] hover:bg-slate-100 hover:border-slate-500 disabled:opacity-50 transition-colors'
+        >
+          ＋
+        </button>
+      </Tooltip>
     </div>
   )
 }

@@ -38,6 +38,7 @@ export const OptionsButton = ({ data = {}, userData = null }) => {
             isIconOnly
             variant='light'
             aria-label='Más opciones'
+            title='Más opciones'
             className='flex items-center justify-center text-center p-0'
           >
             <OptionsIcon className='w-full h-full p-2 text-black' />

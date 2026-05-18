@@ -18,7 +18,6 @@ export function linesToSVG (lines, { width = 960, height = 540 } = {}) {
     .filter(l => l.tool !== TOOLS.BUCKET && l.points)
     .map(l => {
       const isEraser = l.tool === TOOLS.ERASER
-      const isShape = l.tool === TOOLS.RECT || l.tool === TOOLS.LINE
       const stroke = isEraser ? '#ffffff' : l.stroke
       const width = l.strokeWidth
       if (l.tool === TOOLS.RECT && l.points.length >= 4) {
