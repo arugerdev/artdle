@@ -336,3 +336,45 @@ export const PlayIcon = props => (
     <path d='M8 5v14l11-7z' fill='currentColor' />
   </svg>
 )
+export const LineIcon = props => (
+  <svg
+    aria-hidden='true'
+    fill='none'
+    focusable='false'
+    height='1em'
+    role='presentation'
+    viewBox='0 0 24 24'
+    width='1em'
+    {...props}
+  >
+    <path d='M3 21L21 3' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
+  </svg>
+)
+export const RectIcon = props => (
+  <svg
+    aria-hidden='true'
+    fill='none'
+    focusable='false'
+    height='1em'
+    role='presentation'
+    viewBox='0 0 24 24'
+    width='1em'
+    {...props}
+  >
+    <rect x='4' y='6' width='16' height='12' stroke='currentColor' strokeWidth='2' fill='none' />
+  </svg>
+)
+export const SvgExportIcon = props => (
+  <svg
+    aria-hidden='true'
+    fill='none'
+    focusable='false'
+    height='1em'
+    role='presentation'
+    viewBox='0 0 24 24'
+    width='1em'
+    {...props}
+  >
+    <text x='4' y='17' fontSize='11' fontFamily='monospace' fontWeight='bold' fill='currentColor'>SVG</text>
+  </svg>
+)
