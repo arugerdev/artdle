@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "home": "Home",
+    "explore": "Explore drawings",
+    "howToPlay": "How to play?",
+    "about": "About",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "profile": "Profile"
+  },
+  "main": {
+    "todaysWordLabel": "Today's word is:",
+    "topDraws": "Top drawings",
+    "otherDraws": "Other drawings",
+    "drawDoneToast": "You've already drawn today! Come back tomorrow for a new word ✏",
+    "noDrawsTitle": "No drawings yet!",
+    "drawsCount": "{{count}} drawings"
+  },
+  "drawer": {
+    "namePlaceholder": "Give your creation a name...",
+    "nameLabel": "Name of your creation",
+    "uploadSuccess": "Drawing uploaded — thanks for playing! Come back tomorrow for a new word.",
+    "uploadError": "Couldn't upload the drawing: {{message}}",
+    "notAuthenticated": "You're not signed in"
+  },
+  "explore": {
+    "title": "Explore drawings",
+    "filters": "Filters",
+    "byName": "By drawing name",
+    "drawNameLabel": "Drawing name",
+    "drawNamePlaceholder": "Drawing of...",
+    "byDay": "By day",
+    "drawDay": "Drawing day (mm / dd / yyyy)",
+    "sortBy": "Sort by...",
+    "category": "Category",
+    "allCategories": "All",
+    "sortNewest": "Creation date (newest)",
+    "sortOldest": "Creation date (oldest)",
+    "sortBest": "Highest rated",
+    "sortWorst": "Lowest rated"
+  },
+  "profile": {
+    "notFoundTitle": "User not found 🔍",
+    "notFoundBody": "No profile named {{username}} exists.",
+    "draws": "Drawings",
+    "likesReceived": "Likes received",
+    "currentStreak": "Current streak",
+    "longestStreak": "Longest streak",
+    "gallery": "Gallery",
+    "emptyGallery": "This artist hasn't uploaded anything yet 😶"
+  },
+  "comments": {
+    "title": "Comments",
+    "placeholder": "Write a comment...",
+    "post": "Post",
+    "loginToPost": "Sign in to comment.",
+    "noComments": "No comments yet. Be the first!",
+    "loadError": "Couldn't load comments",
+    "postError": "Couldn't post: {{message}}",
+    "loginNudge": "Sign in to comment"
+  },
+  "errorBoundary": {
+    "title": "Something went wrong while drawing this page 🎨",
+    "subtitle": "Sorry — an unexpected error occurred.",
+    "reload": "Reload page",
+    "home": "Go home"
+  },
+  "notFound": {
+    "title": "Wrong address? 😜",
+    "subtitle": "This address doesn't exist — that's an error...",
+    "backCTA": "You can get back to the homepage from this button:",
+    "homeButton": "Homepage"
+  },
+  "actions": {
+    "download": "Download",
+    "timelapse": "Timelapse",
+    "share": "Share",
+    "close": "Close",
+    "send": "Send",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "save": "Save",
+    "restart": "Restart"
+  }
+}

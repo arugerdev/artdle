@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Component } from 'react'
 import { Button } from '@nextui-org/react'
+import i18n from '../../i18n'
 
 export class ErrorBoundary extends Component {
   constructor (props) {
@@ -29,15 +30,12 @@ export class ErrorBoundary extends Component {
   render () {
     if (!this.state.hasError) return this.props.children
 
+    const t = (k) => i18n.t(k)
     return (
       <main className='flex flex-col gap-8 justify-center items-center h-full w-full min-w-screen min-h-screen p-6'>
         <section className='flex flex-col items-center justify-center text-center'>
-          <h1 className='font-extrabold text-2xl'>
-            Algo ha ido mal mientras dibujábamos esta página 🎨
-          </h1>
-          <h2 className='font-semibold text-gray-600 mt-2'>
-            Lo sentimos, ha ocurrido un error inesperado.
-          </h2>
+          <h1 className='font-extrabold text-2xl'>{t('errorBoundary.title')}</h1>
+          <h2 className='font-semibold text-gray-600 mt-2'>{t('errorBoundary.subtitle')}</h2>
           <p className='font-mono text-xs text-gray-400 mt-4 max-w-prose break-words'>
             {String(this.state.error?.message ?? this.state.error ?? 'Error desconocido')}
           </p>
@@ -49,14 +47,14 @@ export class ErrorBoundary extends Component {
             className='font-bold text-md'
             onPress={this.handleReload}
           >
-            Recargar página
+            {t('errorBoundary.reload')}
           </Button>
           <Button
             variant='light'
             className='font-bold text-md'
             onPress={this.handleHome}
           >
-            Ir al inicio
+            {t('errorBoundary.home')}
           </Button>
         </section>
       </main>
