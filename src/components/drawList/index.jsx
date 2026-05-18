@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { DrawCard } from '../drawCard'
 import supabase, { getDailyWord } from '../../utils/supabase'
 import toast from 'react-hot-toast'
+import { useTranslation } from 'react-i18next'
 
 export const DrawList = ({
   className,
@@ -16,6 +17,7 @@ export const DrawList = ({
   maxItems = 8,
   positions = false
 }) => {
+  const { t } = useTranslation()
   const [draws, setDraws] = useState([])
   const [pageIndex, setPageIndex] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -185,7 +187,7 @@ export const DrawList = ({
           </section>
           {(!draws || draws.length == 0) && (
             <div className='flex flex-col w-full h-full items-center justify-center text-center'>
-              <h1 className='font-bold text-xl'>No hay dibujos!</h1>
+              <h1 className='font-bold text-xl'>{t('main.noDrawsTitle')}</h1>
               <p>😥</p>
             </div>
           )}
@@ -195,7 +197,7 @@ export const DrawList = ({
               className='flex flex-col w-full h-full items-center justify-center text-center'
             >
               {drawsCount > draws.length && <div className='loader'></div>}
-              <p>Hay {drawsCount} dibujos</p>
+              <p>{t('main.drawsCount', { count: drawsCount })}</p>
             </div>
           )}
         </>

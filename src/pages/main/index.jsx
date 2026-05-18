@@ -4,8 +4,10 @@ import supabase, { getDailyWord } from '../../utils/supabase'
 import { DrawList } from '../../components/drawList/index'
 import toast, { Toaster } from 'react-hot-toast'
 import { Topbar } from '../../components/topbar/index'
+import { useTranslation } from 'react-i18next'
 
 export default function MainPage () {
+  const { t } = useTranslation()
   const [myDraw, setMyDraw] = useState([])
   const [loading, setLoading] = useState(true)
   const [dailyWord, setDailyWord] = useState('')
@@ -23,9 +25,7 @@ export default function MainPage () {
       if (error) throw error
       setMyDraw(data ?? [])
       if ((data?.length ?? 0) > 0) {
-        toast.success(
-          'Ya has hecho tu dibujo de hoy! Vuelve mañana para dibujar otra cosa ✏'
-        )
+        toast.success(t('main.drawDoneToast'))
       }
     } catch {
       setMyDraw([])
@@ -48,7 +48,7 @@ export default function MainPage () {
         <>
           <div className='flex flex-col gap-0 justify-start items-center h-full w-full'>
             <small className='text-medium font-semibold'>
-              La palabra del dia es:
+              {t('main.todaysWordLabel')}
             </small>
             <h1 className='flex text-4xl font-sans font-extrabold pt-1 py-12 px-2'>
               {dailyWord}
@@ -62,7 +62,7 @@ export default function MainPage () {
           </div>
 
           <h1 className='flex text-4xl font-sans font-extrabold py-8 pb-2 px-2'>
-            Mejores dibujos
+            {t('main.topDraws')}
           </h1>
 
           <DrawList
@@ -76,7 +76,7 @@ export default function MainPage () {
             positions
           />
           <h1 className='flex text-4xl font-sans font-extrabold py-8 pb-2 px-2'>
-            Otros dibujos
+            {t('main.otherDraws')}
           </h1>
 
           <DrawList

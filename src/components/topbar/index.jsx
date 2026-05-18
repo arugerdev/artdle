@@ -18,16 +18,26 @@ import { getAuthData, loginWithGoogle, signOut } from '../../utils/supabase'
 import toast from 'react-hot-toast'
 import { UserButton } from '../userButton'
 import { isMobile } from '../../utils/system'
+import { useTranslation } from 'react-i18next'
+import i18n from '../../i18n'
 export const Topbar = () => {
+  const { t } = useTranslation()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [location, pushLocation] = useLocation()
+  const [lang, setLang] = useState(i18n.language?.split('-')[0] ?? 'es')
 
   const menuItems = [
-    { label: 'Inicio', path: '/' },
-    { label: 'Explorar dibujos', path: '/explore' },
-    { label: '¿Cómo jugar?', path: '/howtoplay' },
-    { label: 'Sobre Mí', path: '/about' }
+    { label: t('nav.home'), path: '/' },
+    { label: t('nav.explore'), path: '/explore' },
+    { label: t('nav.howToPlay'), path: '/howtoplay' },
+    { label: t('nav.about'), path: '/about' }
   ]
+
+  const toggleLang = () => {
+    const next = lang === 'es' ? 'en' : 'es'
+    i18n.changeLanguage(next)
+    setLang(next)
+  }
   const [userData, setUserData] = useState(null)
   const [loadingUserData, setLoadingUserData] = useState(true)
 
@@ -76,6 +86,16 @@ export const Topbar = () => {
       </NavbarContent>
       <NavbarContent justify='end'>
         <NavbarItem className='hidden sm:flex'>
+          <Button
+            size='sm'
+            variant='light'
+            onPress={toggleLang}
+            aria-label='Change language'
+          >
+            {lang === 'es' ? '🇬🇧 EN' : '🇪🇸 ES'}
+          </Button>
+        </NavbarItem>
+        <NavbarItem className='hidden sm:flex'>
           <Skeleton isLoaded={!loadingUserData} className='rounded-xl'>
             {(!userData || !userData.email) && (
               <Button
@@ -88,7 +108,7 @@ export const Topbar = () => {
                 color='primary'
                 variant='light'
               >
-                Iniciar Sesión
+                {t('nav.signIn')}
               </Button>
             )}
             {userData && userData.email && userData.identities.length > 0 && (

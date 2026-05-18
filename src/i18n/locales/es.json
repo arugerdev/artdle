@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "explore": "Explorar dibujos",
+    "howToPlay": "¿Cómo jugar?",
+    "about": "Sobre Mí",
+    "signIn": "Iniciar Sesión",
+    "signOut": "Cerrar Sesión",
+    "profile": "Perfil"
+  },
+  "main": {
+    "todaysWordLabel": "La palabra del dia es:",
+    "topDraws": "Mejores dibujos",
+    "otherDraws": "Otros dibujos",
+    "drawDoneToast": "Ya has hecho tu dibujo de hoy! Vuelve mañana para dibujar otra cosa ✏",
+    "noDrawsTitle": "No hay dibujos!",
+    "drawsCount": "Hay {{count}} dibujos"
+  },
+  "drawer": {
+    "namePlaceholder": "Pon un nombre a tu creacción...",
+    "nameLabel": "Nombre de tu creacción",
+    "uploadSuccess": "El dibujo se ha subido correctamente, gracias por jugar! Espera hasta mañana para otra palabra diferente!",
+    "uploadError": "El dibujo no se ha podido subir, ha ocurrido un error: {{message}}",
+    "notAuthenticated": "No estás autenticado"
+  },
+  "explore": {
+    "title": "Explorar dibujos",
+    "filters": "Filtros",
+    "byName": "Por nombre del dibujo",
+    "drawNameLabel": "Nombre del dibujo",
+    "drawNamePlaceholder": "Dibujo de...",
+    "byDay": "Por día dibujado",
+    "drawDay": "Día del dibujo (mm / dd / yyyy)",
+    "sortBy": "Ordenar por...",
+    "category": "Categoría",
+    "allCategories": "Todas",
+    "sortNewest": "Fecha de creacción (Mas nuevos)",
+    "sortOldest": "Fecha de creacción (Mas viejos)",
+    "sortBest": "Mejor valoración",
+    "sortWorst": "Peor valoración"
+  },
+  "profile": {
+    "notFoundTitle": "Usuario no encontrado 🔍",
+    "notFoundBody": "No existe ningún perfil con el nombre {{username}}.",
+    "draws": "Dibujos",
+    "likesReceived": "Likes recibidos",
+    "currentStreak": "Racha actual",
+    "longestStreak": "Mejor racha",
+    "gallery": "Galería",
+    "emptyGallery": "Este artista todavía no ha subido nada 😶"
+  },
+  "comments": {
+    "title": "Comentarios",
+    "placeholder": "Escribe un comentario...",
+    "post": "Publicar",
+    "loginToPost": "Inicia sesión para comentar.",
+    "noComments": "Aún no hay comentarios. ¡Sé el primero!",
+    "loadError": "No se pudieron cargar los comentarios",
+    "postError": "No se pudo publicar: {{message}}",
+    "loginNudge": "Inicia sesión para comentar"
+  },
+  "errorBoundary": {
+    "title": "Algo ha ido mal mientras dibujábamos esta página 🎨",
+    "subtitle": "Lo sentimos, ha ocurrido un error inesperado.",
+    "reload": "Recargar página",
+    "home": "Ir al inicio"
+  },
+  "notFound": {
+    "title": "Te has equivocado de dirección? 😜",
+    "subtitle": "Esta dirección no existe esto es un error...",
+    "backCTA": "Puedes volver a la página principal desde este botón:",
+    "homeButton": "Página Principal"
+  },
+  "actions": {
+    "download": "Descargar",
+    "timelapse": "Timelapse",
+    "share": "Compartir",
+    "close": "Cerrar",
+    "send": "Enviar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "restart": "Reiniciar"
+  }
+}
