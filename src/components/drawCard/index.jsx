@@ -19,7 +19,9 @@ import { useEffect, useState } from 'react'
 import { OptionsButton } from './../optionsButton/index'
 import { isMobile } from '../../utils/system'
 import { ShareButton } from './../shareButton/index'
+import { resolveDrawImage } from '../../utils/image'
 export const DrawCard = ({ data, className = '', position = null }) => {
+  const imageSrc = resolveDrawImage(data, { supabaseUrl: import.meta.env.VITE_SUPABASE_URL })
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   // Prefer joined-view fields when present; fall back to lazy fetches
@@ -79,7 +81,7 @@ export const DrawCard = ({ data, className = '', position = null }) => {
             </p>
           )}
           <Image
-            src={data.uridata}
+            src={imageSrc}
             radius='sm'
             isBlurred={!isMobile()}
             isZoomed={!isMobile()}
@@ -134,7 +136,7 @@ export const DrawCard = ({ data, className = '', position = null }) => {
                     <Image
                       isBlurred
                       className='h-full object-scale-down rounded-sm'
-                      src={data.uridata}
+                      src={imageSrc}
                       alt={data.name}
                     />
                   </ModalBody>
@@ -153,7 +155,7 @@ export const DrawCard = ({ data, className = '', position = null }) => {
                         variant='flat'
                         onPress={() => {
                           var a = document.createElement('a')
-                          a.href = data.uridata.toString()
+                          a.href = imageSrc
                           a.download = `${data.name}-${data.created_at}-draw.png`
                           a.click()
                         }}
