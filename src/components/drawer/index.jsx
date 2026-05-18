@@ -13,7 +13,7 @@ import supabase from '../../utils/supabase.js'
 import toast from 'react-hot-toast'
 import { ToolBarButton } from '../toolBarButton/index'
 import { getColorOnPos } from '../../utils/colors.js'
-import { Stage, Layer, Line } from 'react-konva'
+import { Stage, Layer, Line, Rect as KonvaRect } from 'react-konva'
 import { URLImage } from '../URLImage/index.jsx'
 import { isMacOs, isMobile } from '../../utils/system.js'
 import {
@@ -26,8 +26,13 @@ import { EyeDropper } from './../tools/eyeDropper/index'
 import { Pencil } from './../tools/pencil/index'
 import { Eraser } from './../tools/eraser/index'
 import { ColorBucket } from './../tools/colorBucket/index'
+import { Line as LineTool } from './../tools/line/index'
+import { Rect as RectTool } from './../tools/rect/index'
 import { ShareButton } from '../shareButton/index.jsx'
 import { stageToCompressedDataURL, dataURLToBlob, resolveDrawImage } from '../../utils/image.js'
+import { PaletteSwatches } from '../paletteSwatches/index.jsx'
+import { downloadSVG } from '../../utils/svg.js'
+import { SvgExportIcon } from '../../assets/icons'
 
 export const Drawer = ({
   className,
@@ -84,6 +89,19 @@ export const Drawer = ({
         setColor(getColorOnPos(canvas, position.x, position.y))
         setActiveTool(TOOLS.PENCIL)
         break
+      case TOOLS.LINE:
+      case TOOLS.RECT:
+        setLines(prevLines => [
+          ...prevLines,
+          {
+            tool: activeTool,
+            points: [position.x, position.y, position.x, position.y],
+            stroke: color,
+            strokeWidth: size
+          }
+        ])
+        setRedoLines([])
+        break
       case TOOLS.PENCIL:
       default:
         setLines(prevLines => [
@@ -113,10 +131,20 @@ export const Drawer = ({
     const position = stageTransform.invert().point(point)
 
     const lastLine = lines[lines.length - 1]
-    lastLine.points = lastLine.points.concat([
-      Math.round(position.x),
-      Math.round(position.y)
-    ])
+    if (lastLine.tool === TOOLS.LINE || lastLine.tool === TOOLS.RECT) {
+      // Shape tools resize from the original anchor instead of appending.
+      lastLine.points = [
+        lastLine.points[0],
+        lastLine.points[1],
+        Math.round(position.x),
+        Math.round(position.y)
+      ]
+    } else {
+      lastLine.points = lastLine.points.concat([
+        Math.round(position.x),
+        Math.round(position.y)
+      ])
+    }
     setLines(lines => [...lines])
   }
 
@@ -158,24 +186,38 @@ export const Drawer = ({
     return lines.map((line, i) => {
       if (line.tool === TOOLS.BUCKET) {
         return <URLImage key={i} src={line.dataURL} />
-      } else {
+      }
+      if (line.tool === TOOLS.RECT && line.points?.length >= 4) {
+        const [x1, y1, x2, y2] = line.points
         return (
-          <Line
+          <KonvaRect
             key={i}
-            points={line.points}
+            x={Math.min(x1, x2)}
+            y={Math.min(y1, y2)}
+            width={Math.abs(x2 - x1)}
+            height={Math.abs(y2 - y1)}
             stroke={line.stroke}
             strokeWidth={line.strokeWidth}
-            tension={0.0001}
-            lineCap='round'
-            lineJoin='round'
-            shadowBlur={0}
-            shadowColor={line.stroke}
-            globalCompositeOperation={
-              line.tool === 1 ? 'destination-out' : 'source-over'
-            }
+            fill='transparent'
           />
         )
       }
+      return (
+        <Line
+          key={i}
+          points={line.points}
+          stroke={line.stroke}
+          strokeWidth={line.strokeWidth}
+          tension={line.tool === TOOLS.LINE ? 0 : 0.0001}
+          lineCap='round'
+          lineJoin='round'
+          shadowBlur={0}
+          shadowColor={line.stroke}
+          globalCompositeOperation={
+            line.tool === TOOLS.ERASER ? 'destination-out' : 'source-over'
+          }
+        />
+      )
     })
   }
 
@@ -359,6 +401,16 @@ export const Drawer = ({
               isDrawed={isDrawed}
             />
           )}
+          <LineTool
+            activeTool={activeTool}
+            setActiveTool={setActiveTool}
+            isDrawed={isDrawed}
+          />
+          <RectTool
+            activeTool={activeTool}
+            setActiveTool={setActiveTool}
+            isDrawed={isDrawed}
+          />
 
           <EyeDropper
             activeTool={activeTool}
@@ -373,7 +425,9 @@ export const Drawer = ({
             onChange={e => setColor(e.target.value)}
             className='bg-transparent rounded-full justify-center p-1 w-[40px] h-[40px] cursor-pointer'
             disabled={isDrawed}
+            aria-label='Selector de color'
           ></input>
+          <PaletteSwatches color={color} setColor={setColor} isDisabled={isDrawed} />
 
           <ToolBarButton
             icon={<UndoIcon className='w-full h-full' />}
@@ -486,9 +540,19 @@ export const Drawer = ({
             activeTool === 3 ? 'border-2 border-blue-500 bg-slate-300' : ''
           } bg-transparent justify-center p-2`}
           isIconOnly
+          aria-label='Descargar PNG'
           onPress={() => handleSave(uriData !== null)}
         >
           <DownloadIcon className='w-full h-full' />
+        </Button>
+        <Button
+          className='bg-transparent justify-center p-2'
+          isIconOnly
+          aria-label='Descargar SVG'
+          isDisabled={lines.length === 0}
+          onPress={() => downloadSVG(lines, `${name}-${Date.now()}.svg`)}
+        >
+          <SvgExportIcon className='w-full h-full' />
         </Button>
         {isDrawed && <ShareButton data={drawData[0]} dailyWord={dailyWord} />}
 
