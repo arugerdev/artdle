@@ -10,6 +10,7 @@ import TermsOfServicePage from './pages/termsOfService'
 import TurnPhonePage from './pages/turnphone'
 import DrawPage from './pages/draw'
 import ProfilePage from './pages/profile'
+import AdminPage from './pages/admin'
 import { ErrorBoundary } from './components/errorBoundary'
 
 function App () {
@@ -45,6 +46,7 @@ function App () {
         <Route path='/draw' component={DrawPage} />
 
         <Route path='/u/:username' component={ProfilePage} />
+        <Route path='/admin' component={AdminPage} />
         <Route path='/about' component={AboutPage} />
         <Route path='/explore' component={ExplorePage} />
         <Route path='/howtoplay' component={HowToPlayPage} />
