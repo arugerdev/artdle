@@ -52,9 +52,9 @@ function LobbyView () {
   }
 
   return (
-    <section className='glass flex flex-col items-center gap-4 p-6 max-w-md w-full rounded-3xl'>
-      <h1 className='text-3xl font-bold text-slate-900'>Jugar en vivo 🎮</h1>
-      <p className='text-slate-500 text-center text-sm'>
+    <section className='ios-card flex flex-col items-center gap-4 p-6 max-w-md w-full rounded-3xl mt-4'>
+      <h1 className='text-3xl font-bold text-slate-900 dark:text-zinc-50'>Jugar en vivo 🎮</h1>
+      <p className='text-slate-500 dark:text-zinc-400 text-center text-sm'>
         Crea una sala compartida o únete a una existente con su código de 6
         caracteres. Todos los jugadores dibujan a la vez sobre el mismo
         lienzo, viendo los trazos en tiempo real.
@@ -64,7 +64,7 @@ function LobbyView () {
         radius='full'
         onPress={createRoom}
         isLoading={creating}
-        className='bg-slate-900 text-white w-full'
+        className='bg-slate-900 text-white dark:bg-zinc-50 dark:text-slate-900 w-full font-semibold'
       >
         Crear sala
       </Button>
@@ -76,8 +76,13 @@ function LobbyView () {
           value={joinCode}
           onValueChange={setJoinCode}
           maxLength={6}
+          classNames={{
+            label: 'text-slate-500 dark:text-zinc-400',
+            inputWrapper: 'bg-white/60 dark:bg-zinc-900/40 border-slate-200 dark:border-zinc-700',
+            input: 'text-slate-900 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500'
+          }}
         />
-        <Button onPress={join} variant='flat' radius='full' className='bg-white/60 backdrop-blur-md border border-slate-200/60'>
+        <Button onPress={join} variant='flat' radius='full' className='ios-chip text-slate-700 dark:text-zinc-200'>
           Unirse
         </Button>
       </div>
@@ -256,13 +261,13 @@ function RoomView ({ code }) {
 
   return (
     <section className='flex flex-col items-center gap-3 p-4 w-full max-w-[1100px]'>
-      <div className='glass flex flex-row items-center gap-3 w-full justify-between rounded-2xl p-3'>
+      <div className='ios-card flex flex-row items-center gap-3 w-full justify-between rounded-2xl p-3'>
         <div className='flex flex-col'>
-          <h1 className='font-extrabold text-xl text-slate-900'>
-            Sala <span className='font-mono bg-slate-100 px-2 rounded'>{code}</span>
+          <h1 className='font-bold text-xl text-slate-900 dark:text-zinc-50'>
+            Sala <span className='font-mono text-base bg-slate-100 dark:bg-zinc-800 px-2 rounded ml-1'>{code}</span>
           </h1>
           {room?.word && (
-            <small className='text-slate-500'>Palabra: <strong>{room.word}</strong></small>
+            <small className='text-slate-500 dark:text-zinc-400'>Palabra: <strong className='text-slate-700 dark:text-zinc-200'>{room.word}</strong></small>
           )}
         </div>
         <Button
@@ -274,7 +279,7 @@ function RoomView ({ code }) {
               () => toast.error('No se pudo copiar')
             )
           }}
-          className='bg-slate-900 text-white'
+          className='bg-slate-900 text-white dark:bg-zinc-50 dark:text-slate-900 font-semibold'
         >
           Compartir enlace
         </Button>
@@ -282,13 +287,13 @@ function RoomView ({ code }) {
       {!room && <div className='loader' role='status' aria-busy='true'></div>}
       {room && (
         <>
-          <div className='glass-strong flex flex-row items-center gap-3 p-2 rounded-2xl w-full'>
+          <div className='ios-card flex flex-row items-center gap-3 p-2 rounded-2xl w-full'>
             <input
               type='color'
               value={color}
               onChange={e => setColor(e.target.value)}
               aria-label='Color'
-              className='w-9 h-9 rounded-full cursor-pointer border-2 border-white shadow-inner ring-1 ring-slate-300'
+              className='w-9 h-9 rounded-full cursor-pointer border-2 border-white dark:border-zinc-700 shadow-inner ring-1 ring-slate-300 dark:ring-zinc-700'
             />
             <Slider
               size='sm'
@@ -298,9 +303,14 @@ function RoomView ({ code }) {
               onChange={setSize}
               className='max-w-[200px]'
               aria-label='Tamaño de pincel'
-              startContent={<small className='text-xs font-mono text-slate-500 w-7 text-right'>{size}</small>}
+              startContent={<small className='text-xs font-mono text-slate-500 dark:text-zinc-400 w-7 text-right'>{size}</small>}
+              classNames={{
+                track: 'bg-slate-200/70 dark:bg-zinc-700/70',
+                filler: 'bg-slate-900 dark:bg-zinc-100',
+                thumb: 'bg-white dark:bg-zinc-50 border-2 border-slate-300 dark:border-zinc-300'
+              }}
             />
-            <span className='text-sm text-slate-500 ml-auto'>
+            <span className='text-xs uppercase tracking-widest text-slate-500 dark:text-zinc-400 ml-auto font-mono'>
               {strokeCount} trazo{strokeCount === 1 ? '' : 's'}
             </span>
           </div>
@@ -309,7 +319,7 @@ function RoomView ({ code }) {
               ref={canvasRef}
               width={VW}
               height={VH}
-              className='block rounded-2xl border border-slate-200/70 shadow-inner bg-white max-w-full h-auto'
+              className='paper block rounded-2xl max-w-full h-auto'
               style={{ width: `min(${VW}px, 100%)`, aspectRatio: `${VW}/${VH}` }}
               role='img'
               aria-label='Lienzo compartido de la sala'
