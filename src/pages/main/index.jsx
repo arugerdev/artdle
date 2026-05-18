@@ -10,38 +10,34 @@ export default function MainPage () {
   const [loading, setLoading] = useState(true)
   const [dailyWord, setDailyWord] = useState('')
 
-  function getDraws () {
-    supabase.auth.getUser().then(async user => {
-      if (!user.data.user) {
-        setLoading(false)
-        return
-      }
-      supabase
+  const getDraws = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const today = new Date().toISOString().split('T')[0]
+      const { data, error } = await supabase
         .from('draws')
         .select('*')
-        .eq('creator', user.data.user.id)
-        .eq('day', new Date().toISOString().split('T')[0])
-        .then(draws => {
-          setMyDraw(draws.data)
-          if (draws.data.length > 0) {
-            toast.success(
-              'Ya has hecho tu dibujo de hoy! Vuelve mañana para dibujar otra cosa ✏'
-            )
-          }
-          setLoading(false)
-        })
-        .catch(() => {
-          setMyDraw([])
-          setLoading(false)
-        })
-    })
+        .eq('creator', user.id)
+        .eq('day', today)
+      if (error) throw error
+      setMyDraw(data ?? [])
+      if ((data?.length ?? 0) > 0) {
+        toast.success(
+          'Ya has hecho tu dibujo de hoy! Vuelve mañana para dibujar otra cosa ✏'
+        )
+      }
+    } catch {
+      setMyDraw([])
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]
     getDraws()
-    getDailyWord(new Date().toISOString().split('T')[0]).then(word => {
-      setDailyWord(word)
-    })
+    getDailyWord(today).then(setDailyWord)
   }, [])
 
   return (
