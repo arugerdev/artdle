@@ -1,7 +1,7 @@
 export const TOOLS = {
   PENCIL: 0,
   ERASER: 1,
-  BUCKER: 2,
+  BUCKET: 2,
   EYEDROPPER: 3
 }
 
