@@ -9,6 +9,7 @@ import PrivacyPage from './pages/privacy'
 import TermsOfServicePage from './pages/termsOfService'
 import TurnPhonePage from './pages/turnphone'
 import DrawPage from './pages/draw'
+import { ErrorBoundary } from './components/errorBoundary'
 
 function App () {
   const [screen, setScreen] = useState({
@@ -29,14 +30,14 @@ function App () {
   }, [])
 
   return (
-    <>
+    <ErrorBoundary>
       <Switch>
         {!(screen.x <= screen.y) && <Route path='/' component={MainPage} />}
         {screen.x <= screen.y && <Route path='/' component={TurnPhonePage} />}
 
         <Route path='/api/draw' component={DrawPage} />
-        <Route path='/draw' component={DrawPage} /> 
-        
+        <Route path='/draw' component={DrawPage} />
+
         <Route path='/about' component={AboutPage} />
         <Route path='/explore' component={ExplorePage} />
         <Route path='/howtoplay' component={HowToPlayPage} />
@@ -44,7 +45,7 @@ function App () {
         <Route path='/conditions' component={TermsOfServicePage} />
         <Route path='' component={NotFoundPage} />
       </Switch>
-    </>
+    </ErrorBoundary>
   )
 }
 
