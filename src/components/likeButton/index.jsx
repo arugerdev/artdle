@@ -58,6 +58,8 @@ export const LikeButton = ({ data = {} }) => {
       <Button
         isIconOnly
         variant='light'
+        aria-label={isLiked ? 'Quitar like' : 'Dar like'}
+        aria-pressed={!!isLiked}
         className='flex items-center justify-center text-center p-0'
         onPress={() => {
           supabase.auth.getUser().then(async user => {

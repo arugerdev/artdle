@@ -83,6 +83,7 @@ export const DrawCard = ({ data, className = '', position = null }) => {
           <Image
             src={imageSrc}
             radius='sm'
+            alt={`Dibujo "${data.name}" — palabra del día: ${data.daily_word ?? dailyWord ?? '?'}`}
             isBlurred={!isMobile()}
             isZoomed={!isMobile()}
           />
