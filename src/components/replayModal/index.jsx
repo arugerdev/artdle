@@ -158,13 +158,13 @@ export const ReplayModal = ({ isOpen, onClose, drawId, drawName }) => {
             <ModalBody className='flex flex-col items-center justify-center gap-3 p-2'>
               {!strokes && !loadError && <div className='loader' role='status' aria-busy='true' aria-label='Cargando timelapse'></div>}
               {loadError && (
-                <div className='flex flex-col items-center justify-center text-center'>
-                  <h2 className='font-bold text-md'>No se puede reproducir</h2>
-                  <p className='text-slate-500 text-sm'>{loadError}</p>
+                <div className='flex flex-col items-center justify-center text-center py-8'>
+                  <h2 className='font-bold text-md text-slate-900 dark:text-zinc-100'>No se puede reproducir</h2>
+                  <p className='text-slate-500 dark:text-zinc-400 text-sm mt-1'>{loadError}</p>
                 </div>
               )}
               {strokes && strokes.length === 0 && !loadError && (
-                <p className='text-slate-500 text-sm'>Este dibujo no tiene trazos guardados.</p>
+                <p className='text-slate-500 dark:text-zinc-400 text-sm py-8'>Este dibujo no tiene trazos guardados.</p>
               )}
               {strokes && strokes.length > 0 && (
                 <>
@@ -189,6 +189,11 @@ export const ReplayModal = ({ isOpen, onClose, drawId, drawName }) => {
                       setProgress(Array.isArray(v) ? v[0] : v)
                     }}
                     className='w-full max-w-prose'
+                    classNames={{
+                      track: 'bg-slate-200/70 dark:bg-zinc-700/70',
+                      filler: 'bg-slate-900 dark:bg-zinc-100',
+                      thumb: 'bg-white dark:bg-zinc-50 border-2 border-slate-300 dark:border-zinc-300'
+                    }}
                   />
                   <div className='flex flex-row items-center justify-center gap-2'>
                     <Button

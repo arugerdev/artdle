@@ -28,7 +28,11 @@ export const UserButton = ({ userData = null, signOut = () => {} }) => {
             }}
           />
         </DropdownTrigger>
-        <DropdownMenu aria-label='Acciones de cuenta' variant='flat'>
+        <DropdownMenu
+          aria-label='Acciones de cuenta'
+          variant='flat'
+          classNames={{ base: 'ios-card' }}
+        >
           <DropdownItem
             key='profile'
             className='h-14 gap-2'
@@ -37,19 +41,15 @@ export const UserButton = ({ userData = null, signOut = () => {} }) => {
               toast.success('Correo copiado correctamente')
             }}
           >
-            <p className='font-semibold'>Registrado como:</p>
-            <p className='font-semibold text-gray-500'>{userData.email}</p>
+            <p className='font-semibold text-slate-900 dark:text-zinc-100 text-xs uppercase tracking-widest'>Registrado como:</p>
+            <p className='text-slate-600 dark:text-zinc-400 text-sm truncate'>{userData.email}</p>
           </DropdownItem>
           <DropdownItem
             key='signOut'
-            onPress={() => {
-              signOut().then(() => {
-                window.location.reload()
-              })
-            }}
-            className='font-extrabold text-danger-500 bg-transparent hover:bg-danger-200 transition-background cursor-pointer'
+            onPress={() => signOut().then(() => window.location.reload())}
+            className='font-semibold text-danger-500 hover:bg-danger-100 dark:hover:bg-danger-900/20 transition-background cursor-pointer'
           >
-            <p>Cerrar sesión</p>
+            Cerrar sesión
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>

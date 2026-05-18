@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Toaster, default as toast } from 'react-hot-toast'
-import { Button, Image } from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 import supabase from '../../utils/supabase'
 import { Topbar } from '../../components/topbar/index'
 import { resolveDrawImage } from '../../utils/image'
@@ -76,12 +76,12 @@ export default function AdminPage () {
       <Toaster />
       <Topbar />
       <section className='flex flex-col w-full max-w-[1200px] px-4 gap-4'>
-        <h1 className='text-3xl font-extrabold'>Admin</h1>
+        <h1 className='text-3xl font-bold text-slate-900 dark:text-zinc-50 tracking-tight'>Admin</h1>
         {checking && <div className='loader' role='status' aria-busy='true'></div>}
         {!checking && !isAdmin && (
-          <section className='flex flex-col items-center text-center p-6'>
-            <h2 className='font-bold text-xl'>Acceso denegado</h2>
-            <p className='text-gray-500'>
+          <section className='ios-card flex flex-col items-center text-center p-8 rounded-3xl'>
+            <h2 className='font-bold text-xl text-slate-900 dark:text-zinc-100'>Acceso denegado</h2>
+            <p className='text-slate-500 dark:text-zinc-400 mt-2'>
               Esta sección está reservada para administradores. Si crees que
               deberías tener acceso, contacta con el administrador del sistema.
             </p>
@@ -89,10 +89,12 @@ export default function AdminPage () {
         )}
         {!checking && isAdmin && (
           <>
-            <h2 className='text-xl font-bold'>Reportes pendientes ({reports.length})</h2>
+            <h2 className='text-sm uppercase tracking-widest font-medium text-slate-500 dark:text-zinc-400 px-1'>
+              Reportes pendientes ({reports.length})
+            </h2>
             {loading && <div className='loader' role='status' aria-busy='true'></div>}
             {!loading && reports.length === 0 && (
-              <p className='text-gray-500'>No hay reportes pendientes. 🎉</p>
+              <p className='ios-card rounded-2xl p-6 text-center text-slate-500 dark:text-zinc-400'>No hay reportes pendientes. 🎉</p>
             )}
             <ul className='flex flex-col gap-3'>
               {reports.map(r => {
@@ -101,23 +103,25 @@ export default function AdminPage () {
                   ? resolveDrawImage(draw, { supabaseUrl: import.meta.env.VITE_SUPABASE_URL })
                   : null
                 return (
-                  <li key={r.id} className='flex flex-row gap-4 bg-slate-50 p-3 rounded-md shadow-sm'>
+                  <li key={r.id} className='ios-card flex flex-row gap-4 p-3 rounded-2xl'>
                     {imgSrc && (
-                      <Image src={imgSrc} className='w-32 h-auto rounded-sm' alt={draw?.name ?? ''} />
+                      <div className='bg-white rounded-md overflow-hidden border border-slate-200/60 dark:border-zinc-700/60 flex-shrink-0'>
+                        <img src={imgSrc} className='w-32 h-auto' alt={draw?.name ?? ''} />
+                      </div>
                     )}
                     <div className='flex flex-col gap-1 flex-grow'>
-                      <strong>{draw?.name ?? `(dibujo #${r.draw_id})`}</strong>
-                      <small className='text-gray-500'>
+                      <strong className='text-slate-900 dark:text-zinc-100'>{draw?.name ?? `(dibujo #${r.draw_id})`}</strong>
+                      <small className='text-slate-500 dark:text-zinc-400'>
                         Autor: {draw?.creator_username ?? '?'} ·
                         Reportado por {r.created_by?.slice(0, 8)}… ·
-                        {new Date(r.created_at).toLocaleString('es-ES')}
+                        {' '}{new Date(r.created_at).toLocaleString('es-ES')}
                       </small>
-                      <p className='text-sm whitespace-pre-wrap'>{r.report_text}</p>
+                      <p className='text-sm whitespace-pre-wrap text-slate-700 dark:text-zinc-300'>{r.report_text}</p>
                       <div className='flex flex-row gap-2 mt-1'>
-                        <Button size='sm' color='warning' variant='flat' onPress={() => dismissReport(r.id)}>
+                        <Button size='sm' radius='full' color='warning' variant='flat' onPress={() => dismissReport(r.id)}>
                           Descartar reporte
                         </Button>
-                        <Button size='sm' color='danger' variant='flat' onPress={() => deleteDraw(r.draw_id)}>
+                        <Button size='sm' radius='full' color='danger' variant='flat' onPress={() => deleteDraw(r.draw_id)}>
                           Eliminar dibujo
                         </Button>
                       </div>
