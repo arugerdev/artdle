@@ -51,12 +51,12 @@ export default function MainPage () {
             aria-labelledby='daily-word-heading'
           >
             <div className='flex flex-col items-center justify-center gap-1 mb-2'>
-              <small className='text-[10px] font-semibold uppercase tracking-[0.25em] text-zinc-500'>
+              <small className='text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-500 dark:text-zinc-400'>
                 {t('main.todaysWordLabel')}
               </small>
               <h1
                 id='daily-word-heading'
-                className='text-5xl sm:text-7xl font-sans font-bold pt-1 px-2 text-center text-zinc-50 tracking-tight'
+                className='text-5xl sm:text-7xl font-sans font-bold pt-1 px-2 text-center text-slate-900 dark:text-zinc-50 tracking-tight'
               >
                 {dailyWord || '…'}
               </h1>
@@ -107,12 +107,12 @@ export default function MainPage () {
 function SectionDivider ({ title, emoji }) {
   return (
     <div className='flex flex-row items-center gap-3 w-full max-w-[1200px] px-4 mt-6'>
-      <div className='flex-1 h-px bg-zinc-800' />
-      <h2 className='flex flex-row items-center gap-2 text-sm sm:text-base font-medium py-1 px-3 text-zinc-400 tracking-tight uppercase'>
+      <div className='flex-1 h-px bg-slate-200 dark:bg-zinc-800' />
+      <h2 className='flex flex-row items-center gap-2 text-sm sm:text-base font-medium py-1 px-3 text-slate-500 dark:text-zinc-400 tracking-tight uppercase'>
         {emoji && <span aria-hidden='true' className='text-base opacity-80'>{emoji}</span>}
         {title}
       </h2>
-      <div className='flex-1 h-px bg-zinc-800' />
+      <div className='flex-1 h-px bg-slate-200 dark:bg-zinc-800' />
     </div>
   )
 }

@@ -186,8 +186,8 @@ export const DrawList = ({
             })}
           </section>
           {(!draws || draws.length == 0) && (
-            <div className='flex flex-col w-full h-full items-center justify-center text-center text-zinc-400 py-12'>
-              <h1 className='font-medium text-base text-zinc-300'>{t('main.noDrawsTitle')}</h1>
+            <div className='flex flex-col w-full h-full items-center justify-center text-center text-slate-500 dark:text-zinc-400 py-12'>
+              <h1 className='font-medium text-base text-slate-700 dark:text-zinc-300'>{t('main.noDrawsTitle')}</h1>
               <p className='text-2xl mt-1 opacity-50'>😥</p>
             </div>
           )}
@@ -197,7 +197,7 @@ export const DrawList = ({
               className='flex flex-col w-full h-full items-center justify-center text-center py-4'
             >
               {drawsCount > draws.length && <div className='loader'></div>}
-              <p className='text-xs uppercase tracking-widest text-zinc-500 mt-2'>
+              <p className='text-xs uppercase tracking-widest text-slate-500 dark:text-zinc-500 mt-2'>
                 {t('main.drawsCount', { count: drawsCount })}
               </p>
             </div>

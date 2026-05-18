@@ -77,7 +77,7 @@ export const CommentsSection = ({ drawId }) => {
 
   return (
     <section className='flex flex-col gap-3 w-full' aria-label='Comentarios'>
-      <h2 className='font-bold border-b-2 border-b-[#555] pb-1'>
+      <h2 className='text-sm uppercase tracking-widest font-medium text-slate-500 dark:text-zinc-400 pb-1'>
         Comentarios {comments.length > 0 ? `(${comments.length})` : ''}
       </h2>
       {user && user.email && (
@@ -107,15 +107,15 @@ export const CommentsSection = ({ drawId }) => {
         </div>
       )}
       {(!user || !user.email) && (
-        <p className='text-sm text-gray-500'>Inicia sesión para comentar.</p>
+        <p className='text-sm text-slate-500 dark:text-zinc-400'>Inicia sesión para comentar.</p>
       )}
       {loading && <div className='loader' role='status' aria-busy='true'></div>}
       {!loading && comments.length === 0 && (
-        <p className='text-sm text-gray-500'>Aún no hay comentarios. ¡Sé el primero!</p>
+        <p className='text-sm text-slate-500 dark:text-zinc-400'>Aún no hay comentarios. ¡Sé el primero!</p>
       )}
       <ul className='flex flex-col gap-2'>
         {comments.map(c => (
-          <li key={c.id} className='flex flex-row gap-2 items-start p-2 bg-slate-50 rounded-md'>
+          <li key={c.id} className='ios-card flex flex-row gap-2 items-start p-3 rounded-2xl'>
             <Avatar size='sm' src={c.profile?.avatar_url} />
             <div className='flex flex-col gap-0 w-full'>
               <div className='flex flex-row items-center gap-2'>
@@ -128,12 +128,12 @@ export const CommentsSection = ({ drawId }) => {
                       {c.profile.username}
                     </Link>
                   )
-                  : <strong className='text-sm'>Autor desconocido</strong>}
-                <small className='text-gray-400 text-xs'>
+                  : <strong className='text-sm text-slate-700 dark:text-zinc-200'>Autor desconocido</strong>}
+                <small className='text-slate-400 dark:text-zinc-500 text-xs font-mono'>
                   {new Date(c.created_at).toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}
                 </small>
               </div>
-              <p className='text-sm whitespace-pre-wrap break-words'>{c.text}</p>
+              <p className='text-sm whitespace-pre-wrap break-words text-slate-800 dark:text-zinc-200'>{c.text}</p>
             </div>
           </li>
         ))}

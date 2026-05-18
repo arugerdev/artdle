@@ -65,37 +65,37 @@ export default function ProfilePage () {
         </section>
       )}
       {!loading && !profile && (
-        <section className='flex flex-col items-center justify-center p-6 text-center'>
-          <h1 className='font-extrabold text-2xl'>Usuario no encontrado 🔍</h1>
-          <p className='text-gray-500 mt-2'>
+        <section className='ios-card flex flex-col items-center justify-center p-8 text-center mt-6 rounded-3xl max-w-md'>
+          <h1 className='font-bold text-2xl text-slate-900 dark:text-zinc-100'>Usuario no encontrado 🔍</h1>
+          <p className='text-slate-500 dark:text-zinc-400 mt-2'>
             No existe ningún perfil con el nombre <strong>{username}</strong>.
           </p>
         </section>
       )}
       {!loading && profile && (
         <>
-          <section className='flex flex-col items-center justify-center gap-2 px-4 pt-4 w-full max-w-[800px]'>
-            <Avatar src={profile.avatar_url} size='lg' className='w-24 h-24 text-large' />
-            <h1 className='text-3xl font-extrabold'>{profile.username}</h1>
+          <section className='ios-card flex flex-col items-center justify-center gap-2 px-4 py-6 mt-4 w-full max-w-md rounded-3xl'>
+            <Avatar src={profile.avatar_url} size='lg' className='w-24 h-24 text-large ring-2 ring-slate-200 dark:ring-zinc-700' />
+            <h1 className='text-3xl font-bold text-slate-900 dark:text-zinc-50'>{profile.username}</h1>
             {profile.full_name && (
-              <p className='text-gray-500'>{profile.full_name}</p>
+              <p className='text-slate-500 dark:text-zinc-400'>{profile.full_name}</p>
             )}
-            <div className='flex flex-row gap-6 mt-2'>
+            <div className='flex flex-row gap-6 mt-2 text-slate-900 dark:text-zinc-100'>
               <div className='flex flex-col items-center'>
                 <span className='font-bold text-xl'>{stats?.total_draws ?? draws.length}</span>
-                <span className='text-xs text-gray-500'>Dibujos</span>
+                <span className='text-[10px] uppercase tracking-widest text-slate-500 dark:text-zinc-500'>Dibujos</span>
               </div>
               <div className='flex flex-col items-center'>
                 <span className='font-bold text-xl'>{totalLikes}</span>
-                <span className='text-xs text-gray-500'>Likes recibidos</span>
+                <span className='text-[10px] uppercase tracking-widest text-slate-500 dark:text-zinc-500'>Likes</span>
               </div>
               <div className='flex flex-col items-center'>
                 <span className='font-bold text-xl'>🔥 {stats?.current_streak ?? 0}</span>
-                <span className='text-xs text-gray-500'>Racha actual</span>
+                <span className='text-[10px] uppercase tracking-widest text-slate-500 dark:text-zinc-500'>Racha</span>
               </div>
               <div className='flex flex-col items-center'>
                 <span className='font-bold text-xl'>{stats?.longest_streak ?? 0}</span>
-                <span className='text-xs text-gray-500'>Mejor racha</span>
+                <span className='text-[10px] uppercase tracking-widest text-slate-500 dark:text-zinc-500'>Mejor</span>
               </div>
             </div>
             {badges.length > 0 && (
@@ -111,16 +111,16 @@ export default function ProfilePage () {
             )}
           </section>
           <section className='w-full max-w-[1560px] px-4 pb-8'>
-            <h2 className='text-xl font-bold border-b-2 border-b-[#555] mb-4'>
+            <h2 className='text-sm uppercase tracking-widest font-medium text-slate-500 dark:text-zinc-400 mb-4 px-1'>
               Galería
             </h2>
             {draws.length === 0 && (
-              <div className='flex flex-col items-center justify-center text-center text-gray-500 py-12'>
+              <div className='ios-card flex flex-col items-center justify-center text-center text-slate-500 dark:text-zinc-400 py-12 rounded-2xl'>
                 <p>Este artista todavía no ha subido nada 😶</p>
               </div>
             )}
             {draws.length > 0 && (
-              <section className='w-full grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-2 bg-slate-100 p-4 rounded-xl shadow-lg'>
+              <section className='w-full grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-3'>
                 {draws.map(d => (
                   <DrawCard key={d.id} data={d} />
                 ))}

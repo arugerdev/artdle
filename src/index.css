@@ -3,60 +3,141 @@
 @tailwind utilities;
 
 /* ----------------------------------------------------------------------
- * Dark editorial palette — zinc-based neutrals, warm undertone.
- * The canvas itself stays white so drawing feels like real paper; the
- * chrome around it is dark so the work-in-progress draws the eye.
+ * Theme tokens — single source of truth for colour values used in glass
+ * utilities. Tailwind classes still handle most styling; these tokens
+ * are for the manual rgba() backdrops where we need precision.
  * --------------------------------------------------------------------*/
+:root {
+  --bg: 248 250 252;             /* slate-50 */
+  --bg-soft: 241 245 249;        /* slate-100 */
+  --fg: 15 23 42;                /* slate-900 */
+  --fg-soft: 100 116 139;        /* slate-500 */
+  --hairline: 226 232 240;       /* slate-200 */
+  --card-fill: 255 255 255;      /* white */
+  --card-border: 255 255 255;
+  --shadow-rgb: 15 23 42;        /* slate-900 for shadows */
+  --accent-1: 99 102 241;        /* indigo-500 */
+  --accent-2: 244 114 182;       /* pink-400 */
+}
+
+html.dark {
+  --bg: 9 9 11;                  /* zinc-950 */
+  --bg-soft: 24 24 27;           /* zinc-900 */
+  --fg: 250 250 250;             /* zinc-50 */
+  --fg-soft: 161 161 170;        /* zinc-400 */
+  --hairline: 39 39 42;          /* zinc-800 */
+  --card-fill: 24 24 27;
+  --card-border: 255 255 255;
+  --shadow-rgb: 0 0 0;
+  --accent-1: 129 140 248;       /* indigo-400 */
+  --accent-2: 236 72 153;        /* pink-500 */
+}
+
 html, body {
   min-height: 100%;
-  background-color: #0a0a0b; /* near-black neutral, warmer than slate-950 */
-  color: #fafafa;
-  color-scheme: dark;
+  background-color: rgb(var(--bg));
+  color: rgb(var(--fg));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ----------------------------------------------------------------------
+ * Decorative behind-everything wash so backdrop-blur actually has
+ * something to blur. Two huge soft radial blobs, each ~5-7% opacity,
+ * shifted to opposite corners. iOS-style "vibrancy" depends on this.
+ * --------------------------------------------------------------------*/
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  /* Single very faint warm tint, no rainbow. Sits behind everything. */
   background-image:
-    radial-gradient(60rem 60rem at 80% -10%, rgba(245, 158, 11, 0.04), transparent 70%),
-    radial-gradient(50rem 50rem at -10% 110%, rgba(99, 102, 241, 0.04), transparent 70%);
+    radial-gradient(50rem 50rem at 15% 10%, rgb(var(--accent-1) / 0.10), transparent 60%),
+    radial-gradient(45rem 45rem at 85% 90%, rgb(var(--accent-2) / 0.08), transparent 60%);
+}
+
+html.dark body::before {
+  background-image:
+    radial-gradient(50rem 50rem at 15% 10%, rgb(var(--accent-1) / 0.07), transparent 60%),
+    radial-gradient(45rem 45rem at 85% 90%, rgb(var(--accent-2) / 0.06), transparent 60%);
 }
 
 /* ----------------------------------------------------------------------
- * Surface utilities — opaque dark cards with hairline borders. No
- * glass/blur on dark backgrounds because it just looks muddy.
+ * iOS glass — three thicknesses matching iOS materials.
+ *   .ios-card        thick material, primary surfaces
+ *   .ios-card-thin   thinner blur, secondary surfaces
+ *   .ios-chip        small chips / buttons
+ *
+ * Light mode uses white/x with subtle inner highlight.
+ * Dark  mode uses zinc/x with the same inner highlight.
  * --------------------------------------------------------------------*/
 @layer components {
-  .surface {
-    @apply bg-zinc-900 border border-zinc-800 shadow-[0_1px_0_0_rgb(255,255,255,0.04)_inset,0_30px_60px_-20px_rgb(0,0,0,0.6)];
+  .ios-card {
+    background-color: rgb(255 255 255 / 0.70);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgb(255 255 255 / 0.6);
+    box-shadow:
+      0 1px 0 0 rgb(255 255 255 / 0.6) inset,
+      0 1px 2px rgb(15 23 42 / 0.04),
+      0 12px 30px -8px rgb(15 23 42 / 0.10);
   }
-  .surface-2 {
-    @apply bg-zinc-900/70 border border-zinc-800 backdrop-blur-md;
+  html.dark .ios-card {
+    background-color: rgb(39 39 42 / 0.55);
+    border-color: rgb(255 255 255 / 0.08);
+    box-shadow:
+      0 1px 0 0 rgb(255 255 255 / 0.06) inset,
+      0 1px 2px rgb(0 0 0 / 0.4),
+      0 18px 40px -8px rgb(0 0 0 / 0.55);
   }
-  .surface-3 {
-    @apply bg-zinc-800/60 border border-zinc-700/60;
-  }
-  /* legacy aliases used in a couple of places — point to the dark surface */
-  .glass { @apply surface; }
-  .glass-strong { @apply surface; }
-  .glass-subtle { @apply surface-2; }
 
-  .hairline { @apply border-b border-zinc-800; }
+  .ios-card-thin {
+    background-color: rgb(255 255 255 / 0.55);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgb(255 255 255 / 0.55);
+    box-shadow:
+      0 1px 0 0 rgb(255 255 255 / 0.55) inset,
+      0 8px 22px -10px rgb(15 23 42 / 0.08);
+  }
+  html.dark .ios-card-thin {
+    background-color: rgb(39 39 42 / 0.45);
+    border-color: rgb(255 255 255 / 0.06);
+    box-shadow:
+      0 1px 0 0 rgb(255 255 255 / 0.05) inset,
+      0 10px 30px -8px rgb(0 0 0 / 0.45);
+  }
+
+  .ios-chip {
+    background-color: rgb(255 255 255 / 0.6);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid rgb(255 255 255 / 0.5);
+  }
+  html.dark .ios-chip {
+    background-color: rgb(39 39 42 / 0.55);
+    border-color: rgb(255 255 255 / 0.08);
+  }
+
+  /* Legacy aliases used in older components — point them at the new
+     iOS surfaces so existing files keep rendering correctly. */
+  .glass        { @apply ios-card; }
+  .glass-strong { @apply ios-card; }
+  .glass-subtle { @apply ios-card-thin; }
+  .surface      { @apply ios-card; }
+  .surface-2    { @apply ios-card-thin; }
+  .surface-3    { @apply ios-chip; }
 }
 
 /* ----------------------------------------------------------------------
- * Loader — bright on dark.
+ * Loader — adapts to theme via currentColor on the dots.
  * --------------------------------------------------------------------*/
 .loader {
   position: relative;
   width: 80px;
   height: 80px;
+  color: rgb(var(--fg));
 }
 .loader::before,
 .loader::after {
@@ -64,8 +145,9 @@ body::before {
   position: absolute;
   width: 18px;
   height: 18px;
-  border-radius: 6px;
-  background-color: rgb(244, 244, 245); /* zinc-100 */
+  border-radius: 8px;
+  background-color: currentColor;
+  opacity: 0.9;
   left: 50%;
   top: 50%;
   animation: rotate 1s ease-in infinite;
@@ -74,7 +156,7 @@ body::before {
   width: 10px;
   height: 10px;
   border-radius: 4px;
-  background-color: rgb(161, 161, 170); /* zinc-400 */
+  opacity: 0.5;
   animation: rotate 1s ease-in infinite, moveY 1s ease-in infinite;
 }
 
@@ -92,12 +174,15 @@ body::before {
   100% { transform: translate(-50%, -100%) rotate(360deg) scale(1, 1); }
 }
 
-/* ----------------------------------------------------------------------
- * The canvas itself: paper-like, brightest element on screen.
- * --------------------------------------------------------------------*/
+/* Canvas surface — always white so drawing feels like paper. */
 .paper {
   background-color: #ffffff;
   box-shadow:
-    0 0 0 1px rgba(255,255,255,0.04),
-    0 30px 80px -20px rgba(0,0,0,0.7);
+    0 0 0 1px rgb(15 23 42 / 0.06),
+    0 12px 30px -8px rgb(15 23 42 / 0.10);
+}
+html.dark .paper {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.08),
+    0 18px 40px -8px rgb(0 0 0 / 0.55);
 }

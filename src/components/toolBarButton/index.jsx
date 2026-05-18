@@ -42,34 +42,34 @@ export const ToolBarButton = ({
         closeDelay={0}
         placement={placement}
         content={
-          <div className='flex flex-col gap-0 max-w-[220px]'>
+          <div className='flex flex-col gap-0 max-w-[220px] py-1 px-1'>
             <div className='flex flex-row items-center gap-2'>
-              <span className='font-semibold text-sm text-pretty text-zinc-100'>{label}</span>
+              <span className='font-semibold text-sm text-pretty text-slate-900 dark:text-zinc-100'>{label}</span>
               {shortcut && (
-                <kbd className='text-[10px] font-mono px-1 py-px rounded bg-zinc-800 border border-zinc-700 text-zinc-300'>
+                <kbd className='text-[10px] font-mono px-1 py-px rounded bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-300'>
                   {shortcut}
                 </kbd>
               )}
             </div>
             {description && (
-              <p className='text-xs text-zinc-400 text-pretty mt-0.5'>
+              <p className='text-xs text-slate-500 dark:text-zinc-400 text-pretty mt-0.5'>
                 {description}
               </p>
             )}
           </div>
         }
         classNames={{
-          content: 'bg-zinc-900 border border-zinc-800'
+          content: 'ios-card'
         }}
       >
         <Button
           className={`min-w-9 w-9 h-9 transition-colors ${
             active
-              ? 'bg-zinc-50 text-zinc-950'
-              : 'bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100'
+              ? 'bg-slate-900 text-white dark:bg-zinc-50 dark:text-slate-900 shadow-md'
+              : 'bg-transparent text-slate-600 dark:text-zinc-400 hover:bg-white/60 dark:hover:bg-zinc-700/60 hover:text-slate-900 dark:hover:text-zinc-100'
           }`}
           isIconOnly
-          radius='lg'
+          radius='full'
           aria-label={label}
           aria-pressed={active}
           onPress={modal && onPress === null ? onOpen : () => onPress()}
@@ -82,8 +82,13 @@ export const ToolBarButton = ({
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
-          className='w-full min-w-[40%] max-w-screen-md max-h-screen bg-zinc-900 text-zinc-100'
+          className='w-full min-w-[40%] max-w-screen-md max-h-screen'
           placement={placement}
+          backdrop='blur'
+          classNames={{
+            base: 'ios-card text-slate-900 dark:text-zinc-100',
+            closeButton: 'text-slate-500 dark:text-zinc-400'
+          }}
         >
           <ModalContent>
             {onClose => (
