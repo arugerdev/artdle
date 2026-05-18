@@ -65,7 +65,7 @@ export const PaletteSwatches = ({ color, setColor, isDisabled }) => {
                 aria-label={`Color personalizado ${c}`}
                 disabled={isDisabled}
                 onClick={() => setColor(c)}
-                className={`w-5 h-5 rounded-sm border transition-transform hover:scale-110 active:scale-95 ${color.toLowerCase() === c.toLowerCase() ? 'border-2 border-blue-500 ring-2 ring-blue-200' : 'border-slate-300'}`}
+                className={`w-5 h-5 rounded-md border transition-transform hover:scale-110 active:scale-95 ${color.toLowerCase() === c.toLowerCase() ? 'border-2 border-slate-900 scale-110' : 'border-slate-300'}`}
                 style={{ background: c }}
               />
             </Tooltip>

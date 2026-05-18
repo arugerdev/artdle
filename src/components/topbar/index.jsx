@@ -17,7 +17,6 @@ import { useLocation } from 'wouter'
 import { getAuthData, loginWithGoogle, signOut } from '../../utils/supabase'
 import toast from 'react-hot-toast'
 import { UserButton } from '../userButton'
-import { isMobile } from '../../utils/system'
 import { useTranslation } from 'react-i18next'
 import i18n from '../../i18n'
 export const Topbar = () => {
@@ -53,30 +52,36 @@ export const Topbar = () => {
 
   return (
     <Navbar
-      isBordered
-      shouldHideOnScroll={!isMobile()}
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      position='static'
-      className='flex flex-row w-full max-w-screen items-center justify-center'
+      position='sticky'
+      maxWidth='full'
+      classNames={{
+        base: 'bg-white/60 backdrop-blur-xl border-b border-white/60 shadow-[0_2px_20px_rgb(15,23,42,0.04)]',
+        wrapper: 'max-w-screen-2xl px-4 sm:px-6',
+        item: ['data-[active=true]:font-semibold', 'data-[active=true]:text-slate-900']
+      }}
     >
       {/* -------------- PC -------------- */}
-      <NavbarContent className='hidden sm:flex gap-4 w-full' justify='center'>
+      <NavbarContent className='hidden sm:flex gap-6 w-full' justify='start'>
         <NavbarBrand>
           <Link
-            className='flex flex-row gap-4 text-black cursor-pointer'
+            className='flex flex-row gap-2 items-center text-slate-900 cursor-pointer'
             onPress={() => pushLocation('/')}
           >
-            <Image href={''} src={Logo} width={'64px'} height={'64px'} />
-            <p className='font-bold text-inherit'>Artdle</p>
+            <Image src={Logo} width={36} height={36} radius='full' />
+            <p className='font-bold text-base tracking-tight'>Artdle</p>
           </Link>
         </NavbarBrand>
 
         {menuItems.map((item, i) => (
-          <NavbarItem key={item.label + i} isActive={location == item.path}>
+          <NavbarItem key={item.label + i} isActive={location === item.path}>
             <Link
-              color='foreground'
-              href=''
+              className={`text-sm cursor-pointer transition-colors ${
+                location === item.path
+                  ? 'text-slate-900 font-semibold'
+                  : 'text-slate-500 hover:text-slate-900'
+              }`}
               onPress={() => pushLocation(item.path)}
             >
               {item.label}
@@ -88,11 +93,13 @@ export const Topbar = () => {
         <NavbarItem className='hidden sm:flex'>
           <Button
             size='sm'
-            variant='light'
+            variant='flat'
+            radius='full'
             onPress={toggleLang}
             aria-label='Change language'
+            className='bg-white/50 backdrop-blur-md border border-slate-200/60 text-xs font-medium text-slate-600'
           >
-            {lang === 'es' ? '🇬🇧 EN' : '🇪🇸 ES'}
+            {lang === 'es' ? 'EN' : 'ES'}
           </Button>
         </NavbarItem>
         <NavbarItem className='hidden sm:flex'>

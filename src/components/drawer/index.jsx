@@ -33,6 +33,7 @@ import { stageToCompressedDataURL, dataURLToBlob, resolveDrawImage } from '../..
 import { loadDraft, saveDraft, clearDraft } from '../../utils/offlineDraft.js'
 import { LayerPanel } from '../layerPanel/index.jsx'
 import { Tooltip } from '@nextui-org/react'
+import { ColorPickerPopover } from '../colorPickerPopover/index.jsx'
 import { PaletteSwatches } from '../paletteSwatches/index.jsx'
 import { downloadSVG } from '../../utils/svg.js'
 import { SvgExportIcon } from '../../assets/icons'
@@ -400,16 +401,16 @@ export const Drawer = ({
     <div
       role='separator'
       aria-hidden='true'
-      className='bg-slate-200 self-stretch h-px w-full lg:h-px lg:w-full lg:my-0.5'
+      className='bg-slate-200/70 self-stretch h-px w-full lg:h-px lg:w-full lg:my-0.5'
     />
   )
 
   return (
     <section
-      className={`${className} flex flex-col bg-slate-50 items-start gap-3 p-3 sm:p-4 w-full h-full max-w-screen shadow-lg rounded-2xl border border-slate-200`}
+      className={`${className} glass flex flex-col items-start gap-3 p-3 sm:p-4 w-full h-full max-w-screen rounded-3xl`}
     >
       <section className='flex flex-col-reverse items-center lg:items-start justify-center w-full lg:flex-row gap-3'>
-        <section className='flex flex-row flex-wrap w-full lg:max-w-[72px] h-auto lg:flex-col items-center justify-start shadow-md rounded-xl bg-white gap-1.5 p-2 border border-slate-200'>
+        <section className='glass-strong flex flex-row flex-wrap w-full lg:max-w-[68px] h-auto lg:flex-col items-center justify-start rounded-2xl gap-1.5 p-2'>
           {!isMobile() && (
             <div
               aria-hidden='true'
@@ -461,27 +462,8 @@ export const Drawer = ({
 
           <Divider />
 
-          {/* Colour controls */}
-          <Tooltip
-            content={
-              <div className='flex flex-col gap-0'>
-                <span className='font-semibold text-xs'>Selector de color</span>
-                <span className='text-[10px] text-gray-500 font-mono'>{color.toUpperCase()}</span>
-              </div>
-            }
-            placement='right'
-            delay={200}
-            closeDelay={0}
-          >
-            <input
-              type='color'
-              value={color}
-              onChange={e => setColor(e.target.value)}
-              className='bg-transparent rounded-full justify-center p-1 w-9 h-9 cursor-pointer border border-slate-200 hover:border-slate-400 transition-colors'
-              disabled={isDrawed}
-              aria-label='Selector de color'
-            />
-          </Tooltip>
+          {/* Colour controls — popover picker + saved swatches */}
+          <ColorPickerPopover color={color} setColor={setColor} isDisabled={isDrawed} />
           <PaletteSwatches color={color} setColor={setColor} isDisabled={isDrawed} />
 
           <Divider />
@@ -577,7 +559,7 @@ export const Drawer = ({
             onPointerMove={handleMouseMove}
             onPointerUp={handleMouseUp}
             ref={stageRef}
-            className='touch-none border border-slate-300 shadow-inner rounded-lg bg-white p-px w-fit h-fit'
+            className='touch-none border border-slate-200/70 shadow-inner rounded-2xl bg-white p-px w-fit h-fit'
           >
             <Layer>{renderLines()}</Layer>
           </Stage>
@@ -586,25 +568,25 @@ export const Drawer = ({
           <img
             src={uriData}
             alt={name}
-            className='w-[960px] max-w-full h-auto rounded-lg border border-slate-300 shadow-inner'
+            className='w-[960px] max-w-full h-auto rounded-2xl border border-slate-200/70 shadow-inner'
           />
         )}
       </section>
 
-      <section className='flex flex-row flex-wrap items-center justify-end shadow-md w-full h-auto rounded-xl bg-white gap-2 p-2.5 border border-slate-200'>
+      <section className='glass-strong flex flex-row flex-wrap items-center justify-end w-full h-auto rounded-2xl gap-2 p-2.5'>
         <Input
           type='title'
-          variant='faded'
-          color='primary'
+          variant='bordered'
           isClearable
           placeholder='Pon un nombre a tu creación...'
-          label={<strong>Nombre de tu creación</strong>}
-          labelPlacement='inside'
+          label={<span className='text-xs font-medium uppercase tracking-wider text-slate-500'>Nombre</span>}
+          labelPlacement='outside'
           isDisabled={isDrawed}
           value={name}
           onValueChange={setName}
           classNames={{
-            inputWrapper: 'min-h-[3rem]'
+            inputWrapper: 'min-h-[2.5rem] bg-white/50 backdrop-blur-md border-slate-200/70 data-[hover=true]:border-slate-300 group-data-[focus=true]:border-slate-400 group-data-[focus=true]:bg-white/70',
+            input: 'text-sm'
           }}
         />
 
@@ -612,7 +594,7 @@ export const Drawer = ({
           content={
             <div className='flex flex-col'>
               <span className='font-semibold text-xs'>Descargar PNG</span>
-              <span className='text-[10px] text-gray-500'>Imagen rasterizada</span>
+              <span className='text-[10px] text-slate-500'>Imagen rasterizada</span>
             </div>
           }
           placement='top'
@@ -621,11 +603,13 @@ export const Drawer = ({
         >
           <Button
             variant='flat'
+            radius='full'
             isIconOnly
             aria-label='Descargar PNG'
             onPress={() => handleSave(uriData !== null)}
+            className='bg-white/60 backdrop-blur-md border border-slate-200/60'
           >
-            <DownloadIcon className='w-full h-full p-2' />
+            <DownloadIcon className='w-5 h-5 text-slate-700' />
           </Button>
         </Tooltip>
 
@@ -633,7 +617,7 @@ export const Drawer = ({
           content={
             <div className='flex flex-col'>
               <span className='font-semibold text-xs'>Descargar SVG</span>
-              <span className='text-[10px] text-gray-500'>Vectorial · sin pérdida</span>
+              <span className='text-[10px] text-slate-500'>Vectorial · sin pérdida</span>
             </div>
           }
           placement='top'
@@ -642,12 +626,14 @@ export const Drawer = ({
         >
           <Button
             variant='flat'
+            radius='full'
             isIconOnly
             aria-label='Descargar SVG'
             isDisabled={lines.length === 0}
             onPress={() => downloadSVG(lines, `${name}-${Date.now()}.svg`)}
+            className='bg-white/60 backdrop-blur-md border border-slate-200/60'
           >
-            <SvgExportIcon className='w-full h-full p-2' />
+            <SvgExportIcon className='w-5 h-5 text-slate-700' />
           </Button>
         </Tooltip>
 
@@ -659,7 +645,7 @@ export const Drawer = ({
               <span className='font-semibold text-xs'>
                 {isDrawed ? 'Dibujo enviado' : 'Enviar dibujo'}
               </span>
-              <span className='text-[10px] text-gray-500'>
+              <span className='text-[10px] text-slate-500'>
                 {name.length < 2 ? 'Pon un nombre primero' : 'Subir y publicar'}
               </span>
             </div>
@@ -670,16 +656,15 @@ export const Drawer = ({
           isDisabled={isDrawed}
         >
           <Button
-            color='success'
-            variant='shadow'
+            radius='full'
             isIconOnly
             aria-label='Enviar dibujo'
             isLoading={loading}
             onPress={sendDraw}
             isDisabled={isDrawed || name.length < 2}
-            className='shadow-success/30'
+            className='bg-slate-900 text-white hover:bg-slate-700 transition-colors'
           >
-            <SendIcon className='w-full h-full p-2 text-white' />
+            <SendIcon className='w-5 h-5' />
           </Button>
         </Tooltip>
       </section>
