@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { createPortal } from 'react-dom'
 import { Button, Slider, Input, Tooltip } from '@nextui-org/react'
 import { DownloadIcon, PaperIcon, RedoIcon, SendIcon, UndoIcon, SvgExportIcon } from './../../assets/icons/index'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
@@ -37,7 +38,9 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
       : null
   )
   const [drawData, setDrawData] = useState(data)
-  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100, visible: false })
+  // x, y are viewport coords. scale is the canvas's CSS-px-per-logical-px
+  // ratio so the brush preview matches the actual stroke width on screen.
+  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100, scale: 1, visible: false })
 
   const TODAY = new Date().toISOString().split('T')[0]
   const [paths, setPaths] = useState(() => {
@@ -144,7 +147,9 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
   }
 
   const onPointerMove = e => {
-    setCursorPos({ x: e.clientX, y: e.clientY, visible: !isMobile() })
+    const rect = liveCanvasRef.current?.getBoundingClientRect()
+    const scale = rect && rect.width > 0 ? rect.width / VW : 1
+    setCursorPos({ x: e.clientX, y: e.clientY, scale, visible: !isMobile() })
     if (!isDrawingRef.current) return
     e.preventDefault()
     const { x, y } = clientToCanvas(e)
@@ -420,18 +425,26 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
 
         {/* CANVAS */}
         <div ref={wrapperRef} className='relative w-fit max-w-full'>
-          {!isMobile() && cursorPos.visible && !isDrawed && (
-            <div
-              aria-hidden='true'
-              className='fixed pointer-events-none z-10 rounded-full border border-slate-700/70 dark:border-zinc-300/70 bg-slate-700/10 dark:bg-zinc-100/10'
-              style={{
-                left: `${cursorPos.x - size / 2}px`,
-                top: `${cursorPos.y - size / 2}px`,
-                width: `${size}px`,
-                height: `${size}px`
-              }}
-            />
-          )}
+          {/* Brush preview is portalled to <body> so it isn't trapped
+              inside the ios-card's backdrop-filter containing block —
+              that was making the cursor drift relative to the panel
+              instead of the viewport. */}
+          {!isMobile() && cursorPos.visible && !isDrawed && typeof document !== 'undefined' && (() => {
+            const displaySize = Math.max(2, size * cursorPos.scale)
+            return createPortal(
+              <div
+                aria-hidden='true'
+                className='fixed pointer-events-none z-[1000] rounded-full border border-slate-700/70 dark:border-zinc-300/70 bg-slate-700/10 dark:bg-zinc-100/10'
+                style={{
+                  left: `${cursorPos.x - displaySize / 2}px`,
+                  top: `${cursorPos.y - displaySize / 2}px`,
+                  width: `${displaySize}px`,
+                  height: `${displaySize}px`
+                }}
+              />,
+              document.body
+            )
+          })()}
 
           {!isDrawed && (
             <>
