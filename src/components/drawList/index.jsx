@@ -30,9 +30,9 @@ export const DrawList = ({
       case '$.1':
         return { index: 'created_at', options: { ascending: true } }
       case '$.2':
-        return { index: 'items_count', options: { ascending: false } }
+        return { index: 'likes_count', options: { ascending: false } }
       case '$.3':
-        return { index: 'items_count', options: { ascending: true } }
+        return { index: 'likes_count', options: { ascending: true } }
       case '$.0':
       default:
         return { index: 'created_at', options: { ascending: false } }
@@ -55,7 +55,7 @@ export const DrawList = ({
     try {
       if (!added) {
         const { data: countData } = await applyFilter(
-          supabase.from('draws').select('id')
+          supabase.from('draws_with_meta').select('id')
         )
         setDrawsCount(countData?.length ?? 0)
       }
@@ -64,7 +64,7 @@ export const DrawList = ({
       const end = start + 7
 
       const { data, error } = await applyFilter(
-        supabase.from('draws').select('*')
+        supabase.from('draws_with_meta').select('*')
       )
         .order(orderIndex, orderOptions)
         .range(start, end)

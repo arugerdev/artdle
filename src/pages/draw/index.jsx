@@ -26,11 +26,11 @@ export default function DrawPage () {
     if (!id) return
     setLoading(true)
     supabase
-      .from('draws')
+      .from('draws_with_meta')
       .select()
       .eq('id', id)
-      .then(data => {
-        setData(data.data[0])
+      .then(result => {
+        setData(result.data?.[0] ?? null)
         setLoading(false)
       })
   }, [id])
