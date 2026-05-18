@@ -25,6 +25,12 @@ export function stageToCompressedDataURL (stage, { quality = 0.9 } = {}) {
   return stage.toDataURL()
 }
 
+// Same as the above but for a vanilla HTMLCanvasElement.
+export function canvasToCompressedDataURL (canvas, { quality = 0.9 } = {}) {
+  if (canUseWebP()) return canvas.toDataURL('image/webp', quality)
+  return canvas.toDataURL()
+}
+
 // Extracts { mime, base64 } from a data URL like
 // "data:image/webp;base64,AAAA..."
 export function parseDataURL (uri = '') {
