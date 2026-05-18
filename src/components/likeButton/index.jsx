@@ -7,44 +7,51 @@ import { abbrNum } from '../../utils/maths'
 import toast from 'react-hot-toast'
 
 export const LikeButton = ({ data = {} }) => {
+  const hasJoinedCount = typeof data.likes_count === 'number'
   const [isLiked, setLiked] = useState()
-  const [counter, setCounter] = useState(0)
+  const [counter, setCounter] = useState(hasJoinedCount ? data.likes_count : 0)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const abortController = new AbortController()
-
     setLoading(true)
     supabase.auth.getUser().then(async user => {
+      const userId = user.data.user?.id
+      if (!userId) {
+        setLiked(false)
+        if (!hasJoinedCount) setCounter(0)
+        setLoading(false)
+        return
+      }
+
+      // "Did I like this?" — always needed, can't come from the public view.
       supabase
         .from('likes')
-        .select('*')
-        .eq('liked_by', user.data.user.id)
+        .select('id', { head: true, count: 'exact' })
+        .eq('liked_by', userId)
         .eq('liked_to', data.id)
-        .then(likes => {
-          setLiked(likes.data.length > 0)
+        .then(({ count, error }) => {
+          if (error) toast.error('Ha ocurrido un error al encontrar likes: ' + error.message)
+          else setLiked((count ?? 0) > 0)
         })
-        .catch(err => {
-          toast.error('Ha ocurrido un error al encontrar likes: ' + err)
-        })
+
+      // Total count — only fetch when the parent didn't already join it in.
+      if (hasJoinedCount) {
+        setCounter(data.likes_count)
+        setLoading(false)
+        return
+      }
 
       supabase
         .from('likes')
-        .select('*')
+        .select('id', { head: true, count: 'exact' })
         .eq('liked_to', data.id)
-        .then(likes => {
-          setCounter(likes.data.length)
-          setLoading(false)
-        })
-        .catch(err => {
-          toast.error('Ha ocurrido un error al encontrar likes: ' + err)
+        .then(({ count, error }) => {
+          if (error) toast.error('Ha ocurrido un error al encontrar likes: ' + error.message)
+          else setCounter(count ?? 0)
           setLoading(false)
         })
     })
-    return () => {
-      abortController.abort()
-    }
-  }, [data])
+  }, [data.id, data.likes_count, hasJoinedCount])
 
   return (
     <section className='flex flex-row items-center justify-center'>

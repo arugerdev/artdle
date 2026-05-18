@@ -22,18 +22,31 @@ import { ShareButton } from './../shareButton/index'
 export const DrawCard = ({ data, className = '', position = null }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const [dailyWord, setDailyWord] = useState('')
-  const [userData, setUserData] = useState(null)
+  // Prefer joined-view fields when present; fall back to lazy fetches
+  // so the card still works if invoked with a plain `draws` row.
+  const joined = data.creator_username !== undefined || data.daily_word !== undefined
+  const [dailyWord, setDailyWord] = useState(joined ? (data.daily_word ?? '') : '')
+  const [userData, setUserData] = useState(
+    joined
+      ? {
+          username: data.creator_username,
+          full_name: data.creator_full_name,
+          avatar_url: data.creator_avatar_url
+        }
+      : null
+  )
 
   useEffect(() => {
+    if (joined) return
     getDailyWord(data.created_at.split('+')[0].split('T')[0]).then(word => {
       setDailyWord(word)
     })
 
-    getUserData(data.creator).then(data => {
-      setUserData(data)
+    getUserData(data.creator).then(profile => {
+      setUserData(profile)
     })
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.id, joined])
 
   return (
     <Tooltip
