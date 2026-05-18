@@ -47,16 +47,16 @@ export default function MainPage () {
       {!loading && (
         <>
           <section
-            className='flex flex-col items-center justify-center gap-1 w-full max-w-[1100px] px-4'
+            className='flex flex-col items-center justify-center gap-4 w-full max-w-[1100px] px-4 pt-4'
             aria-labelledby='daily-word-heading'
           >
-            <div className='flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-blue-50 via-white to-purple-50 border border-slate-200 rounded-2xl shadow-sm px-8 py-6 mb-6 w-full max-w-md'>
-              <small className='text-xs font-semibold uppercase tracking-wider text-slate-500'>
+            <div className='glass flex flex-col items-center justify-center gap-1 rounded-2xl px-10 py-5 mb-2 max-w-md'>
+              <small className='text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500'>
                 {t('main.todaysWordLabel')}
               </small>
               <h1
                 id='daily-word-heading'
-                className='text-4xl sm:text-5xl font-sans font-extrabold pt-1 px-2 text-center bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent'
+                className='text-4xl sm:text-5xl font-sans font-bold pt-1 px-2 text-center text-slate-900 tracking-tight'
               >
                 {dailyWord || '…'}
               </h1>
@@ -107,12 +107,12 @@ export default function MainPage () {
 function SectionDivider ({ title, emoji }) {
   return (
     <div className='flex flex-row items-center gap-3 w-full max-w-[1200px] px-4 mt-4'>
-      <div className='flex-1 h-px bg-gradient-to-r from-transparent to-slate-300' />
-      <h2 className='flex flex-row items-center gap-2 text-2xl sm:text-3xl font-sans font-extrabold py-1 px-3 text-slate-800'>
-        {emoji && <span aria-hidden='true'>{emoji}</span>}
+      <div className='flex-1 h-px bg-slate-200/70' />
+      <h2 className='flex flex-row items-center gap-2 text-base sm:text-lg font-semibold py-1 px-3 text-slate-700 tracking-tight'>
+        {emoji && <span aria-hidden='true' className='text-xl'>{emoji}</span>}
         {title}
       </h2>
-      <div className='flex-1 h-px bg-gradient-to-l from-transparent to-slate-300' />
+      <div className='flex-1 h-px bg-slate-200/70' />
     </div>
   )
 }

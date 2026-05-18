@@ -61,10 +61,13 @@ export const ToolBarButton = ({
         }
       >
         <Button
-          className={`${
-            active ? 'border-2 border-primary bg-primary/10' : ''
-          } bg-transparent justify-center p-2 transition-colors`}
+          className={`min-w-9 w-9 h-9 transition-colors ${
+            active
+              ? 'bg-slate-900 text-white shadow-inner'
+              : 'bg-transparent text-slate-700 hover:bg-slate-200/60'
+          }`}
           isIconOnly
+          radius='lg'
           aria-label={label}
           aria-pressed={active}
           onPress={modal && onPress === null ? onOpen : () => onPress()}

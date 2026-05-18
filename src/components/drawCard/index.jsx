@@ -76,7 +76,7 @@ export const DrawCard = ({ data, className = '', position = null }) => {
         onPress={onOpen}
         className={`w-full max-w-[500px] h-full cursor-pointer group ${className}`}
       >
-        <section className='flex flex-col items-center justify-start w-full text-center shadow-md hover:shadow-xl h-auto rounded-xl text-black bg-white border border-slate-200 gap-2 p-3 transition-all duration-200 group-hover:-translate-y-0.5'>
+        <section className='glass flex flex-col items-center justify-start w-full text-center h-auto rounded-2xl text-slate-900 gap-2 p-3 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_18px_40px_rgb(15,23,42,0.10)]'>
           {position && (
             <p className='text-2xl leading-none' aria-label={`Posición ${position}`}>
               {position === 1
@@ -90,26 +90,26 @@ export const DrawCard = ({ data, className = '', position = null }) => {
           )}
           <Image
             src={imageSrc}
-            radius='md'
+            radius='lg'
             alt={`Dibujo "${data.name}" — palabra del día: ${data.daily_word ?? dailyWord ?? '?'}`}
             isBlurred={!isMobile()}
             isZoomed={!isMobile()}
             classNames={{ wrapper: 'w-full' }}
           />
-          <div className='w-full h-px bg-slate-200'></div>
+          <div className='w-full h-px bg-slate-200/60'></div>
           <div className='flex flex-row w-full items-center justify-center gap-2'>
-            <section className='flex flex-col items-start justify-center text-start w-full truncate gap-0.5'>
-              <h1 className='font-extrabold truncate w-full'>{data.name}</h1>
+            <section className='flex flex-col items-start justify-center text-start w-full truncate gap-0'>
+              <h1 className='font-semibold truncate w-full text-slate-900'>{data.name}</h1>
               <small className='text-slate-400 text-xs'>
                 {new Date(data.created_at).toString().split('GMT')[0]}
               </small>
             </section>
             <LikeButton data={data} />
           </div>
-          <div className='flex flex-row w-full items-center justify-start p-0 m-0 gap-2'>
-            <Avatar size='sm' src={userData?.avatar_url} />
+          <div className='flex flex-row w-full items-center justify-start gap-2 pt-1 border-t border-slate-100/80'>
+            <Avatar size='sm' src={userData?.avatar_url} className='border border-slate-200/60' />
             <small className='text-slate-500 font-normal text-sm truncate'>
-              <strong>{userData?.username ?? 'Autor desconocido'}</strong>
+              {userData?.username ?? 'Autor desconocido'}
             </small>
           </div>
           <Modal

@@ -2,60 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ----------------------------------------------------------------------
+ * Page surface — neutral slate base with two extremely faint radial
+ * tints that give backdrop-blur something to soften. No screaming
+ * gradients on visible content; this lives behind glass panels only.
+ * --------------------------------------------------------------------*/
+html, body {
+  min-height: 100%;
+  background-color: #f8fafc; /* slate-50 */
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(40rem 40rem at 12% 8%, rgba(99, 102, 241, 0.06), transparent 60%),
+    radial-gradient(36rem 36rem at 92% 88%, rgba(244, 114, 182, 0.05), transparent 60%);
+}
+
+/* ----------------------------------------------------------------------
+ * Glass surface utility — apply with `.glass` on any container.
+ * Tuned so it works whether the surface is on slate-50 or on top of
+ * a card grid.
+ * --------------------------------------------------------------------*/
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_8px_30px_rgb(15,23,42,0.06)];
+  }
+  .glass-strong {
+    @apply bg-white/85 backdrop-blur-xl border border-white/70 shadow-[0_10px_40px_rgb(15,23,42,0.08)];
+  }
+  .glass-subtle {
+    @apply bg-white/40 backdrop-blur-md border border-white/50;
+  }
+}
+
+/* ----------------------------------------------------------------------
+ * Loader — same animation as before, slimmer for the new look.
+ * --------------------------------------------------------------------*/
 .loader {
   position: relative;
-  width: 164px;
-  height: 164px;
+  width: 96px;
+  height: 96px;
 }
 .loader::before,
 .loader::after {
   content: '';
   position: absolute;
-  width: 40px;
-  height: 40px;
-  background-color: #6d7b96;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background-color: rgb(71, 85, 105); /* slate-600 */
   left: 50%;
   top: 50%;
   animation: rotate 1s ease-in infinite;
 }
 .loader::after {
-  width: 20px;
-  height: 20px;
-  background-color: rgb(188, 225, 241);
+  width: 14px;
+  height: 14px;
+  border-radius: 6px;
+  background-color: rgb(148, 163, 184); /* slate-400 */
   animation: rotate 1s ease-in infinite, moveY 1s ease-in infinite;
 }
 
 @keyframes moveY {
-  0%,
-  100% {
-    top: 10%;
-  }
-  45%,
-  55% {
-    top: 59%;
-  }
-  60% {
-    top: 40%;
-  }
+  0%, 100% { top: 10%; }
+  45%, 55% { top: 59%; }
+  60% { top: 40%; }
 }
 @keyframes rotate {
-  0% {
-    transform: translate(-50%, -100%) rotate(0deg) scale(1, 1);
-  }
-  25% {
-    transform: translate(-50%, 0%) rotate(180deg) scale(1, 1);
-  }
-  45%,
-  55% {
-    transform: translate(-50%, 100%) rotate(180deg) scale(3, 0.5);
-  }
-  60% {
-    transform: translate(-50%, 100%) rotate(180deg) scale(1, 1);
-  }
-  75% {
-    transform: translate(-50%, 0%) rotate(270deg) scale(1, 1);
-  }
-  100% {
-    transform: translate(-50%, -100%) rotate(360deg) scale(1, 1);
-  }
+  0% { transform: translate(-50%, -100%) rotate(0deg) scale(1, 1); }
+  25% { transform: translate(-50%, 0%) rotate(180deg) scale(1, 1); }
+  45%, 55% { transform: translate(-50%, 100%) rotate(180deg) scale(2.5, 0.5); }
+  60% { transform: translate(-50%, 100%) rotate(180deg) scale(1, 1); }
+  75% { transform: translate(-50%, 0%) rotate(270deg) scale(1, 1); }
+  100% { transform: translate(-50%, -100%) rotate(360deg) scale(1, 1); }
 }

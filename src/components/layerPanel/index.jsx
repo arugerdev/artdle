@@ -52,8 +52,8 @@ export const LayerPanel = ({ layers, activeLayer, setLayers, setActiveLayer }) =
               onClick={() => setActiveLayer(layer.id)}
               className={`text-xs w-6 h-6 flex items-center justify-center rounded-md font-semibold transition-colors ${
                 activeLayer === layer.id
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'bg-slate-100/70 text-slate-600 hover:bg-slate-200/70'
               }`}
             >
               {layer.id + 1}
