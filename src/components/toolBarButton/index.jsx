@@ -63,7 +63,7 @@ export const ToolBarButton = ({
         }}
       >
         <Button
-          className={`min-w-9 w-9 h-9 transition-colors ${
+          className={`min-w-8 w-8 h-8 transition-colors ${
             active
               ? 'bg-slate-900 text-white dark:bg-zinc-50 dark:text-slate-900 shadow-md'
               : 'bg-transparent text-slate-600 dark:text-zinc-400 hover:bg-white/60 dark:hover:bg-zinc-700/60 hover:text-slate-900 dark:hover:text-zinc-100'
