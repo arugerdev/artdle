@@ -74,11 +74,11 @@ export const DrawCard = ({ data, className = '', position = null }) => {
     >
       <Link
         onPress={onOpen}
-        className={` w-full max-w-[500px] h-full cursor-pointer ${className}`}
+        className={`w-full max-w-[500px] h-full cursor-pointer group ${className}`}
       >
-        <section className='flex flex-col border-r-2 items-center justify-center w-full text-center shadow-lg h-auto rounded-lg text-black bg-white gap-2 p-2'>
+        <section className='flex flex-col items-center justify-start w-full text-center shadow-md hover:shadow-xl h-auto rounded-xl text-black bg-white border border-slate-200 gap-2 p-3 transition-all duration-200 group-hover:-translate-y-0.5'>
           {position && (
-            <p>
+            <p className='text-2xl leading-none' aria-label={`Posición ${position}`}>
               {position === 1
                 ? '👑'
                 : position === 2
@@ -90,25 +90,25 @@ export const DrawCard = ({ data, className = '', position = null }) => {
           )}
           <Image
             src={imageSrc}
-            radius='sm'
+            radius='md'
             alt={`Dibujo "${data.name}" — palabra del día: ${data.daily_word ?? dailyWord ?? '?'}`}
             isBlurred={!isMobile()}
             isZoomed={!isMobile()}
+            classNames={{ wrapper: 'w-full' }}
           />
-          <div className='w-full border-1'></div>
-          <div className='flex flex-row w-full items-center justify-center'>
-            <section className='flex flex-col -gap-8 items-start justify-center text-start w-full truncate'>
-              <h1 className='font-extrabold'>{data.name}</h1>
-              <small className=''>
+          <div className='w-full h-px bg-slate-200'></div>
+          <div className='flex flex-row w-full items-center justify-center gap-2'>
+            <section className='flex flex-col items-start justify-center text-start w-full truncate gap-0.5'>
+              <h1 className='font-extrabold truncate w-full'>{data.name}</h1>
+              <small className='text-slate-400 text-xs'>
                 {new Date(data.created_at).toString().split('GMT')[0]}
               </small>
             </section>
-
             <LikeButton data={data} />
           </div>
           <div className='flex flex-row w-full items-center justify-start p-0 m-0 gap-2'>
             <Avatar size='sm' src={userData?.avatar_url} />
-            <small className='text-slate-500 font-normal text-sm'>
+            <small className='text-slate-500 font-normal text-sm truncate'>
               <strong>{userData?.username ?? 'Autor desconocido'}</strong>
             </small>
           </div>

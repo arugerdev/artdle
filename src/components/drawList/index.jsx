@@ -157,7 +157,7 @@ export const DrawList = ({
     <section
       className={`${className} ${
         loading ? 'justify-center' : 'justify-start'
-      } flex flex-row flex-wrap bg-slate-100 items-start z-20 gap-2 p-4 w-full h-full mb-8 shadow-lg rounded-xl`}
+      } flex flex-row flex-wrap bg-slate-50 items-start z-20 gap-3 p-4 w-full h-full mb-4 shadow-sm rounded-2xl border border-slate-200`}
     >
       {!loading && draws && (
         <>

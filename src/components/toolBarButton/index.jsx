@@ -10,6 +10,14 @@ import {
   ModalFooter
 } from '@nextui-org/react'
 import React from 'react'
+
+// Splits a label like "Pencil / Lapiz ( P / 1 )" → { label, shortcut }.
+function parseShortcut (raw = '') {
+  const match = /^(.*?)\s*\(\s*([^)]+)\s*\)\s*$/.exec(raw)
+  if (!match) return { label: raw, shortcut: null }
+  return { label: match[1].trim(), shortcut: match[2].trim() }
+}
+
 export const ToolBarButton = ({
   active = false,
   onPress = () => {},
@@ -17,33 +25,47 @@ export const ToolBarButton = ({
   isDisabled = false,
   name = 'A button',
   description = 'A description of a button',
-  placement = 'left',
+  placement = 'right',
   modal = false,
   modalContent = null,
   modalTitle = ''
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const { label, shortcut } = parseShortcut(name)
 
   return (
     <>
       <Tooltip
         size='sm'
-        shadow='xl'
-        showArrow={true}
+        shadow='lg'
+        showArrow
+        delay={200}
+        closeDelay={0}
         placement={placement}
         content={
-          <div className='flex flex-col items-start justify-center'>
-            <h1 className='font-extrabold max-w-prose text-pretty'>{name}</h1>
-            <p className='max-w-[200px] text-pretty'>{description}</p>
+          <div className='flex flex-col gap-0 max-w-[220px]'>
+            <div className='flex flex-row items-center gap-2'>
+              <span className='font-semibold text-sm text-pretty'>{label}</span>
+              {shortcut && (
+                <kbd className='text-[10px] font-mono px-1 py-px rounded bg-slate-100 border border-slate-200 text-slate-600'>
+                  {shortcut}
+                </kbd>
+              )}
+            </div>
+            {description && (
+              <p className='text-xs text-slate-500 text-pretty mt-0.5'>
+                {description}
+              </p>
+            )}
           </div>
         }
       >
         <Button
           className={`${
-            active ? 'border-2 border-blue-500 bg-slate-300' : ''
-          } bg-transparent justify-center p-2`}
+            active ? 'border-2 border-primary bg-primary/10' : ''
+          } bg-transparent justify-center p-2 transition-colors`}
           isIconOnly
-          aria-label={name}
+          aria-label={label}
           aria-pressed={active}
           onPress={modal && onPress === null ? onOpen : () => onPress()}
           isDisabled={isDisabled}

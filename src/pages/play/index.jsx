@@ -77,6 +77,7 @@ function LobbyView () {
   )
 }
 
+// eslint-disable-next-line react/prop-types
 function RoomView ({ code }) {
   const [, navigate] = useLocation()
   const [room, setRoom] = useState(null)

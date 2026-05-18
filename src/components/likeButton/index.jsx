@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Button, Spinner } from '@nextui-org/react'
+import { Button, Spinner, Tooltip } from '@nextui-org/react'
 import supabase, { addLike, removeLike } from '../../utils/supabase'
 import { useEffect, useState } from 'react'
 import { FilledHeartIcon, HeartIcon } from '../../assets/icons'
@@ -53,28 +53,31 @@ export const LikeButton = ({ data = {} }) => {
     })
   }, [data.id, data.likes_count, hasJoinedCount])
 
+  const tooltipText = isLiked ? 'Quitar like' : 'Dar like'
   return (
     <section className='flex flex-row items-center justify-center'>
-      <Button
-        isIconOnly
-        variant='light'
-        aria-label={isLiked ? 'Quitar like' : 'Dar like'}
-        aria-pressed={!!isLiked}
-        className='flex items-center justify-center text-center p-0'
-        onPress={() => {
-          supabase.auth.getUser().then(async user => {
-            if (isLiked) removeLike(user, data, setCounter)
-            else if (!isLiked) addLike(user, data, setCounter)
-          })
+      <Tooltip content={tooltipText} delay={200} closeDelay={0} placement='top'>
+        <Button
+          isIconOnly
+          variant='light'
+          aria-label={tooltipText}
+          aria-pressed={!!isLiked}
+          className='flex items-center justify-center text-center p-0 transition-transform active:scale-90'
+          onPress={() => {
+            supabase.auth.getUser().then(async user => {
+              if (isLiked) removeLike(user, data, setCounter)
+              else if (!isLiked) addLike(user, data, setCounter)
+            })
 
-          setLiked(old => !old)
-        }}
-      >
-        {isLiked && (
-          <FilledHeartIcon className='w-full h-full p-2 text-red-600' />
-        )}
-        {!isLiked && <HeartIcon className='w-full h-full p-2 text-red-600' />}
-      </Button>
+            setLiked(old => !old)
+          }}
+        >
+          {isLiked && (
+            <FilledHeartIcon className='w-full h-full p-2 text-red-600' />
+          )}
+          {!isLiked && <HeartIcon className='w-full h-full p-2 text-red-600' />}
+        </Button>
+      </Tooltip>
       {!loading && (
         <small className='text-md font-bold text-gray-500'>
           {abbrNum(counter, 2)}
