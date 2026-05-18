@@ -67,6 +67,15 @@ export const Drawer = ({
   const stageRef = useRef()
   const [redoLines, setRedoLines] = useState([])
   const [drawData, setDrawData] = useState(data)
+  // Light-touch layers — strokes are tagged with a layerId at creation
+  // time. Visibility flips by toggling the layer in `layers` state.
+  // Bucket fills capture the whole canvas snapshot so they intentionally
+  // ignore the layer boundary (documented limitation).
+  const [layers, setLayers] = useState([
+    { id: 0, name: 'Capa 1', visible: true },
+    { id: 1, name: 'Capa 2', visible: true }
+  ])
+  const [activeLayer, setActiveLayer] = useState(0)
 
   const handleMouseDown = e => {
     isDrawing.current = true
@@ -105,7 +114,8 @@ export const Drawer = ({
             tool: activeTool,
             points: [position.x, position.y, position.x, position.y],
             stroke: color,
-            strokeWidth: size
+            strokeWidth: size,
+            layerId: activeLayer
           }
         ])
         setRedoLines([])
@@ -118,7 +128,8 @@ export const Drawer = ({
             tool: activeTool,
             points: [position.x, position.y, position.x, position.y],
             stroke: color,
-            strokeWidth: size
+            strokeWidth: size,
+            layerId: activeLayer
           }
         ])
         setRedoLines([])
@@ -191,8 +202,14 @@ export const Drawer = ({
     [lines, redoLines, isDrawed]
   )
 
+  const visibleLayerIds = new Set(layers.filter(l => l.visible).map(l => l.id))
+
   const renderLines = () => {
     return lines.map((line, i) => {
+      // Bucket strokes are full-canvas snapshots — keep them visible so
+      // older drawings still render correctly even when layers are hidden.
+      const visible = line.tool === TOOLS.BUCKET || visibleLayerIds.has(line.layerId ?? 0)
+      if (!visible) return null
       if (line.tool === TOOLS.BUCKET) {
         return <URLImage key={i} src={line.dataURL} />
       }
@@ -483,6 +500,37 @@ export const Drawer = ({
               'Se utiliza para borrar todo el lienzo CUIDADO CON ESTO, BORRARÁ TODO EL DIBUJO, se utiliza cuando quieres empezar desde el comienzo a dibujar.'
             }
           />
+
+          {!isDrawed && (
+            <div
+              className='flex flex-row lg:flex-col gap-1 border border-slate-200 rounded-md p-1 mt-0 lg:mt-1'
+              aria-label='Capas'
+            >
+              {layers.map(layer => (
+                <div key={layer.id} className='flex flex-row items-center gap-1'>
+                  <button
+                    type='button'
+                    aria-label={`${layer.visible ? 'Ocultar' : 'Mostrar'} ${layer.name}`}
+                    onClick={() =>
+                      setLayers(prev => prev.map(l => l.id === layer.id ? { ...l, visible: !l.visible } : l))
+                    }
+                    className='text-xs w-5 h-5 flex items-center justify-center'
+                  >
+                    {layer.visible ? '👁' : '◌'}
+                  </button>
+                  <button
+                    type='button'
+                    aria-pressed={activeLayer === layer.id}
+                    aria-label={`Capa activa: ${layer.name}`}
+                    onClick={() => setActiveLayer(layer.id)}
+                    className={`text-xs px-1 rounded ${activeLayer === layer.id ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-700'}`}
+                  >
+                    {layer.id + 1}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
 
           {(activeTool === TOOLS.PENCIL || activeTool === TOOLS.ERASER) && (
             <Slider
