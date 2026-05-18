@@ -113,10 +113,9 @@ export const DrawList = ({
   }, [isInView])
 
   useEffect(() => {
-    window.addEventListener('scroll', () => handleScroll())
-    return () => {
-      window.removeEventListener('scroll', () => handleScroll())
-    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const resetData = () => {
