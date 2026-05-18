@@ -32,3 +32,29 @@ export function parseDataURL (uri = '') {
   if (!match) return { mime: 'image/png', base64: uri }
   return { mime: match[1], base64: match[2] }
 }
+
+// Build a Blob from a base64 data URL — needed when uploading to Storage.
+export function dataURLToBlob (uri) {
+  const { mime, base64 } = parseDataURL(uri)
+  const binary = atob(base64)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i)
+  return new Blob([bytes], { type: mime })
+}
+
+// Public URL builder. Imported here instead of in the supabase util so this
+// module stays usable from edge/server contexts that don't have the client.
+export function buildStorageURL (supabaseUrl, bucket, path) {
+  if (!supabaseUrl || !bucket || !path) return null
+  const base = supabaseUrl.replace(/\/$/, '')
+  return `${base}/storage/v1/object/public/${bucket}/${path}`
+}
+
+// Resolve the renderable image src for a draw row (joined or legacy).
+export function resolveDrawImage (data, { supabaseUrl } = {}) {
+  if (!data) return null
+  if (data.storage_path) {
+    return buildStorageURL(supabaseUrl, 'draws', data.storage_path)
+  }
+  return data.uridata ?? null
+}

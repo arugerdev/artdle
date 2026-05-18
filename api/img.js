@@ -15,8 +15,6 @@ function extractImage (uridata = '') {
       return { mime, base64: uridata.slice(prefix.length) }
     }
   }
-  // Unknown prefix — strip anything that looks like a data URL header and
-  // assume PNG (current legacy behaviour).
   const stripped = uridata.replace(/^data:[^;]+;base64,/, '')
   return { mime: 'image/png', base64: stripped }
 }
@@ -24,8 +22,9 @@ function extractImage (uridata = '') {
 export default async function handler (req, res) {
   dotenv.config()
 
+  const supabaseUrl = process.env.VITE_SUPABASE_URL
   const supabase = createClient(
-    process.env.VITE_SUPABASE_URL,
+    supabaseUrl,
     process.env.VITE_SUPABASE_ANON_KEY
   )
 
@@ -37,7 +36,7 @@ export default async function handler (req, res) {
 
   const { data, error } = await supabase
     .from('draws')
-    .select('uridata')
+    .select('uridata, storage_path')
     .eq('id', drawId)
     .single()
 
@@ -46,6 +45,22 @@ export default async function handler (req, res) {
     return res.status(error.code === 'PGRST116' ? 404 : 500).json({
       error: error.code === 'PGRST116' ? 'Not found' : 'Internal server error'
     })
+  }
+
+  // New rows: object lives in Storage. Cheapest path — redirect to the
+  // public CDN URL, which is already cached and faster than re-proxying.
+  if (data.storage_path) {
+    const base = supabaseUrl.replace(/\/$/, '')
+    const url = `${base}/storage/v1/object/public/draws/${data.storage_path}`
+    res.setHeader('Cache-Control', 'public, max-age=86400, immutable')
+    res.setHeader('Location', url)
+    res.status(302).end()
+    return
+  }
+
+  // Legacy rows: image lives base64-inline on the row.
+  if (!data.uridata) {
+    return res.status(404).json({ error: 'No image data' })
   }
 
   try {

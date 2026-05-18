@@ -27,7 +27,7 @@ import { Pencil } from './../tools/pencil/index'
 import { Eraser } from './../tools/eraser/index'
 import { ColorBucket } from './../tools/colorBucket/index'
 import { ShareButton } from '../shareButton/index.jsx'
-import { stageToCompressedDataURL } from '../../utils/image.js'
+import { stageToCompressedDataURL, dataURLToBlob, resolveDrawImage } from '../../utils/image.js'
 
 export const Drawer = ({
   className,
@@ -44,7 +44,9 @@ export const Drawer = ({
   )
   const [isDrawed, setIsDrawed] = useState(drawed)
   const [uriData, setUriData] = useState(
-    data && data[0] ? data[0].uridata : null
+    data && data[0]
+      ? resolveDrawImage(data[0], { supabaseUrl: import.meta.env.VITE_SUPABASE_URL })
+      : null
   )
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [lines, setLines] = useState([])
@@ -177,36 +179,59 @@ export const Drawer = ({
     })
   }
 
-  const sendDraw = () => {
+  const sendDraw = async () => {
     setLoading(true)
-    const uri = stageToCompressedDataURL(stageRef.current)
-    supabase.auth.getUser().then(user => {
-      supabase
+    try {
+      const uri = stageToCompressedDataURL(stageRef.current)
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('No estás autenticado')
+
+      const blob = dataURLToBlob(uri)
+      const ext = blob.type === 'image/webp' ? 'webp' : 'png'
+      const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
+
+      const { error: uploadError } = await supabase
+        .storage
+        .from('draws')
+        .upload(path, blob, {
+          contentType: blob.type,
+          upsert: false,
+          cacheControl: '86400'
+        })
+
+      let storagePath = path
+      let legacyUri = null
+      if (uploadError) {
+        // Storage push failed (free-tier limit, etc.) — fall back to base64
+        // so the user doesn't lose their drawing.
+        console.warn('[Drawer] Storage upload failed, falling back to base64:', uploadError.message)
+        storagePath = null
+        legacyUri = uri
+      }
+
+      const { data: inserted, error: insertError } = await supabase
         .from('draws')
         .insert({
-          name: name,
-          uridata: uri,
-          creator: user.data.user.id
+          name,
+          creator: user.id,
+          storage_path: storagePath,
+          uridata: legacyUri
         })
         .select()
-        .then(result => {
-          data = result.data
-          setDrawData(result.data)
-          if (result.status === 201) {
-            toast.success(
-              'El dibujo se ha subido correctamente, gracias por jugar! Espera hasta mañana para otra palabra diferente!'
-            )
-            setIsDrawed(true)
-            setUriData(uri)
-          }
-          setLoading(false)
-        })
-        .catch(e => {
-          toast.error(
-            'El dibujo no se ha podido subir, ha ocurrido un error: ' + e
-          )
-        })
-    })
+
+      if (insertError) throw insertError
+
+      setDrawData(inserted)
+      toast.success(
+        'El dibujo se ha subido correctamente, gracias por jugar! Espera hasta mañana para otra palabra diferente!'
+      )
+      setIsDrawed(true)
+      setUriData(resolveDrawImage(inserted?.[0], { supabaseUrl: import.meta.env.VITE_SUPABASE_URL }) ?? uri)
+    } catch (e) {
+      toast.error('El dibujo no se ha podido subir, ha ocurrido un error: ' + (e?.message ?? e))
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {

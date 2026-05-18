@@ -17,7 +17,7 @@ export default function MainPage () {
       const today = new Date().toISOString().split('T')[0]
       const { data, error } = await supabase
         .from('draws')
-        .select('*')
+        .select('id, name, uridata, storage_path, day, created_at, creator')
         .eq('creator', user.id)
         .eq('day', today)
       if (error) throw error
