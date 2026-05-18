@@ -25,136 +25,64 @@ export const DrawList = ({
 
   const containerRef = useRef(null)
 
-  const getData = (added = false) => {
-    let orderIndex = 'created_at'
-    let orderOptions = { ascending: false }
-
+  const resolveOrder = () => {
     switch (orderBy) {
-      case '$.0':
       case '$.1':
-        orderIndex = 'created_at'
-        break
+        return { index: 'created_at', options: { ascending: true } }
       case '$.2':
+        return { index: 'items_count', options: { ascending: false } }
       case '$.3':
-        orderIndex = 'items_count'
-        break
-    }
-
-    switch (orderBy) {
+        return { index: 'items_count', options: { ascending: true } }
       case '$.0':
-        orderOptions = { ascending: false }
-        break
-      case '$.1':
-        orderOptions = { ascending: true }
-        break
-      case '$.2':
-        orderOptions = { ascending: false }
-        break
-      case '$.3':
-        orderOptions = { ascending: true }
-        break
+      default:
+        return { index: 'created_at', options: { ascending: false } }
     }
+  }
 
-    if (day) {
-      const todayDate = new Date().toISOString().split('T')[0]
+  const applyFilter = query => {
+    if (day) return query.eq('day', day)
+    if (filterName) return query.ilike('name', `%${filterName.toString()}%`)
+    return query
+  }
 
-      if (day.split('-')[0] > todayDate.year) return
-      if (day.split('-')[1] > todayDate.month) return
-      if (day.split('-')[2] > todayDate.day) return
+  const getData = async (added = false) => {
+    if (!day && !filterName) return
 
-      if (day.split('-')[0] < 2024) return
-      if (day.split('-')[1] < 5 && day.split('-')[0] <= 2024) return
-      if (
-        day.split('-')[2] < 21 &&
-        day.split('-')[1] <= 5 &&
-        day.split('-')[0] <= 2024
+    const { index: orderIndex, options: orderOptions } = resolveOrder()
+
+    if (!added) setLoading(true)
+
+    try {
+      if (!added) {
+        const { data: countData } = await applyFilter(
+          supabase.from('draws').select('id')
+        )
+        setDrawsCount(countData?.length ?? 0)
+      }
+
+      const start = 8 * pageIndex
+      const end = start + 7
+
+      const { data, error } = await applyFilter(
+        supabase.from('draws').select('*')
       )
-        return
+        .order(orderIndex, orderOptions)
+        .range(start, end)
+        .limit(maxItems)
 
-      searchByDay(orderIndex, orderOptions, added)
-    } else if (filterName) {
-      searchByName(orderIndex, orderOptions, added)
+      if (error) throw error
+
+      setDraws(prev => (added ? [...prev, ...(data ?? [])] : data ?? []))
+
+      if (day && (showDailyWord || !added)) {
+        const word = await getDailyWord(day)
+        setDailyWord(word)
+      }
+    } catch (err) {
+      toast.error('Ha ocurrido un error al cargar los dibujos: ' + err)
+    } finally {
+      setLoading(false)
     }
-  }
-
-  const searchByName = (orderIndex, orderOptions, added) => {
-    if (!added) {
-      setLoading(true)
-
-      supabase
-        .from('draws')
-        .select('id', 'COUNT(id)')
-        .ilike('name', `%${filterName.toString()}%`)
-        .then(count => {
-          setDrawsCount(count.data.length)
-        })
-    }
-
-    supabase
-      .from('draws')
-      .select('*')
-      .ilike('name', `%${filterName.toString()}%`)
-      .order(orderIndex, orderOptions)
-      .range(0 + 7 * pageIndex + pageIndex, 7 + 7 * pageIndex + pageIndex)
-      .limit(maxItems)
-      .then(data => {
-        if (added) {
-          setDraws(old => [...old, ...data.data])
-          setLoading(false)
-        } else {
-          setDraws(data.data)
-          if (showDailyWord) {
-            getDailyWord(day).then(word => {
-              setDailyWord(word)
-              setLoading(false)
-            })
-          } else {
-            setLoading(false)
-          }
-        }
-      })
-      .catch(err => {
-        toast.error('Ha ocurrido un error al cargar los dibujos: ' + err)
-        setLoading(false)
-      })
-  }
-
-  const searchByDay = (orderIndex, orderOptions, added) => {
-    if (!added) {
-      setLoading(true)
-
-      supabase
-        .from('draws')
-        .select('id', 'COUNT(id)')
-        .eq('day', day)
-        .then(count => {
-          setDrawsCount(count.data.length)
-        })
-    }
-
-    supabase
-      .from('draws')
-      .select('*')
-      .order(orderIndex, orderOptions)
-      .eq('day', day)
-      .range(0 + 7 * pageIndex + pageIndex, 7 + 7 * pageIndex + pageIndex)
-      .limit(maxItems)
-      .then(data => {
-        if (added) {
-          setDraws(old => [...old, ...data.data])
-          setLoading(false)
-        } else {
-          setDraws(data.data)
-        }
-        getDailyWord(day).then(word => {
-          setDailyWord(word)
-          setLoading(false)
-        })
-      })
-      .catch(err => {
-        toast.error('Ha ocurrido un error al cargar los dibujos: ' + err)
-        setLoading(false)
-      })
   }
 
   useEffect(() => {
