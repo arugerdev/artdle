@@ -87,7 +87,12 @@ export default function MainPage () {
         </>
       )}
       {loading && (
-        <section className='flex flex-col items-center justify-center h-screen w-screen'>
+        <section
+          className='flex flex-col items-center justify-center h-screen w-screen'
+          role='status'
+          aria-busy='true'
+          aria-label='Cargando Artdle'
+        >
           <div className='loader'></div>
         </section>
       )}

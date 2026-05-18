@@ -198,7 +198,14 @@ export const DrawList = ({
         </>
       )}
 
-      {loading && <div className='loader'></div>}
+      {loading && (
+        <div
+          className='loader'
+          role='status'
+          aria-busy='true'
+          aria-label='Cargando dibujos'
+        ></div>
+      )}
     </section>
   )
 }

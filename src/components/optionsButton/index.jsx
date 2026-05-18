@@ -37,6 +37,7 @@ export const OptionsButton = ({ data = {}, userData = null }) => {
           <Button
             isIconOnly
             variant='light'
+            aria-label='Más opciones'
             className='flex items-center justify-center text-center p-0'
           >
             <OptionsIcon className='w-full h-full p-2 text-black' />

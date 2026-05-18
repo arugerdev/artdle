@@ -43,6 +43,8 @@ export const ToolBarButton = ({
             active ? 'border-2 border-blue-500 bg-slate-300' : ''
           } bg-transparent justify-center p-2`}
           isIconOnly
+          aria-label={name}
+          aria-pressed={active}
           onPress={modal && onPress === null ? onOpen : () => onPress()}
           isDisabled={isDisabled}
         >
