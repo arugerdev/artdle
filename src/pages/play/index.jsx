@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useLocation, useParams } from 'wouter'
 import { Toaster, default as toast } from 'react-hot-toast'
 import { Button, Input, Slider } from '@nextui-org/react'
-import { Stage, Layer, Line } from 'react-konva'
 import supabase, { getDailyWord } from '../../utils/supabase'
 import { Topbar } from '../../components/topbar/index'
+import { TOOLS } from '../../utils/tools'
+import { strokePath } from '../../utils/canvasRender'
 
 const VW = 960
 const VH = 540
@@ -51,25 +52,32 @@ function LobbyView () {
   }
 
   return (
-    <section className='flex flex-col items-center gap-4 p-6 max-w-md w-full'>
-      <h1 className='text-3xl font-extrabold'>Jugar en vivo 🎮</h1>
-      <p className='text-gray-500 text-center'>
+    <section className='glass flex flex-col items-center gap-4 p-6 max-w-md w-full rounded-3xl'>
+      <h1 className='text-3xl font-bold text-slate-900'>Jugar en vivo 🎮</h1>
+      <p className='text-slate-500 text-center text-sm'>
         Crea una sala compartida o únete a una existente con su código de 6
         caracteres. Todos los jugadores dibujan a la vez sobre el mismo
         lienzo, viendo los trazos en tiempo real.
       </p>
-      <Button color='primary' size='lg' onPress={createRoom} isLoading={creating}>
+      <Button
+        size='lg'
+        radius='full'
+        onPress={createRoom}
+        isLoading={creating}
+        className='bg-slate-900 text-white w-full'
+      >
         Crear sala
       </Button>
       <div className='flex flex-col w-full gap-2'>
         <Input
+          variant='bordered'
           label='Código de sala'
           placeholder='ABCDEF'
           value={joinCode}
           onValueChange={setJoinCode}
           maxLength={6}
         />
-        <Button onPress={join} color='secondary' variant='flat'>
+        <Button onPress={join} variant='flat' radius='full' className='bg-white/60 backdrop-blur-md border border-slate-200/60'>
           Unirse
         </Button>
       </div>
@@ -81,13 +89,20 @@ function LobbyView () {
 function RoomView ({ code }) {
   const [, navigate] = useLocation()
   const [room, setRoom] = useState(null)
-  const [strokes, setStrokes] = useState([])
   const [color, setColor] = useState('#000000')
   const [size, setSize] = useState(10)
-  const isDrawing = useRef(false)
-  const currentStrokeRef = useRef(null)
+  const [strokeCount, setStrokeCount] = useState(0)
+  const canvasRef = useRef(null)
+  const liveCanvasRef = useRef(null)
   const userRef = useRef(null)
+  const seenIdsRef = useRef(new Set())
+  const isDrawingRef = useRef(false)
+  const currentStrokeRef = useRef(null)
+  const rafRef = useRef(0)
 
+  // ----------------------------------------------------------------
+  // Initial load: resolve the room + replay existing strokes.
+  // ----------------------------------------------------------------
   useEffect(() => {
     let cancelled = false
     ;(async () => {
@@ -105,7 +120,6 @@ function RoomView ({ code }) {
         return
       }
       setRoom(data)
-      // Load existing strokes
       const { data: existing } = await supabase
         .from('room_strokes')
         .select('stroke, player_id, id')
@@ -113,12 +127,37 @@ function RoomView ({ code }) {
         .order('created_at', { ascending: true })
         .limit(1000)
       if (cancelled) return
-      setStrokes((existing ?? []).map(r => ({ ...r.stroke, _id: r.id, _player: r.player_id })))
+      const canvas = canvasRef.current
+      if (canvas) {
+        const ctx = canvas.getContext('2d')
+        const dpr = window.devicePixelRatio || 1
+        canvas.width = VW * dpr
+        canvas.height = VH * dpr
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+        ctx.fillStyle = '#fff'
+        ctx.fillRect(0, 0, VW, VH)
+        for (const r of existing ?? []) {
+          seenIdsRef.current.add(r.id)
+          strokePath(ctx, r.stroke)
+        }
+        setStrokeCount(existing?.length ?? 0)
+      }
+      const live = liveCanvasRef.current
+      if (live) {
+        const dpr = window.devicePixelRatio || 1
+        live.width = VW * dpr
+        live.height = VH * dpr
+        live.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0)
+      }
     })()
     return () => { cancelled = true }
   }, [code, navigate])
 
-  // Realtime subscribe
+  // ----------------------------------------------------------------
+  // Realtime subscription: append incoming strokes from other players.
+  // Our own strokes are already painted client-side, so we dedupe on
+  // server-issued row id.
+  // ----------------------------------------------------------------
   useEffect(() => {
     if (!room?.id) return
     const channel = supabase
@@ -130,18 +169,75 @@ function RoomView ({ code }) {
         filter: `room_id=eq.${room.id}`
       }, payload => {
         const r = payload.new
-        // Skip our own optimistic strokes
-        if (r.player_id && userRef.current?.id === r.player_id) {
-          return
-        }
-        setStrokes(prev => [...prev, { ...r.stroke, _id: r.id, _player: r.player_id }])
+        if (seenIdsRef.current.has(r.id)) return
+        seenIdsRef.current.add(r.id)
+        const ctx = canvasRef.current?.getContext('2d')
+        if (ctx) strokePath(ctx, r.stroke)
+        setStrokeCount(n => n + 1)
       })
       .subscribe()
-    return () => channel.unsubscribe()
+    return () => { channel.unsubscribe() }
   }, [room?.id])
 
-  const persistStroke = async stroke => {
-    if (!room || !userRef.current) return
+  // ----------------------------------------------------------------
+  // Pointer handling.
+  // ----------------------------------------------------------------
+  const clientToCanvas = e => {
+    const rect = liveCanvasRef.current.getBoundingClientRect()
+    return {
+      x: ((e.clientX - rect.left) / rect.width) * VW,
+      y: ((e.clientY - rect.top) / rect.height) * VH
+    }
+  }
+
+  const drawLive = () => {
+    rafRef.current = 0
+    const ctx = liveCanvasRef.current?.getContext('2d')
+    if (!ctx) return
+    ctx.clearRect(0, 0, VW, VH)
+    if (currentStrokeRef.current) strokePath(ctx, currentStrokeRef.current)
+  }
+
+  const onDown = e => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return
+    e.preventDefault()
+    try { liveCanvasRef.current?.setPointerCapture?.(e.pointerId) } catch { /* noop */ }
+    const { x, y } = clientToCanvas(e)
+    currentStrokeRef.current = {
+      tool: TOOLS.PENCIL,
+      points: [x, y, x, y],
+      stroke: color,
+      strokeWidth: size
+    }
+    isDrawingRef.current = true
+    if (!rafRef.current) rafRef.current = requestAnimationFrame(drawLive)
+  }
+  const onMove = e => {
+    if (!isDrawingRef.current || !currentStrokeRef.current) return
+    e.preventDefault()
+    const { x, y } = clientToCanvas(e)
+    currentStrokeRef.current.points.push(x, y)
+    if (!rafRef.current) rafRef.current = requestAnimationFrame(drawLive)
+  }
+  const onUp = async e => {
+    if (!isDrawingRef.current) return
+    isDrawingRef.current = false
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = 0
+    }
+    const stroke = currentStrokeRef.current
+    currentStrokeRef.current = null
+
+    // Commit to bottom canvas + clear overlay
+    const ctx = canvasRef.current?.getContext('2d')
+    if (stroke && ctx) strokePath(ctx, stroke)
+    liveCanvasRef.current?.getContext('2d')?.clearRect(0, 0, VW, VH)
+    try { liveCanvasRef.current?.releasePointerCapture?.(e.pointerId) } catch { /* noop */ }
+
+    // Send to peers via DB
+    if (!room || !userRef.current || !stroke) return
+    setStrokeCount(n => n + 1)
     const { error } = await supabase.from('room_strokes').insert({
       room_id: room.id,
       player_id: userRef.current.id,
@@ -150,64 +246,35 @@ function RoomView ({ code }) {
     if (error) console.warn('[Room] persist failed:', error.message)
   }
 
-  const onDown = e => {
-    isDrawing.current = true
-    const pos = e.target.getStage().getPointerPosition()
-    const t = e.target.getStage().getAbsoluteTransform().copy()
-    const p = t.invert().point(pos)
-    currentStrokeRef.current = {
-      points: [p.x, p.y, p.x, p.y],
-      stroke: color,
-      strokeWidth: size
-    }
-    setStrokes(prev => [...prev, { ...currentStrokeRef.current, _local: true }])
-  }
-  const onMove = e => {
-    if (!isDrawing.current || !currentStrokeRef.current) return
-    const stage = e.target.getStage()
-    const pos = stage.getPointerPosition()
-    const t = stage.getAbsoluteTransform().copy()
-    const p = t.invert().point(pos)
-    currentStrokeRef.current.points.push(Math.round(p.x), Math.round(p.y))
-    setStrokes(prev => {
-      const next = [...prev]
-      next[next.length - 1] = { ...currentStrokeRef.current, _local: true }
-      return next
-    })
-  }
-  const onUp = () => {
-    if (!isDrawing.current) return
-    isDrawing.current = false
-    if (currentStrokeRef.current) {
-      persistStroke(currentStrokeRef.current)
-      currentStrokeRef.current = null
-    }
-  }
-
-  const canvasW = Math.min(typeof window !== 'undefined' ? window.innerWidth - 80 : VW, VW)
-  const scale = canvasW / VW
+  // ----------------------------------------------------------------
+  // Resize: keep the CSS aspect-ratio responsive.
+  // ----------------------------------------------------------------
+  useLayoutEffect(() => {
+    // canvas backing store already sized in load effect; no resize handler
+    // needed because CSS handles fluid sizing via aspect-ratio.
+  }, [])
 
   return (
     <section className='flex flex-col items-center gap-3 p-4 w-full max-w-[1100px]'>
-      <div className='flex flex-row items-center gap-3 w-full justify-between'>
+      <div className='glass flex flex-row items-center gap-3 w-full justify-between rounded-2xl p-3'>
         <div className='flex flex-col'>
-          <h1 className='font-extrabold text-xl'>
+          <h1 className='font-extrabold text-xl text-slate-900'>
             Sala <span className='font-mono bg-slate-100 px-2 rounded'>{code}</span>
           </h1>
           {room?.word && (
-            <small className='text-gray-500'>Palabra: <strong>{room.word}</strong></small>
+            <small className='text-slate-500'>Palabra: <strong>{room.word}</strong></small>
           )}
         </div>
         <Button
           size='sm'
-          variant='flat'
-          color='primary'
+          radius='full'
           onPress={() => {
             navigator.clipboard?.writeText(window.location.href).then(
               () => toast.success('Enlace copiado'),
               () => toast.error('No se pudo copiar')
             )
           }}
+          className='bg-slate-900 text-white'
         >
           Compartir enlace
         </Button>
@@ -215,13 +282,13 @@ function RoomView ({ code }) {
       {!room && <div className='loader' role='status' aria-busy='true'></div>}
       {room && (
         <>
-          <div className='flex flex-row items-center gap-3 bg-white p-2 rounded-md shadow-sm w-full'>
+          <div className='glass-strong flex flex-row items-center gap-3 p-2 rounded-2xl w-full'>
             <input
               type='color'
               value={color}
               onChange={e => setColor(e.target.value)}
               aria-label='Color'
-              className='w-10 h-10 rounded cursor-pointer'
+              className='w-9 h-9 rounded-full cursor-pointer border-2 border-white shadow-inner ring-1 ring-slate-300'
             />
             <Slider
               size='sm'
@@ -231,36 +298,34 @@ function RoomView ({ code }) {
               onChange={setSize}
               className='max-w-[200px]'
               aria-label='Tamaño de pincel'
-              startContent={<small>{size}px</small>}
+              startContent={<small className='text-xs font-mono text-slate-500 w-7 text-right'>{size}</small>}
             />
-            <span className='text-sm text-gray-500 ml-auto'>
-              {strokes.length} trazo{strokes.length === 1 ? '' : 's'}
+            <span className='text-sm text-slate-500 ml-auto'>
+              {strokeCount} trazo{strokeCount === 1 ? '' : 's'}
             </span>
           </div>
-          <Stage
-            width={canvasW}
-            height={VH * scale}
-            scaleX={scale}
-            scaleY={scale}
-            onPointerDown={onDown}
-            onPointerMove={onMove}
-            onPointerUp={onUp}
-            className='touch-none border-2 border-slate-600 rounded-md bg-white'
-          >
-            <Layer>
-              {strokes.map((s, i) => (
-                <Line
-                  key={s._id ?? `local-${i}`}
-                  points={s.points}
-                  stroke={s.stroke}
-                  strokeWidth={s.strokeWidth}
-                  tension={0.0001}
-                  lineCap='round'
-                  lineJoin='round'
-                />
-              ))}
-            </Layer>
-          </Stage>
+          <div className='relative w-fit max-w-full'>
+            <canvas
+              ref={canvasRef}
+              width={VW}
+              height={VH}
+              className='block rounded-2xl border border-slate-200/70 shadow-inner bg-white max-w-full h-auto'
+              style={{ width: `min(${VW}px, 100%)`, aspectRatio: `${VW}/${VH}` }}
+              role='img'
+              aria-label='Lienzo compartido de la sala'
+            />
+            <canvas
+              ref={liveCanvasRef}
+              width={VW}
+              height={VH}
+              className='absolute inset-0 block rounded-2xl max-w-full h-auto touch-none'
+              style={{ width: `min(${VW}px, 100%)`, aspectRatio: `${VW}/${VH}` }}
+              onPointerDown={onDown}
+              onPointerMove={onMove}
+              onPointerUp={onUp}
+              onPointerCancel={onUp}
+            />
+          </div>
         </>
       )}
     </section>
@@ -271,7 +336,7 @@ export default function PlayPage () {
   const params = useParams()
   const code = params?.code?.toUpperCase()
   return (
-    <main className='flex flex-col gap-4 justify-start items-center h-full w-full min-w-screen min-h-screen'>
+    <main className='flex flex-col gap-4 justify-start items-center h-full w-full min-w-screen min-h-screen pb-12'>
       <Toaster />
       <Topbar />
       {!code && <LobbyView />}
