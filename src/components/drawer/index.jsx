@@ -302,14 +302,22 @@ export const Drawer = ({ className, drawed = false, data = null, dailyWord = '' 
 
       const drawId = inserted?.[0]?.id
       if (drawId) {
+        // Save bucket fills too — they're cheap to store ({x, y, stroke},
+        // ~40 bytes) and the replay can re-execute them via flood-fill.
         const strokesForReplay = paths
-          .filter(l => l.tool !== TOOLS.BUCKET && l.points)
-          .map(l => ({
-            tool: l.tool,
-            points: l.points,
-            stroke: l.stroke,
-            strokeWidth: l.strokeWidth
-          }))
+          .map(l => {
+            if (l.tool === TOOLS.BUCKET) {
+              return { tool: l.tool, x: l.x, y: l.y, stroke: l.stroke }
+            }
+            if (!l.points || l.points.length < 2) return null
+            return {
+              tool: l.tool,
+              points: l.points,
+              stroke: l.stroke,
+              strokeWidth: l.strokeWidth
+            }
+          })
+          .filter(Boolean)
         if (strokesForReplay.length > 0) {
           supabase
             .from('draw_strokes')

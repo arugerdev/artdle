@@ -4,7 +4,13 @@ import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Slide
 import supabase from '../../utils/supabase'
 import { TOOLS } from '../../utils/tools'
 import { PlayIcon } from '../../assets/icons'
-import { strokePath } from '../../utils/canvasRender'
+import { strokePath, applyBucket } from '../../utils/canvasRender'
+
+// Bucket fills are instantaneous events; give them a fixed virtual cost
+// so the slice routine spends some time on them rather than dumping all
+// fills at progress=0. Empirically ~60 "points" looks like the same
+// pause an average freehand stroke takes.
+const BUCKET_VIRTUAL_POINTS = 60
 
 const VW = 960
 const VH = 540
@@ -16,23 +22,32 @@ const SPEED_OPTIONS = [
   { label: '4x', factor: 4 }
 ]
 
-function totalPointCount (strokes) {
-  return strokes.reduce((n, s) => n + (s.points?.length ?? 0) / 2, 0)
+function strokeCost (s) {
+  if (s.tool === TOOLS.BUCKET) return BUCKET_VIRTUAL_POINTS
+  return (s.points?.length ?? 0) / 2
 }
 
-// Snapshot the strokes sliced by the current progress fraction. The last
-// visible stroke is truncated to a fractional set of its points so the
-// playback looks continuous instead of stepping per-stroke.
+function totalPointCount (strokes) {
+  return strokes.reduce((n, s) => n + strokeCost(s), 0)
+}
+
+// Snapshot the strokes sliced by the current progress fraction. Freehand
+// strokes can be partially included (truncated to N points) so playback
+// looks continuous; bucket strokes are all-or-nothing.
 function sliceForProgress (strokes, totalPoints, progress) {
   if (!strokes) return []
   const targetPoints = totalPoints * progress
   let acc = 0
   const out = []
   for (const s of strokes) {
-    const sPoints = (s.points?.length ?? 0) / 2
-    if (acc + sPoints <= targetPoints) {
+    const cost = strokeCost(s)
+    if (acc + cost <= targetPoints) {
       out.push(s)
-      acc += sPoints
+      acc += cost
+    } else if (s.tool === TOOLS.BUCKET) {
+      // Not enough budget for the fill yet — stop here, we'll include
+      // it once progress catches up.
+      break
     } else {
       const remaining = targetPoints - acc
       const take = Math.max(2, Math.floor(remaining) * 2)
@@ -112,7 +127,10 @@ export const ReplayModal = ({ isOpen, onClose, drawId, drawName }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing, speedIdx, strokes])
 
-  // Paint the canvas every time progress changes.
+  // Paint the canvas every time progress changes. Bucket entries are
+  // re-flood-filled on the spot — applyBucket is O(filled pixels) so
+  // for a 960×540 worst case it's ~6 ms; cheap enough to do on every
+  // tick at typical timelapse speeds.
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas || !strokes) return
@@ -123,9 +141,8 @@ export const ReplayModal = ({ isOpen, onClose, drawId, drawName }) => {
     ctx.fillRect(0, 0, VW, VH)
     const visible = sliceForProgress(strokes, totalPoints, progress)
     for (const p of visible) {
-      // Bucket strokes aren't stored in draw_strokes (filtered at save).
-      if (p.tool === TOOLS.BUCKET) continue
-      strokePath(ctx, p)
+      if (p.tool === TOOLS.BUCKET) applyBucket(ctx, p)
+      else strokePath(ctx, p)
     }
   }, [progress, strokes, totalPoints])
 
