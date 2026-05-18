@@ -33,7 +33,7 @@ import {
 
 const baseProps = {
   weight: 'duotone',
-  size: 22,
+  size: 18,
   'aria-hidden': true
 }
 

@@ -117,24 +117,27 @@ export const DrawCard = ({ data, className = '', position = null }) => {
             className='flex w-[100%] md:w-[60%] h-[90%] max-w-full'
             isOpen={isOpen}
             onClose={onClose}
+            classNames={{
+              base: 'ios-card text-slate-900 dark:text-zinc-100',
+              closeButton: 'text-slate-500 dark:text-zinc-400'
+            }}
           >
             <ModalContent>
               {onClose => (
                 <>
                   <ModalHeader className='flex flex-col pb-0 pt-2 md:p-4 gap-0 w-full'>
-                    <h1 className='font-extrabold text-sm md:text-md'>
+                    <h1 className='font-extrabold text-sm md:text-md text-slate-900 dark:text-zinc-100'>
                       {data.name}
                     </h1>
-                    <small className='text-slate-500 font-normal text-sm'>
-                      Dibujado:{' '}
-                      {new Date(data.created_at).toString().split('GMT')[0]}
+                    <small className='text-slate-500 dark:text-zinc-400 font-normal text-xs font-mono'>
+                      Dibujado: {new Date(data.created_at).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' })}
                     </small>
-                    <small className='text-slate-500 font-normal text-sm'>
-                      Palabra del dia: {dailyWord}
+                    <small className='text-slate-500 dark:text-zinc-400 font-normal text-xs'>
+                      Palabra del día: <span className='text-slate-700 dark:text-zinc-200 font-medium'>{dailyWord}</span>
                     </small>
-                    <div className='flex flex-row items-center justify-start gap-2'>
-                      <Avatar size='sm' src={userData?.avatar_url} />
-                      <small className='text-slate-500 font-normal text-sm'>
+                    <div className='flex flex-row items-center justify-start gap-2 mt-1'>
+                      <Avatar size='sm' src={userData?.avatar_url} className='border border-slate-200 dark:border-zinc-700 w-6 h-6' />
+                      <small className='text-slate-600 dark:text-zinc-300 font-normal text-sm'>
                         {userData?.username
                           ? (
                             <WouterLink
@@ -149,12 +152,15 @@ export const DrawCard = ({ data, className = '', position = null }) => {
                     </div>
                   </ModalHeader>
                   <ModalBody className='flex flex-col items-start justify-start gap-3 p-3 w-full h-full overflow-auto'>
-                    <Image
-                      isBlurred
-                      className='h-full object-scale-down rounded-sm'
-                      src={imageSrc}
-                      alt={data.name}
-                    />
+                    <div className='w-full bg-white rounded-xl overflow-hidden border border-slate-200/60 dark:border-zinc-700/60'>
+                      <Image
+                        radius='none'
+                        className='w-full object-scale-down'
+                        src={imageSrc}
+                        alt={data.name}
+                        classNames={{ wrapper: 'w-full !max-w-none' }}
+                      />
+                    </div>
                     <CommentsSection drawId={data.id} />
                   </ModalBody>
                   <ModalFooter className='pb-2 pt-0 md:p-4'>
