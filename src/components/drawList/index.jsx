@@ -157,7 +157,7 @@ export const DrawList = ({
     <section
       className={`${className} ${
         loading ? 'justify-center' : 'justify-start'
-      } glass flex flex-row flex-wrap items-start z-20 gap-3 p-4 w-full h-full mb-4 rounded-3xl`}
+      } flex flex-row flex-wrap items-start z-20 gap-3 p-4 w-full h-full mb-4 rounded-3xl`}
     >
       {!loading && draws && (
         <>
@@ -186,18 +186,20 @@ export const DrawList = ({
             })}
           </section>
           {(!draws || draws.length == 0) && (
-            <div className='flex flex-col w-full h-full items-center justify-center text-center'>
-              <h1 className='font-bold text-xl'>{t('main.noDrawsTitle')}</h1>
-              <p>😥</p>
+            <div className='flex flex-col w-full h-full items-center justify-center text-center text-zinc-400 py-12'>
+              <h1 className='font-medium text-base text-zinc-300'>{t('main.noDrawsTitle')}</h1>
+              <p className='text-2xl mt-1 opacity-50'>😥</p>
             </div>
           )}
           {showDrawsCount && (
             <div
               ref={sentinelRef}
-              className='flex flex-col w-full h-full items-center justify-center text-center'
+              className='flex flex-col w-full h-full items-center justify-center text-center py-4'
             >
               {drawsCount > draws.length && <div className='loader'></div>}
-              <p>{t('main.drawsCount', { count: drawsCount })}</p>
+              <p className='text-xs uppercase tracking-widest text-zinc-500 mt-2'>
+                {t('main.drawsCount', { count: drawsCount })}
+              </p>
             </div>
           )}
         </>

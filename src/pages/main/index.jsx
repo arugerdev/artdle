@@ -47,16 +47,16 @@ export default function MainPage () {
       {!loading && (
         <>
           <section
-            className='flex flex-col items-center justify-center gap-4 w-full max-w-[1100px] px-4 pt-4'
+            className='flex flex-col items-center justify-center gap-4 w-full max-w-[1100px] px-4 pt-6'
             aria-labelledby='daily-word-heading'
           >
-            <div className='glass flex flex-col items-center justify-center gap-1 rounded-2xl px-10 py-5 mb-2 max-w-md'>
-              <small className='text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500'>
+            <div className='flex flex-col items-center justify-center gap-1 mb-2'>
+              <small className='text-[10px] font-semibold uppercase tracking-[0.25em] text-zinc-500'>
                 {t('main.todaysWordLabel')}
               </small>
               <h1
                 id='daily-word-heading'
-                className='text-4xl sm:text-5xl font-sans font-bold pt-1 px-2 text-center text-slate-900 tracking-tight'
+                className='text-5xl sm:text-7xl font-sans font-bold pt-1 px-2 text-center text-zinc-50 tracking-tight'
               >
                 {dailyWord || '…'}
               </h1>
@@ -106,13 +106,13 @@ export default function MainPage () {
 // eslint-disable-next-line react/prop-types
 function SectionDivider ({ title, emoji }) {
   return (
-    <div className='flex flex-row items-center gap-3 w-full max-w-[1200px] px-4 mt-4'>
-      <div className='flex-1 h-px bg-slate-200/70' />
-      <h2 className='flex flex-row items-center gap-2 text-base sm:text-lg font-semibold py-1 px-3 text-slate-700 tracking-tight'>
-        {emoji && <span aria-hidden='true' className='text-xl'>{emoji}</span>}
+    <div className='flex flex-row items-center gap-3 w-full max-w-[1200px] px-4 mt-6'>
+      <div className='flex-1 h-px bg-zinc-800' />
+      <h2 className='flex flex-row items-center gap-2 text-sm sm:text-base font-medium py-1 px-3 text-zinc-400 tracking-tight uppercase'>
+        {emoji && <span aria-hidden='true' className='text-base opacity-80'>{emoji}</span>}
         {title}
       </h2>
-      <div className='flex-1 h-px bg-slate-200/70' />
+      <div className='flex-1 h-px bg-zinc-800' />
     </div>
   )
 }

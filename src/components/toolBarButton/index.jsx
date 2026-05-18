@@ -11,7 +11,6 @@ import {
 } from '@nextui-org/react'
 import React from 'react'
 
-// Splits a label like "Pencil / Lapiz ( P / 1 )" → { label, shortcut }.
 function parseShortcut (raw = '') {
   const match = /^(.*?)\s*\(\s*([^)]+)\s*\)\s*$/.exec(raw)
   if (!match) return { label: raw, shortcut: null }
@@ -45,26 +44,29 @@ export const ToolBarButton = ({
         content={
           <div className='flex flex-col gap-0 max-w-[220px]'>
             <div className='flex flex-row items-center gap-2'>
-              <span className='font-semibold text-sm text-pretty'>{label}</span>
+              <span className='font-semibold text-sm text-pretty text-zinc-100'>{label}</span>
               {shortcut && (
-                <kbd className='text-[10px] font-mono px-1 py-px rounded bg-slate-100 border border-slate-200 text-slate-600'>
+                <kbd className='text-[10px] font-mono px-1 py-px rounded bg-zinc-800 border border-zinc-700 text-zinc-300'>
                   {shortcut}
                 </kbd>
               )}
             </div>
             {description && (
-              <p className='text-xs text-slate-500 text-pretty mt-0.5'>
+              <p className='text-xs text-zinc-400 text-pretty mt-0.5'>
                 {description}
               </p>
             )}
           </div>
         }
+        classNames={{
+          content: 'bg-zinc-900 border border-zinc-800'
+        }}
       >
         <Button
           className={`min-w-9 w-9 h-9 transition-colors ${
             active
-              ? 'bg-slate-900 text-white shadow-inner'
-              : 'bg-transparent text-slate-700 hover:bg-slate-200/60'
+              ? 'bg-zinc-50 text-zinc-950'
+              : 'bg-transparent text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100'
           }`}
           isIconOnly
           radius='lg'
@@ -80,7 +82,7 @@ export const ToolBarButton = ({
         <Modal
           isOpen={isOpen}
           onOpenChange={onOpenChange}
-          className='w-full min-w-[40%] max-w-screen-md max-h-screen'
+          className='w-full min-w-[40%] max-w-screen-md max-h-screen bg-zinc-900 text-zinc-100'
           placement={placement}
         >
           <ModalContent>

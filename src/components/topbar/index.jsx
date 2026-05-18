@@ -57,20 +57,23 @@ export const Topbar = () => {
       position='sticky'
       maxWidth='full'
       classNames={{
-        base: 'bg-white/60 backdrop-blur-xl border-b border-white/60 shadow-[0_2px_20px_rgb(15,23,42,0.04)]',
+        base: 'bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800 shadow-none',
         wrapper: 'max-w-screen-2xl px-4 sm:px-6',
-        item: ['data-[active=true]:font-semibold', 'data-[active=true]:text-slate-900']
+        item: ['data-[active=true]:font-semibold', 'data-[active=true]:text-zinc-50'],
+        menu: 'bg-zinc-950 border-l border-zinc-800',
+        menuItem: 'text-zinc-300',
+        toggleIcon: 'text-zinc-300'
       }}
     >
       {/* -------------- PC -------------- */}
       <NavbarContent className='hidden sm:flex gap-6 w-full' justify='start'>
         <NavbarBrand>
           <Link
-            className='flex flex-row gap-2 items-center text-slate-900 cursor-pointer'
+            className='flex flex-row gap-2 items-center cursor-pointer text-zinc-50'
             onPress={() => pushLocation('/')}
           >
-            <Image src={Logo} width={36} height={36} radius='full' />
-            <p className='font-bold text-base tracking-tight'>Artdle</p>
+            <Image src={Logo} width={32} height={32} radius='full' className='ring-1 ring-zinc-700' />
+            <p className='font-semibold text-base tracking-tight'>Artdle</p>
           </Link>
         </NavbarBrand>
 
@@ -79,8 +82,8 @@ export const Topbar = () => {
             <Link
               className={`text-sm cursor-pointer transition-colors ${
                 location === item.path
-                  ? 'text-slate-900 font-semibold'
-                  : 'text-slate-500 hover:text-slate-900'
+                  ? 'text-zinc-50 font-semibold'
+                  : 'text-zinc-400 hover:text-zinc-50'
               }`}
               onPress={() => pushLocation(item.path)}
             >
@@ -91,29 +94,34 @@ export const Topbar = () => {
       </NavbarContent>
       <NavbarContent justify='end'>
         <NavbarItem className='hidden sm:flex'>
-          <Button
-            size='sm'
-            variant='flat'
-            radius='full'
-            onPress={toggleLang}
-            aria-label='Change language'
-            className='bg-white/50 backdrop-blur-md border border-slate-200/60 text-xs font-medium text-slate-600'
+          <button
+            type='button'
+            onClick={toggleLang}
+            aria-label={`Idioma actual: ${lang.toUpperCase()}. Cambiar a ${lang === 'es' ? 'inglés' : 'español'}`}
+            className='group relative inline-flex h-7 w-14 items-center rounded-full border border-zinc-800 bg-zinc-900 px-1 text-[10px] font-mono uppercase tracking-wider transition-colors hover:border-zinc-700'
           >
-            {lang === 'es' ? 'EN' : 'ES'}
-          </Button>
+            <span
+              className={`absolute top-0.5 h-5 w-6 rounded-full bg-zinc-50 shadow-sm transition-all duration-300 ${
+                lang === 'es' ? 'left-0.5' : 'left-[1.65rem]'
+              }`}
+            />
+            <span className={`relative z-10 flex-1 text-center ${lang === 'es' ? 'text-zinc-950' : 'text-zinc-500'}`}>ES</span>
+            <span className={`relative z-10 flex-1 text-center ${lang === 'en' ? 'text-zinc-950' : 'text-zinc-500'}`}>EN</span>
+          </button>
         </NavbarItem>
         <NavbarItem className='hidden sm:flex'>
           <Skeleton isLoaded={!loadingUserData} className='rounded-xl'>
             {(!userData || !userData.email) && (
               <Button
                 as={Link}
+                size='sm'
+                radius='full'
                 onPress={() =>
                   loginWithGoogle().then(() => {
                     toast.success('Sesión iniciada correctamente')
                   })
                 }
-                color='primary'
-                variant='light'
+                className='bg-zinc-50 text-zinc-950 font-semibold hover:bg-zinc-200 transition-colors cursor-pointer'
               >
                 {t('nav.signIn')}
               </Button>
@@ -136,11 +144,11 @@ export const Topbar = () => {
       <NavbarContent className='sm:hidden pr-3 w-full' justify='center'>
         <NavbarBrand>
           <Link
-            className='flex flex-row gap-4 text-black cursor-pointer'
+            className='flex flex-row gap-2 items-center cursor-pointer text-zinc-50'
             onPress={() => pushLocation('/')}
           >
-            <Image src={Logo} width={'64px'} height={'64px'} />
-            <p className='font-bold text-inherit'>Artdle</p>
+            <Image src={Logo} width={32} height={32} radius='full' className='ring-1 ring-zinc-700' />
+            <p className='font-semibold text-base text-inherit'>Artdle</p>
           </Link>
         </NavbarBrand>
         <NavbarItem className='sm:hidden pr-3 w-full'>
