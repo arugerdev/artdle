@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 import { parseDate } from '@internationalized/date'
 import { DrawList } from '../../components/drawList'
 import { Toaster } from 'react-hot-toast'
+import supabase from '../../utils/supabase'
 
 export default function ExplorePage () {
   const [date, setDate] = useState(
@@ -19,9 +20,18 @@ export default function ExplorePage () {
   const [orderBy, setOrderBy] = useState(['$.0'])
   const [filterName, setFilterName] = useState('')
   const [selectedKeys, setSelectedKeys] = useState(new Set(['1']))
+  const [categories, setCategories] = useState([])
+  const [filterCategory, setFilterCategory] = useState(new Set([]))
 
   useEffect(() => {
     setSelectedKeys(new Set(['1']))
+    supabase
+      .from('daily_word')
+      .select('category')
+      .then(({ data }) => {
+        const unique = [...new Set((data ?? []).map(r => r.category).filter(Boolean))]
+        setCategories(unique.sort())
+      })
   }, [])
 
   return (
@@ -74,6 +84,22 @@ export default function ExplorePage () {
           </AccordionItem>
         </Accordion>
 
+        {categories.length > 0 && (
+          <Select
+            label='Categoría'
+            placeholder='Todas'
+            className='max-w-xs'
+            selectedKeys={filterCategory}
+            onSelectionChange={setFilterCategory}
+          >
+            {categories.map(c => (
+              <SelectItem key={c} value={c}>
+                {c}
+              </SelectItem>
+            ))}
+          </Select>
+        )}
+
         <Select
           label='Ordenar por...'
           placeholder='Ordenar por...'
@@ -104,6 +130,7 @@ export default function ExplorePage () {
         orderBy={orderBy.currentKey}
         showDailyWord={selectedKeys.currentKey == 2}
         filterName={filterName === '' ? '*' : filterName}
+        filterCategory={filterCategory.currentKey ?? null}
       />
     </main>
   )
